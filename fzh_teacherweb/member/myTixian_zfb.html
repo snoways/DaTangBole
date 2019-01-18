@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title>提现申请</title>
+		<script type="text/javascript" src="../js/com.js"></script>
+		<link rel="stylesheet" type="text/css" href="../css/stylea.css">
+		<link rel="stylesheet" type="text/css" href="../css/weui.min.css">
+		<link rel="stylesheet" type="text/css" href="../css/jquery-weui.css">
+		<script type="text/javascript" src="../js/jquery.min.js"></script>
+		<script type="text/javascript" src="../js/jquery-weui.js"></script>
+		<script type="text/javascript" src="../js/template-native.js"></script>
+		<style type="text/css">
+			input::-webkit-input-placeholder {color: #c3c3c3;}
+			.hide{display: none;}
+		</style>
+	</head>
+	<body >
+		<div id="box"></div>
+
+		<script type="text/html" id="tpl">
+
+			<div id="tixianPage">
+				<div class="bgcolorfff font13" style="padding-left: 14px;padding-right: 14px">
+					<div style="padding:14px 0" class="border_b tableblock">
+						<div class="color333 wrem6">支付宝账号</div>
+						<div>
+							<input type="text" placeholder="请输入支付宝账号" id="zfbaccount">
+						</div>
+					</div>
+					<div style="padding:14px 0" class="tableblock">
+						<div class="color333 wrem6">用户名</div>
+						<div class="color666">
+							<input type="text" placeholder="请输入用户名" id="username">
+						</div>
+					</div>
+				</div>
+				<div class="pad14">
+					<img style="display:inline-block;width:20px;height:16px;" src="../img/tan.png">
+					<div class="font12 color999" style="display: inline-block;">提交提现申请后，请耐心等待后台审核</div>
+				</div>
+				<div class="pad14 bgcolorfff">
+					<div class="tableblock">
+						<div class="color5d inblock font13 wrem5">提现金额</div>
+						<div>
+							<input id="money" class="font13 col-xs-12" type="number" name="" placeholder="请输入提现金额" style="position: relative;top: -3px">
+						</div>
+						<div style="width:20px;" class="txt_right">
+							<img onclick="del()" style="width:16px;height:16px;" src="../img/wo_del.png" style="position: relative;top: -3px">
+						</div>
+					</div>
+				</div>
+				<div class="pad14">
+					<div class="font13 color999" style="display: inline-block;">请输入<%=$imports.telcenterStar(phone)%>收到的验证码</div>
+				</div>
+				<div class="pad14 bgcolorfff">
+					<div class="tableblock">
+						<div class="color5d font13 wrem5">验证码</div>
+						<div>
+							<input id="yanma" class="font13 col-xs-12" type="text" name="" placeholder="请输入验证码" style="position: relative;top: -3px">
+						</div>
+						<div class="wrem6 txt_right">
+							<div onclick="yanzheng()" id="sendmabtn" class="txt_center inblock border_radiu12 font12 wrem6" style="height:20px;line-height:18px;border:1px solid #ff6000;color:#ff6000;position: relative;top: -3px">获取验证码</div>
+						</div>
+					</div>
+				</div>
+				<div class="txt_center" style="margin-top:25px;">
+					<div onclick="submit()" class="txt_center border_radiu40 bgcolorzt font13 colorfff" style="display:inline-block;width:314px;height:42px;line-height:42px;">提交申请</div>
+				</div>
+				<!-- 弹框提示 -->
+				<div id="bounce666" style="display: none">
+					<div style="width:100%;height:100%;background-color:rgba(0,0,0,.3);position:fixed;top:0;left:0;bottom:0;right:0;margin:auto;z-index: 200;"></div>
+					<div class="bgcolorfff" style="width:300px;height:130px;position:fixed;top:-30%;left:0;bottom:0;right:0;margin:auto;z-index: 201;border-radius:8px;">
+						<div class="txt_center" style="padding:25px 0 10px 0;">
+							<img style="display:inline-block;width:44px;height:44px;" src="../img/tishi1.png">
+						</div>
+						<div class="txt_center font13">您已经提交提现申请 请耐心等待！</div>
+						<div class="txt_center">
+							<img onclick="deltan()" style="display:inline-block;margin-bottom:-120px;width:30px;height:30px;" src="../img/cha.png">
+						</div>
+					</div>
+				</div>
+			</div>
+		</script>
+
+
+
+
+		<script type="text/javascript">
+			pre_loading(0);
+
+			var token=localStorage.getItem('user_token');
+			if(Getvariable('token')){
+				token=Getvariable('token');
+			}
+
+			var data = {
+				oprate: true,
+
+				//提现申请
+				cardlist: [],
+				phone:''
+			};
+			function renderhtml(){
+				document.getElementById('box').innerHTML = template('tpl',data)
+			}
+
+
+
+
+
+
+
+			//提现申请页面js==================================================
+			if(!Getvariable('phone')){
+				$.toast('少参数phone','text');
+				pre_loading(3);
+			}else{
+				data.phone=Getvariable('phone');
+				renderhtml();
+
+				//获取用户名
+				pre_loading(100);
+			}
+
+			// 点击删除
+			function del(){
+				$('#money').val('');
+			}
+			// 获取验证码
+			function yanzheng() {
+				// 发起请求
+				$.ajax({
+					type: 'post',
+					url:path_inter+"Client/common/getImgCode",
+					dataType: 'json',
+					data:{
+						phone:data.phone
+					},
+					beforeSend: function() {
+						var ses = 60;
+						var t = setInterval(function() {
+							$('#sendmabtn').html(ses-- + 's').attr('onclick','');
+							if (ses < 1) {
+								clearInterval(t);
+								$('#sendmabtn').html('重新发送').attr('onclick','yanzheng()');
+							}
+						}, 1000);
+					},
+					success: function(res) {
+						if(user_overdue(res.code)){
+							var code = res.data.code;
+							var yzm = code.slice(2,6);// 获取随机码
+
+							// 发短信
+							$.ajax({
+								url:path_inter+"Client/common/sendMsg",
+								dataType:'json',
+								type:'post',
+								data:{
+									phone:data.phone,
+									img_code:yzm
+								},
+								success:function(res){
+									$.toast('发送成功','text');
+								},
+								error:function(){
+
+								}
+							});
+						}
+					}
+				});
+			}
+			function deltan(){
+				$('#bounce666').hide();
+			}
+			// 点击提交申请
+			function submit(){
+				if(!data.oprate){
+					return false;
+				}
+
+				var zfbaccount=$('#zfbaccount').val();
+				var username=$('#username').val();
+				var code = $('#yanma').val();
+				var money = $('#money').val();
+
+				if(zfbaccount==''){
+					$.toast('请输入支付宝账号','text');
+					return false;
+				}
+				if(username==''){
+					$.toast('请输入用户名','text');
+					return false;
+				}
+				if(money==''){
+					$.toast('请输入提现金额','text');
+					return false;
+				}
+				if(code==''){
+					$.toast('请输入验证码','text');
+					return false;
+				}
+
+				data.oprate=false;
+				$.ajax({
+					url:path_inter+"teacher/Mine/ali_apply",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						number:zfbaccount,
+						card_name:username,
+						money:money,
+						phone:data.phone,
+						code:code
+					},
+					success:function(res){
+						data.oprate=true;
+						if(user_overdue(res.code)){
+							$('#bounce666').show();
+						}
+					},
+					error:function(){
+						data.oprate=true;
+						pre_loading(1);
+					}
+				});
+			}
+
+
+
+
+
+
+		</script>
+	</body>
+</html>

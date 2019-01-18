@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>活动列表</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- bootstrap -->
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap.css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+
+  <!-- libraries -->
+  <link href="__PUBLIC__/Shopadmin/css/lib/uniform.default.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/select2.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/font-awesome.css" type="text/css" rel="stylesheet"/>
+
+  <!-- global styles -->
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/layout.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/elements.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/icons.css">
+
+  <!-- this page specific styles -->
+  <link rel="stylesheet" href="__PUBLIC__/Shopadmin/css/compiled/form-showcase.css" type="text/css" media="screen"/>
+
+  <!-- open sans font -->
+  <link
+    href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+    rel='stylesheet' type='text/css'>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <style>
+    .thumbs{
+      height: 40px;
+    }
+  </style>
+</head>
+<body>
+
+<include file="common/menu" />
+
+
+<!-- main container -->
+<div class="content">
+
+  <div id="pad-wrapper" class="form-page">
+    <div class="row header">
+      <div class="col-md-12">
+        <h3>活动管理</h3>
+      </div>
+    </div>
+    <div class="row" style="padding: 10px; border: 1px solid #ccc;  margin-bottom: 10px;background-color: #F5FAFD;">
+      <form class="form-inline" method="post" action="{:U('Activity/index')}">
+        <div class="form-group mar_r5">
+          <label for="shai1">活动状态：</label>
+          <select class="form-control" id="shai1" style="width: 150px" name="status">
+            <option value="0">全部</option>
+            <option value="1" <if condition="$_POST['status'] eq 1">selected</if> >未结束</option>
+            <option value="3" <if condition="$_POST['status'] eq 3">selected</if>>已结束</option>
+          </select>
+        </div>
+        <div class="form-group mar_r5">
+          <label for="shai2">上架情况：</label>
+          <select class="form-control" id="shai2" style="width: 150px" name="state">
+            <option value="">全部</option>
+            <option value="0" <if condition="$_POST['state'] eq '0'">selected</if> >未上架</option>
+            <option value="1" <if condition="$_POST['state'] eq 1">selected</if>>已上架</option>
+            <option value="2" <if condition="$_POST['state'] eq 2">selected</if> >已下架</option>
+          </select>
+        </div>
+        <div class="form-group mar_r5">
+          <label for="shai3">活动分类：</label>
+          <select class="form-control" id="shai3" style="width: 150px" name="cate_id">
+            <option value="0">全部</option>
+            <foreach name="category" item="item">
+              <option value="{$item.id}" <if condition="$_POST['cate_id'] eq $item['id']">selected</if> >{$item.name}</option>
+            </foreach>
+          </select>
+        </div>
+        <div class="form-group mar_r5">
+          <label for="shai4">关键字：</label>
+          <input type="text" name="keyword" class="form-control" id="shai4" style="width: 200px" value="{:I('keyword')}">
+        </div>
+        <button class="btn btn-primary mar_r5" type="submit">搜索</button>
+        <a class="btn btn-danger" href="{:U('Activity/index')}">清空</a>
+      </form>
+    </div>
+    <div class="table-wrapper products-table section">
+      <div class="row">
+        <table class="table table-hover" id="activitytable">
+          <thead>
+          <tr>
+            <th align="center">ID</th>
+            <th>活动标题</th>
+            <th>活动分类</th>
+            <th>缩略图</th>
+            <th>活动商家</th>
+            <th>活动人数</th>
+            <th>当前人数</th>
+            <!--<th>报名截止时间</th>-->
+            <th>报名费</th>
+            <th>活动时间</th>
+            <th width="80">活动目的地</th>
+            <th>添加时间</th>
+            <th>活动状态</th>
+            <th>上架情况</th>
+            <th align="center">{:L('ACTIONS')}</th>
+          </tr>
+          </thead>
+          <tbody>
+          <foreach name="list" key="k" item="vo">
+            <tr>
+              <td align="center">{$k+1}</td>
+              <td>{$vo['title']}</td>
+              <td>{$vo['name']}</td>
+              <td><img class="thumbs" src="__ROOT__/{$vo.img}" /></td>
+              <td>{$vo['shop_id']==0?'平台':$vo['s_name']}</td>
+              <td>{$vo['people_num']}</td>
+              <td>{$vo['now_num']}</td>
+              <!--<td>{$vo['end_time']}</td>-->
+              <td>{$vo['money']}</td>
+              <td>{$vo['start']}-{$vo['end']}</td>
+              <td>{$vo['target']}</td>
+              <td>{$vo['add_time']}</td>
+              <td>{$vo['status']==1?'进行中':'已结束'}</td>
+              <td>
+                <if condition="$vo['state'] eq '0'">
+                  <if condition="$vo['status'] eq 1">
+                    <a href="javascript:;" data-id="{$vo['id']}" title="已上架，点击下架" class="shangjiabtn">未上架</a>
+                    <else/>
+                    未上架
+                  </if>
+                </if>
+                <if condition="$vo['state'] eq 1">
+                  <if condition="$vo['status'] eq 1">
+                    <a href="javascript:;" data-id="{$vo['id']}" title="已上架，点击下架" class="xiajiabtn">已上架</a>
+                    <else/>
+                    已上架
+                  </if>
+                </if>
+                <if condition="$vo['state'] eq 2">
+                  <a href="javascript:;" data-id="{$vo['id']}" class="shangjiabtn" title="已下架，点击上架">已下架</a>
+                </if>
+              </td>
+              <td align="center" width="120">
+                <a href="__CONTROLLER__/sign/id/{$vo['id']}"> 出游日期 </a> |
+                <a href="__CONTROLLER__/attr/id/{$vo['id']}"> 设置套餐 </a> |
+                <a href="__CONTROLLER__/start/id/{$vo['id']}"> 出发地 </a> |
+                <a href="__CONTROLLER__/edit/id/{$vo['id']}">编辑</a> |
+                <php>$form_request = json_encode($_REQUEST);</php>
+                <a href='{:U("Share/Setting")}?id={$vo["id"]}&type=2&ob_title={$vo["title"]}&form_request={$form_request}' >分享设置</a> |
+                <a href="javascript:;" data-id="{$vo['id']}" class="del">删除</a>
+              </td>
+            </tr>
+          </foreach>
+          </tbody>
+        </table>
+        <div class="pagination">{$page}</div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end main container -->
+
+<!-- scripts for this page -->
+<script src="__PUBLIC__/Shopadmin/js/wysihtml5-0.3.0.js"></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/jquery.uniform.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/theme.js"></script>
+<!--laryer-->
+<script src="__PUBLIC__/Shopadmin/layer/layer.js"></script>
+<script src="__PUBLIC__/layer/layer.js"></script>
+
+<script>
+  $('#activitytable').on('click', '.xiajiabtn', function () {
+    //下架
+    var id = $(this).data('id');
+    console.log(id)
+    layer.confirm('您确定要下架该活动吗?', {icon: 3, title:'提示'}, function(index){
+
+        $.post("__CONTROLLER__/status",
+            {'id':id, 'status':1},
+            function(json){
+                var data = JSON.parse(json);
+                if (data.code==1){
+                    window.location.reload();
+                }else{
+                    layer.alert(data.msg);
+                }
+            },"text");
+        layer.close(index);
+    });
+  }).on('click', '.shangjiabtn', function () {
+    //上架
+    var id = $(this).data('id');
+    console.log(id)
+    layer.confirm('您确定要上架该活动吗?', {icon: 3, title:'提示'}, function(index){
+
+        $.post("__CONTROLLER__/status",
+            {'id':id, 'status':2},
+            function(json){
+                var data = JSON.parse(json);
+                if (data.code==1){
+                    window.location.reload();
+                }else{
+                    layer.alert(data.msg);
+                }
+            },"text");
+        layer.close(index);
+    });
+  }).on('click', '.del', function () {
+    //删除
+    var id = $(this).data('id');
+    console.log(id)
+    layer.confirm('您确定要删除该活动吗?', {icon: 3, title:'提示'}, function(index){
+
+        $.post("__CONTROLLER__/del",
+            {"id":id},
+            function(json){
+                var data = JSON.parse(json);
+                if (data.code==1){
+                    window.location.reload();
+                }else{
+                    layer.alert(data.msg);
+                }
+
+            },"text");
+        layer.close(index);
+    });
+  }).on('click', '.editbtn', function () {
+    //编辑
+    var id = $(this).data('id');
+    console.log(id)
+  }).on('click', '.uploadbtn', function () {
+    //上传活动视频
+    var id = $(this).data('id');
+    console.log(id)
+  });
+</script>
+
+
+</body>
+</html>

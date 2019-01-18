@@ -1,0 +1,88 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('index/index')}">{$info.s_name}的个人中心</a></li>
+        <li class="active"><a href="{:U('index/small_pass',array('id'=>$info['id']))}">修改密码</a></li>
+        <li><a href="{:U('index/imglist',array('id'=>$info['id']))}">图集管理</a></li>
+        <li style="float: right;"><a href="{:U('auth/login')}">退出登录</a></li>
+    </ul>
+    <div class="form-horizontal js-ajax-form" >
+        <fieldset>
+            <div class="control-group">
+                <label class="control-label" for="input-old-password">原始密码</label>
+                <div class="controls">
+                    <input type="password" class="input-xlarge" id="input-old-password" name="old_password">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="input-password">新密码</label>
+                <div class="controls">
+                    <input type="password" class="input-xlarge" id="input-password" name="s_password">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="input-repassword">重复新密码</label>
+                <div class="controls">
+                    <input type="password" class="input-xlarge" id="input-repassword" name="s_repassword">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">保存</button>
+            </div>
+        </fieldset>
+    </div>
+</div>
+<input type="hidden" id="url" value="{:U('index/small_pass')}">
+<script src="__PUBLIC__/js/common.js"></script>
+<script>
+    $('.btn').click(function(){
+        var o_password = $("input[name=old_password]").val();
+        var s_password = $("input[name=s_password]").val();
+        var s_repassword = $("input[name=s_repassword]").val();
+        if(o_password == ''){
+            layer.tips('原密码不能为空', "input[name='old_password']",{tips:1});
+            return false;
+        }
+        if(s_password == ''){
+            layer.tips('密码不能为空', "input[name='s_password']",{tips:1});
+            return false;
+        }
+        if(s_repassword == ''){
+            layer.tips('密码不能为空', "input[name='s_repassword']",{tips:1});
+            return false;
+        }
+        if(s_password !== s_repassword){
+            layer.tips('两次密码不一致', "input[name='s_repassword']",{tips:1});
+            return false;
+        }
+        var url = $("#url").val();
+        $.post(url,{
+            o_password:o_password,s_password:s_password,s_repassword:s_repassword,
+        },function(data){
+//            console.log(data)
+//            return false;
+            var data = JSON.parse(data);
+            if(data.code == 4){
+                layer.tips('原密码错误', "input[name='old_password']",{tips:1});
+                return false;
+                // $.toast('请输入用户名和密码',"text");
+            }else if(data.code == 3){
+                layer.tips('两次密码不一致', "input[name='s_repassword']",{tips:1});
+                return false;
+                // $.toast('用户不存在',"text");
+            }else if(data.code == 2){
+                layer.tips('密码长度少于6位', "input[name='s_password']",{tips:1});
+                return false;
+            }else{
+                layer.msg("修改成功");
+                setTimeout(function(){
+                    window.location.href="index.php/Managed/index/index";
+                },1500)
+            }
+        })
+    })
+</script>
+</body>
+</html>

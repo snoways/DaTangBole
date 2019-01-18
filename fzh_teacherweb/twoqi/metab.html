@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title>我的标签</title>
+		<script src="../js/com.js" ></script>
+		<link rel="stylesheet" href="../css/weui.min.css" />
+		<link rel="stylesheet" href="../css/jquery-weui.css" />
+		<link rel="stylesheet" href="../css/stylea.css" />
+		<script src="../js/jquery.min.js" ></script>
+		<script src="../js/jquery-weui.js"></script>
+		<script src="../js/template-native.js"></script>
+	</head>
+	<body>
+		<div class="content_box" style="background: #efefef">
+			<div class="content_scroll">
+				<!--内容开始-->
+				<div id="contain"></div>
+				<!--内容结束-->
+			</div>
+		</div>
+
+		<script type="text/html" id="tpl">
+			<div style="padding:30px 0 60px 0">
+				<div class="clear metablist">
+					<%for(var i=0;i<list.length;i++){%>
+					<%var el=list[i];%>
+					<div class="L col-xs-4 mar_b20">
+						<div class="pad_l10 pad_r10">
+							<div onclick="itemclick(<%=el%>,<%=i%>)" class="font12 colorzt pad_t5 pad_b5 txt_center item <%=el.status==1?'on':''%>" style="border:2px solid #ff6000"><%=el.lname%></div>
+						</div>
+					</div>
+					<%}%>
+				</div>
+			</div>
+			<div style="width: 84%;margin: 0 auto">
+				<a href="javascript:queding();" class="block font15 colorfff txt_center bgcolorzt pad_t10 pad_b10" style="border-radius: 100px;">确定</a>
+			</div>
+		</script>
+
+
+		<script>
+			var token = localStorage.getItem("user_token");
+
+			if(Getvariable('token')){
+				token=Getvariable('token');
+			}
+
+			var data = {
+				list:[],
+				oprate:true
+			};
+			function renderhtml() {
+				document.getElementById('contain').innerHTML = template('tpl', data);
+			}
+
+
+
+
+
+			pre_loading(0);
+			$.ajax({
+				url:path_inter+"Teacher/Mine/all_label",
+				dataType:'json',
+				type:'post',
+				data:{token:token},
+				success:function(res){
+					if(user_overdue(res.code,res.msg)){
+						data.list=res.data;
+						pre_loading(100);
+						renderhtml();
+					}
+				},
+				error:function(){
+					pre_loading(1);
+				}
+			});
+
+
+
+
+			function itemclick(el,index){
+				if(data.list[index].status==1){
+					data.list[index].status=2;//未选中
+				}else{
+					data.list[index].status=1;//选中
+				}
+				renderhtml();
+			}
+			function queding(){
+				if(!data.oprate){
+					return false;
+				}
+
+				var ids=[];
+				for(var i=0;i<data.list.length;i++){
+					if(data.list[i].status==1){
+						ids.push(data.list[i].id);
+					}
+				}
+				ids=ids.toString();
+
+				if(ids==''){
+					$.toast('请选择标签','text');
+					return false;
+				}
+
+				data.oprate=false;
+				$.ajax({
+					url:path_inter+"Teacher/Mine/mine_label",
+					dataType:'json',
+					type:'post',
+					data:{token:token,id:ids},
+					success:function(res){
+						data.oprate=true;
+						if(user_overdue(res.code,res.msg)){
+							$.toast('提交成功');
+						}
+					},
+					error:function(){
+						data.oprate=true;
+						pre_loading(1);
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

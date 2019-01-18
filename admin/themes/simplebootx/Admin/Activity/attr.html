@@ -1,0 +1,232 @@
+<admintpl file="header" />
+<style>
+    .plus,.minus{
+        color: #077aff;
+    }
+    .minus{
+        color: #ff2222;
+    }
+    .price{
+        width: 100px;
+    }
+    .adult,.child {
+        width: 100px;
+    }
+    input[name='introduce'],input[name='title']{
+        width: 90%;
+    }
+
+    .no-margin{
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+    .save{
+        width: 24.5px;
+        height: 24.5px;
+        border:none;
+        border-radius: 100%;
+    }
+</style>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('Activity/index')}">活动列表</a></li>
+        <li class="active"><a href="{:U('Activity/attr',array('id'=>$_GTE['id']))}">设置套餐</a></li>
+    </ul>
+    <form action="{:U('Activity/attr')}" method="post" class="form-horizontal js-ajax-forms" enctype="multipart/form-data">
+        <input type="hidden"  name="id" value="{$_GET['id']}" >
+        <div class="row-fluid">
+            <div class="span12">
+                <table class="table table-bordered">
+                    <tr>
+                        <th> ID </th>
+                        <th> 活动标题 </th>
+                        <th> 套餐说明 </th>
+                        <th width="250" style=""> 价格/市场价 </th>
+                        <th width="120"> 成人价格 </th>
+                        <th width="120"> 儿童价格 </th>
+                        <th width="90"> 操作 </th>
+                    </tr>
+                    <tr class="item">
+                        <td> 0 </td>
+                        <td>
+                            <input type="text" class="title" name="title" value="" placeholder="请输入活动标题" required/>
+                        </td>
+                        <td >
+                            <input type="text"  class="introduce" name="introduce" value="" placeholder="请输入活动介绍" required/>
+                        </td>
+                        <td>
+                            <input type="text" class="price bazar_price"  placeholder="请输入优惠价">
+                            / <input type="text" class="price normal_price" placeholder="请输入市场价">
+                        </td>
+                        <td>
+                            <input type="number" class="adult" name="adult" value="" placeholder="请输入成人价格">
+                        </td>
+                        <td>
+                            <input type="number" class="child" name="child" value="" placeholder="请输入儿童价格">
+                        </td>
+                        <td>
+                            <a href="javascript:;" class="form-required plus"  id="add"> 添加 </a>
+                        </td>
+                    </tr>
+
+                    <foreach name="list" item="v">
+                        <tr class="item" data_id="{$v['id']}">
+                            <td> {$v['id']} </td>
+                            <td>
+                                <input type="text" class="title" name="title" value="{$v['title']}" placeholder="请输入活动标题" required/>
+                            </td>
+                            <td >
+                                <input type="text"  class="introduce" name="introduce" value="{$v['introduce']}" placeholder="请输入活动介绍" required/>
+                            </td>
+                            <td>
+                                <input type="text" class="price normal_price " value="{$v['price']}"  placeholder="请输入优惠价">
+                                / <input type="text" class="price bazar_price" value="{$v['bazar_price']}" placeholder="请输入市场价">
+                            </td>
+                            <td>
+                                <input type="number" class="adult" name="adult" value="{$v['adult']}" placeholder="请输入成人价格">
+                            </td>
+                            <td>
+                                <input type="number" class="child" name="child" value="{$v['child']}" placeholder="请输入儿童价格">
+                            </td>
+                            <td>
+                                <a href="javascript:;" class="plus no-margin save" > 保存 </a>
+                                <a href="javascript:;" class="minus no-margin"> 删除 </a>
+                            </td>
+                        </tr>
+                    </foreach>
+
+                </table>
+            </div>
+        </div>
+        <!--<div class="form-actions">-->
+            <!--<button class="btn btn-primary js-ajax-submit" type="submit">提交</button>-->
+            <!--<a class="btn" href="{:U('Activity/index')}">返回</a>-->
+        <!--</div>-->
+    </form>
+</div>
+<script type="text/javascript" src="__PUBLIC__/layer/layer.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/common.js"></script>
+</body>
+<script>
+    $("#add").click(function () {
+
+        var el = $(this).closest('.item');
+
+        var title = el.find('.title').val();
+        var introduce = el.find('.introduce').val();
+        var bazar = el.find('.bazar_price').val();
+        var normal = el.find('.normal_price').val();
+        var adult = el.find('.adult').val();
+        var child = el.find('.child').val();
+
+        if(!title || !introduce || !bazar || !normal){
+            artdialog_alert('请填写完所有信息再添加')
+            return false
+        }
+
+        var act_id = "{$_GET['id']}";
+        $.post("{:U('Activity/addAttr')}",{
+            act_id:act_id,
+            title:title,
+            introduce:introduce,
+            bazar_price:bazar,
+            price:normal,
+            adult:adult,
+            child:child
+        },function (res) {
+            if(res.code == 1){
+                var data = res.data;
+                var html = '<tr class="item" data_id="'+data.id+'" >\n' +
+                    '           <td> '+data.id+' </td>\n' +
+                    '           <td>\n' +
+                    '               <input type="text" class="title" name="title" value="'+data.title+'" placeholder="请输入活动标题" required/>\n' +
+                    '           </td>\n' +
+                    '           <td >\n' +
+                    '               <input type="text" class="introduce" name="introduce" value="'+data.introduce+'" placeholder="请输入活动介绍" required/>\n' +
+                    '           </td>\n' +
+                    '           <td>\n' +
+                    '               <input type="text" class="price normal_price " value="'+data.price+'" placeholder="请输入优惠价">\n' +
+                    '               / <input type="text" class="price bazar_price " value="'+data.bazar_price+'" placeholder="请输入市场价">\n' +
+                    '           </td>\n' +
+                    '           <td> ' +
+                    '               <input type="number" class="adult" name="adult" value="'+data.adult+'" placeholder="请输入成人价格">' +
+                    '           </td>' +
+                    '           <td>' +
+                    '               <input type="number" class="child" name="child" value="'+data.child+'" placeholder="请输入儿童价格"> ' +
+                    '           </td>' +
+                    '           <td>\n' +
+                    '               <a href="javascript:;" class="plus no-margin save" > 保存 </a>' +
+                    '               <a href="javascript:;" class="minus no-margin"> 删除 </a>' +
+                    '           </td>\n' +
+                    '        </tr>';
+                $('.table').append(html);
+                el.find('input').val('');
+                layer.msg("添加成功")
+            }else{
+                artdialog_alert(res.msg)
+                return false
+            }
+        })
+
+    })
+
+    $(".minus").live('click',function () {
+        var el = $(this).closest('.item');
+        var id = el.attr('data_id');
+
+        $.get("{:U('Activity/deleteAttr')}",{
+            id:id
+        },function (res) {
+            if(res.code == 1){
+                el.closest('.item').remove();
+                layer.msg('删除成功')
+            }else{
+                artdialog_alert(res.msg)
+                return false
+            }
+        })
+    })
+
+    $(".js-datetime").live('click',function () {
+        var dateTimeInput = $(this);
+        if (dateTimeInput.length) {
+            Wind.use('datePicker', function () {
+                dateTimeInput.datePicker({
+                    time: true
+                });
+            });
+        }
+    })
+
+    $(".save").live('click',function () {
+        var el = $(this).closest('.item');
+        var id = el.attr('data_id');
+        var title = el.find('.title').val();
+        var intro = el.find('.introduce').val();
+        var price = el.find('.normal_price').val();
+        var bz_price = el.find('.bazar_price').val();
+        var adult = el.find('.adult').val();
+        var child = el.find('.child').val();
+
+        $.post("{:U('Activity/updateAttr')}",{
+            id:id,
+            title:title,
+            introduce:intro,
+            price:price,
+            bazar_price:bz_price,
+            adult:adult,
+            child:child
+        },function (res) {
+            if(res.code == 1){
+                layer.msg(res.msg)
+            }else{
+                artdialog_alert(res.msg)
+                return false
+            }
+        })
+    })
+
+</script>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>选择优惠券</title>
+  <script src="js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="css/ku/hui.css">
+  <link rel="stylesheet" href="css/ku/weui.min.css">
+  <link rel="stylesheet" href="css/ku/jquery-weui.min.css">
+  <link rel="stylesheet" href="css/ku/style.css">
+  <script src="js/ku/hui.js"></script>
+  <script src="js/ku/vue.min.js"></script>
+  <script src="js/ku/jquery-1.12.4.min.js"></script>
+  <script src="js/ku/jquery-weui.js"></script>
+</head>
+<body>
+
+<div id="app" v-cloak>
+
+  <div class="content_box">
+    <div class="content_scroll">
+      <div class="empty" v-if="list.length==0">暂无优惠券</div>
+      <!--内容开始-->
+      <ul class="youhuiquan">
+        <li class="pad10" v-for="(el,i) in list" :class="{grayli:el.can==-1}" @click="itemclick(el,i)">
+          <div class="pad_t10 pad_b10 bgcolorfff border_radiu4">
+            <div class="tableblock">
+              <div class="txt_center" style="width: 120px">
+                <div class="colorzt mar_b5 gray" style="line-height: 1">
+                  <span class="font15">￥</span>
+                  <span class="font28">{{el.money}}</span>
+                </div>
+                <div class="font12 color666 gray">满{{el.min_consumption}}元可用</div>
+              </div>
+              <div>
+                <div class="font14 color333 gray">{{el.title}}</div>
+                <div class="font12 color999 gray">限{{el.expire_date}}前使用</div>
+              </div>
+              <div style="width: 80px" class="txt_center">
+                <span class="font14 colorfff bgcolorzt inblock border_radiu4 goshiyong" style="padding: 4px 6px">去使用</span>
+              </div>
+            </div>
+          </div>
+          <div class="color666 font12 pad10 rela" style="background:#fafafa;border-top: 1px solid #eee;">
+            <span class="border_radius50 abso" style="background: #f5f5f5;width: 12px;height: 12px;top: -6px;left: -6px;"></span>
+            <span class="border_radius50 abso" style="background: #f5f5f5;width: 12px;height: 12px;top: -6px;right: -6px;"></span>
+            限：{{el.name}}
+          </div>
+        </li>
+      </ul>
+      <!--内容end-->
+    </div>
+  </div>
+
+</div>
+
+<script>
+  pre_loading(0);
+
+  var token=localStorage.getItem('user_token');
+  if(Getvariable('token')){
+    token=Getvariable('token');
+  }
+
+  var type,money;
+  if(!Getvariable('type') || !Getvariable('money')){
+    pre_loading(3);
+  }else{
+    type=Getvariable('type');
+    money=Getvariable('money');
+  }
+
+  var vm = new Vue({
+    el: '#app',
+    data: {
+      path_img:path_img,
+      list:[]
+    },
+    methods:{
+      itemclick:function(el,index){
+        if(el.can==1){
+          var str=JSON.stringify(el);
+          sessionStorage.setItem('yhqselected1',str);
+          history.go(-1);
+        }
+      }
+    },
+    created:function(){
+      //web-优惠券列表
+      $.ajax({
+        url:path_inter+"parents/coupon/findCoupon",
+        dataType:'json',
+        type:'post',
+        data:{
+          token: token,
+          type:type,
+          money:money
+        },
+        success:function(res){
+          if(user_overdue(res.code,res.msg)){
+            vm.list=res.data;
+            pre_loading(100);
+          }
+        },
+        error:function(){
+          pre_loading(1);
+        }
+      });
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>预约</title>
+  <script src="js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="css/ku/hui.css">
+  <link rel="stylesheet" href="css/ku/style.css">
+  <script src="js/ku/hui.js"></script>
+  <script src="js/ku/template-web.js"></script>
+</head>
+<body>
+
+<div ontouchstart class="content_box">
+  <div class="content_scroll" style="padding-bottom: 46px">
+
+    <!--<div class="pad10 border_b colorzt">-->
+      <!--<img src="img/icon19.png" height="14" class="mar_r5" alt=""/>-->
+      <!--<span class="inblock">预约时间</span>-->
+    <!--</div>-->
+    <!--<div class="border_b pad_t10 pad_b10 color666" style="padding-left: 20px;">-->
+      <!--{{detail.teach_date}}&nbsp;{{detail.xinqi}}&nbsp;{{detail.teach_time}}-->
+    <!--</div>-->
+
+    <!--内容开始-->
+    <div id="contain"></div>
+    <!--内容end-->
+  </div>
+</div>
+<script type="text/html" id="tpl">
+  <div class="bgcolorfff">
+    <div class="pad10 border_b colorzt">
+      <img src="img/icon4.png" height="14" class="mar_r5" alt=""/>
+      <span class="inblock font14">授课地址</span>
+    </div>
+    <a class="pad10 border_b block" href="javascript:;" onclick="goSelectAddr()">
+      <%for(var i=0;i<addr_list.length;i++){%>
+      <%var el=addr_list[i];%>
+        <%if(addr_list.length!=0 && xz_addid==el.a_id){%>
+        <div class="tableblock">
+          <div class="mar_b5 font13">
+            <div class="tableblock color666 pad_l10">
+              <div>联系人: <%=el.name%></div>
+              <div class="txt_right"><%=el.tel%></div>
+            </div>
+            <div class="color666 pad_l10">授课地址: <%=el.addresses%></div>
+          </div>
+          <div class="txt_right" style="width: 20px">
+            <img src="img/arrowr.png" height="10" alt=""/>
+          </div>
+        </div>
+        <%}%>
+      <%}%>
+      <%if(addr_list.length==0){%>
+      <div class="font14 pad_l10 color666">暂无收货地址，前去添加~</div>
+      <%}%>
+    </a>
+
+    <div class="pad10 colorzt border_b">
+      <img src="img/icon5.png" height="14" class="mar_r5" alt=""/>
+      <span class="inblock font14">已选科目</span>
+    </div>
+    <ul class="pad_t10 pad_l10 pad_r5 clear font12 color666 border_b findteaDetKuangCourse">
+      <li class="L mar_b10 pad_l10 pad_r5">
+        <a href="javascript:;" class="block border_all border_radiu4 pad5 txt_center on bdczt"><%=detail.subject_name%></a>
+      </li>
+    </ul>
+
+    <div class="pad10 border_b colorzt">
+      <img src="img/icon6.png" width="16" class="mar_r5" alt=""/>
+      <span class="inblock font14">购买数量</span>
+    </div>
+    <div class="pad10 tableblock border_b">
+      <div class="font14 color666 col-xs-6">
+        <div class="pad_l10">￥<%=$imports.num2(detail.price)%>/<%=kuang.danwei%></div>
+      </div>
+      <div class="txt_right col-xs-6">
+        <div class="inblock addjian">
+          <a class="inblock jian" href="javascript:;" onclick="jian()"></a><input disabled type="text" class="txt_center colorzt" value="<%=detail.class_num%>" /><a class="inblock add" href="javascript:;" onclick="add()"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="pad10 border_b colorzt">
+      <img src="img/twoqi/quan.png" height="14" class="mar_r5" alt=""/>
+      <span class="inblock font14">使用优惠券</span>
+    </div>
+    <div class="pad10" onclick="selectquan()">
+      <div class="tableblock">
+        <div>
+          <%if(yhqselected.money==''){%>
+          <span class="font13 color999">未选择优惠券</span>
+          <%}else{%>
+          <span class="font13 color666">￥<%=$imports.num2(yhqselected.money)%></span>
+          <%}%>
+        </div>
+        <div class="txt_right">
+          <img src="img/arrowr.png" height="10" alt="">
+        </div>
+      </div>
+    </div>
+  </div>
+</script>
+
+
+
+
+
+<div id="containfooter"></div>
+<script type="text/html" id="tplfooter">
+  <div class="footer" style="height: 46px;">
+    <div class="tableblock" style="height: 46px">
+      <div class="col-xs-8 color666 font14">
+        <div class="pad_l10">
+          合计：<span class="font20 colorzt">￥<%=$imports.num2(detail.class_num*detail.price-yhqselected.money)%></span>
+        </div>
+      </div>
+      <a class="col-xs-4 bgcolorzt colorfff font16 txt_center" href="javascript:;" onclick="klijiYuyue()">立即预约</a>
+    </div>
+  </div>
+</script>
+
+<script>
+  ioshistorygoback();
+
+  var token=localStorage.getItem('user_token');
+
+  if(Getvariable('token')){
+    token=Getvariable('token');
+  }
+
+  var data={
+    oprate: true,//true时允许做操作
+    addr_list: [],
+    xz_addid: "",
+    kuang: {
+      money: 0,
+      danwei: '课时',
+      inputzhi: 1
+    },
+    detail: {},
+
+    yhqselected:{money:''},
+    cr_id:''//优惠券id 从选择优惠券页面返回本页 获得的
+  };
+  function renderhtml(){
+    document.getElementById('contain').innerHTML=template('tpl', data);
+    document.getElementById('containfooter').innerHTML=template('tplfooter', data);
+  }
+
+  //初始加载
+  pre_loading(0);
+  if (Getvariable("pid")) {
+    data.detail =JSON.parse(localStorage.getItem(Getvariable("pid")));
+    if(sessionStorage.getItem('datadetailclassnum')){
+      data.detail.class_num=sessionStorage.getItem('datadetailclassnum');//获取 购买数量
+    }
+    if (Getvariable("aid") != "no") {
+      data.xz_addid = Getvariable("aid");
+    }
+    if(sessionStorage.getItem('yhqselected1')){
+      data.yhqselected=JSON.parse(sessionStorage.getItem('yhqselected1'));
+      data.cr_id=data.yhqselected.crid;
+    }
+    //获取地址
+    hui.post(
+      path_inter+'parents/teacher/addressList',
+      {
+        token: token
+      },
+      function(res){
+        res = JSON.parse(res);
+        pre_loading(100);
+        if (user_overdue(res.code,res.msg)){
+          for(var i=0;i<res.data.length;i++){
+            res.data[i].addresses = res.data[i].province + res.data[i].city + res.data[i].area + res.data[i].address + res.data[i].other;
+            if (i == 0 && data.xz_addid == "") {
+              data.xz_addid = res.data[i].a_id;
+            }
+          }
+          data.addr_list=res.data;
+          renderhtml();
+        }
+      },
+      function(){
+        //error
+        pre_loading(1);
+      }
+    );
+  }
+  else {
+    pre_loading(404, "预约信息错误，请重新预约");
+  }
+
+
+
+
+
+
+
+
+
+  function selectquan(){
+    sessionStorage.setItem('datadetailclassnum',data.detail.class_num);//存购买数量
+    location.href='yhq_select.html?type=1&money='+data.detail.class_num*data.detail.price;
+  }
+  function goSelectAddr(){
+    //跳转到选择地址界面
+    localStorage.setItem(Getvariable("pid"), JSON.stringify(data.detail));
+    if (data.xz_addid == "") {
+      data.xz_addid = "yes";
+    }
+    location.href = 'member/address.html?pid=' + data.xz_addid + "&xz_addr=" + data.xz_addid;
+  }
+  function add() {
+    data.detail.class_num = parseInt(data.detail.class_num);
+    data.detail.class_num++;
+    renderhtml();
+  }
+  function jian() {
+    if(!data.oprate){
+      return false;
+    }
+
+    data.detail.class_num = parseInt(data.detail.class_num);
+    if (data.detail.class_num > 1) {
+      data.detail.class_num--;
+    }
+    renderhtml();
+
+    if(data.yhqselected.money>0){
+      var money=data.detail.class_num*data.detail.price;
+      //如果减少数量，导致优惠券不可用的话，提示 请重新选择优惠券
+      //web-优惠券列表
+      data.oprate=false;
+      hui.post(
+        path_inter+'parents/coupon/findCoupon',
+        {
+          token: token,
+          type:1,
+          money:money
+        },
+        function(res){
+          data.oprate = true;
+          res = JSON.parse(res);
+          if(user_overdue(res.code,res.msg)){
+            if(res.data.length==0){
+              //没有可用的优惠券了，需要重新选择优惠券
+              hui.toast("请重新选择优惠券");
+              data.yhqselected={money:0};
+              renderhtml();
+            }else{
+              var canselectedquan=false;
+              for(var i=0;i<res.data.length;i++){
+                if(res.data[i].can==1 && data.yhqselected.crid==res.data[i].crid){
+                  //说明之前选择的优惠券还可以用
+                  canselectedquan=true;
+                  break;
+                }
+              }
+              if(!canselectedquan){
+                //需要重新选择优惠券
+                hui.toast("请重新选择优惠券");
+                data.yhqselected={money:0};
+                renderhtml();
+              }
+            }
+          }
+        },
+        function(){
+          //error
+          data.oprate = true;
+        }
+      );
+    }
+  }
+  function klijiYuyue() {
+    if (!data.oprate) {
+      return false;
+    }
+    if (data.xz_addid == "") {
+      hui.toast("请选择地址");
+      return false;
+    }
+
+    data.oprate = false;
+    sessionStorage.removeItem('yhqselected1');//清空
+    hui.post(
+      path_inter+'parents/teacher/reservation',
+      {
+        token: token,
+        teacher_id: data.detail.teacher_id,
+        class_num: data.detail.class_num,
+        subject_id: data.detail.subject_id,
+//        teach_date: data.detail.teach_date,
+//        teach_time: data.detail.teach_time,
+//        teacher_time_id: data.detail.teacher_time_id,
+        address_id: data.xz_addid,
+        cr_id:data.cr_id//优惠券id
+      },
+      function(res){
+        res = JSON.parse(res);
+        data.oprate = true;
+        renderhtml();
+        if (user_overdue(res.code,res.msg)) {
+          if (res.code == 1) {
+            location.href = path_js + '/yuyue_ok.html?order_sn=' + res.data.order_sn;
+          }
+          else {
+            location.href = path_js + '/yuyue_no.html?kefu_tel=' + res.data.kefu_tel;
+          }
+        }
+      },
+      function(){
+        //error
+        data.oprate = true;
+        renderhtml();
+      }
+    );
+  }
+
+  //从find_teacher_detail中设置的yueyue本地存储，如果想直接打开本页看的话，需要手动设置上才行
+//  localStorage.setItem('yuyue','{"class_num":1,"price":"0.01","subject_id":"203","subject_name":"小学 一年级英语","teach_date":"2018-05-21","teach_time":"09:10-12:17","teacher_id":"248","teacher_time_id":"417","xinqi":"星期一","subject":[{"description":"","grade":"小学 一年级","price":"0.01","subject":"数学","subject_id":"202","subject_name":"小学 一年级数学"},{"description":"","grade":"小学 2年级","price":"0.01","subject":"数学","subject_id":"202","subject_name":"小学 2年级数学"}]}')
+</script>
+
+
+</body>
+</html>

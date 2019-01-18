@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <title>我的分享-老师</title>
+  <script src="../js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="../css/ku/hui.css">
+  <link rel="stylesheet" href="../css/ku/weui.min.css">
+  <link rel="stylesheet" href="../css/ku/jquery-weui.min.css">
+  <link rel="stylesheet" href="../css/ku/style.css">
+  <script src="../js/ku/hui.js"></script>
+  <script src="../js/ku/vue.min.js"></script>
+  <script src="../js/ku/jquery-1.12.4.min.js"></script>
+  <script src="../js/ku/jquery-weui.js"></script>
+  <script src="../js/ku/swiper_jqueryweui.js"></script>
+  <style>
+    .dataicon{width: 80px;height: 80px;}
+    .martzhi{margin-top: 18px;}
+  </style>
+</head>
+<body>
+
+<div id="app" v-cloak>
+
+  <div class="content_box">
+    <div class="content_scroll bgcolorfff">
+
+      <div>
+        <img src="../img/shareqinzi/sharetitbg.png" class="block" alt="">
+      </div>
+
+      <div style="background: url(../img/teacherquan.png) no-repeat center;background-size: 100% auto;" class="marok">
+        <div class="tableblock w100 pad_t20 mar_t10">
+          <div class="col-xs-5 txt_right">
+            <img :src="shuju.t_img" v-if="shuju.t_img.indexOf('http')!=-1" alt="" style="width: 70px;height: 70px;" class="border_radius50">
+            <img :src="path_img+shuju.t_img" v-if="shuju.t_img.indexOf('http')==-1" alt="" style="width: 70px;height: 70px;" class="border_radius50">
+          </div>
+          <div class="col-xs-7">
+            <div class="pad_l20">
+              <div class="lh1">
+                <img src="../img/teacher_sex1.png" v-if="shuju.sex==1" height="16" alt="">
+                <img src="../img/teacher_sex2.png" v-if="shuju.sex==2" height="16" alt="">
+                <span class="font16 color333">{{shuju.name}}</span>
+                <span class="font13 color666">{{shuju.age}}岁</span>
+              </div>
+              <!-- <div class="mar_t5" style="line-height: 1.4em;">
+                <img src="../img/gold.png" height="12" alt="">
+                <span class="font12 color333" v-if="shuju.level_name">{{shuju.level_name}}</span>
+                <span class="font12 color333" v-if="!shuju.level_name">普通用户</span>
+              </div> -->
+              <div class="mar_t5">
+                <div class="inblock border_radiu20 lh1" style="border:1px solid #ff6000;padding: 3px 10px;">
+                  <img :src="el" height="14" alt="" v-for="(el,i) in scoreimg">
+                  <span class="colorzt font13 inblock">{{shuju.score}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tableblock pad_t20 colorfff font12">
+          <div class="txt_right">
+            <div class="pad_r20">
+              <div class="dataicon bgcolorzt border_radius50 txt_center inblock">
+                <div class="martzhi">{{shuju.teach_age}}</div>
+                <div>教龄</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="pad_l20">
+              <div class="dataicon bgcolorzt border_radius50 txt_center inblock">
+                <div class="martzhi">{{shuju.student_num}}</div>
+                <div>学生数</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tableblock pad_t20 colorfff font12">
+          <div class="txt_right">
+            <div class="pad_r20">
+              <div class="dataicon bgcolorzt border_radius50 txt_center inblock">
+                <div class="martzhi">{{shuju.class_num}}</div>
+                <div>授课时长</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="pad_l20">
+              <div class="dataicon bgcolorzt border_radius50 txt_center inblock">
+                <div class="martzhi">{{shuju.pingjia}}</div>
+                <div>好评</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="font13 color333 txt_center mar_t10 pad_t10">
+        <a href="javascript:;" id="download">浏览更多精彩分享 &gt;</a>
+      </div>
+
+      <div style="width: 88%;margin:20px auto 0 auto" class="pad_b20">
+        <div class="clear">
+          <div class="L col-xs-6">
+            <div class="pad_l10 pad_r10">
+              <div class="txt_center">
+                <div class="inblock" style="width: 80%">
+                  <div class="imgp padb100per">
+                    <img src="../img/alpha.png" onclick="imginit(0)" id="iosimg" alt="">
+                  </div>
+                </div>
+              </div>
+              <div class="txt_center mar_t10">
+                <a class="inblock font13 colorzt border_allzt border_radiu20 pad_t5 pad_b5 w100" href="#" id="ioslink">
+                  <img src="../img/shareqinzi/share_ios.png" alt="" style="width: 15px;height: 17px" class="mar_r5">
+                  <span class="inblock">IOS 客户端下载</span>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="L col-xs-6">
+            <div class="pad_l10 pad_r10">
+              <div class="txt_center">
+                <div class="inblock" style="width: 80%">
+                  <div class="imgp padb100per">
+                    <img src="../img/alpha.png" onclick="imginit(1)" id="adrimg" alt="">
+                  </div>
+                </div>
+              </div>
+              <div class="txt_center mar_t10">
+                <a class="inblock font13 colorzt border_allzt border_radiu20 pad_t5 pad_b5 w100" href="#" id="adrlink">
+                  <img src="../img/shareqinzi/share_adr.png" alt="" style="width: 15px;height: 17px" class="mar_r5">
+                  <span class="inblock">Andriod 客户端</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="txt_center color999 font12 pad_b10 mar_t20">请点击二维码放大后识别</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  pre_loading(0);
+
+  var tid;//老师id
+  if(!Getvariable('pid')){
+    $.toast('少pid','text');
+  }else{
+    tid=Getvariable('pid');
+    vueinit();
+  }
+
+  var vm;
+  function vueinit(){
+    vm = new Vue({
+      el: '#app',
+      data: {
+        path_img:path_img,
+        shuju:{
+          t_img:''
+        },
+        scoreimg:[]
+      },
+      methods:{
+        itemclick:function(index){
+          pb1.open(index);
+        }
+      },
+      created:function(){
+        var that=this;
+        //分享出来的页面 问过了 不传token
+        $.ajax({
+          url:path_inter+"parents/share/share_teacher",
+          dataType:'json',
+          type:'post',
+          data:{
+            t_id:tid
+          },
+          success:function(res){
+            if(user_overdue(res.code,res.msg)){
+              vm.shuju=res.data;
+
+              var score=res.data.score;
+              var scoreimg=[];
+              for(var i=1;i<=5;i++){
+                if(parseInt(score/i)>0){
+                  scoreimg.push('../img/star_ok.png');
+                }else if(parseInt(score/i)==0 && score-0.5>=i-1){
+                  scoreimg.push('../img/star_ban.png');
+                }else{
+                  scoreimg.push('../img/star_no.png');
+                }
+              }
+              vm.scoreimg=scoreimg;
+
+              pre_loading(100);
+
+              that.$nextTick(function () {
+                pagedo();
+              });
+            }
+          },
+          error:function(){
+            pre_loading(1);
+          }
+        });
+      }
+    });
+  }
+
+
+  function pagedo(){
+    //确定下载链接
+    if(/android/i.test(navigator.userAgent)){
+      //安卓
+      $('#download').attr('href',familylink_adr);
+    }
+    if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)){
+      //苹果
+      $('#download').attr('href',familylink_ios);
+    }
+
+    $('#ioslink').attr('href',familylink_ios);
+    $('#adrlink').attr('href',familylink_adr);
+    $('#iosimg').attr('src',familyma_ios);
+    $('#adrimg').attr('src',familyma_adr);
+  }
+  function imginit(index){
+    var pb1 = $.photoBrowser({
+      items: [
+        $('#iosimg').attr('src'),
+        $('#adrimg').attr('src')
+      ],
+      initIndex:index
+    });
+    pb1.open();
+  }
+</script>
+
+</body>
+</html>

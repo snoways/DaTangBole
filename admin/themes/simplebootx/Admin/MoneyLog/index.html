@@ -1,0 +1,83 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a>财务管理</a></li>
+		</ul>
+		<form class="well form-search" id="formurl" method="post" action="{:U('MoneyLog/index')}">
+			时间：
+			<input type="date" name="start" value="{:I('request.start')}" >-<input type="date" name="end" value="{:I('request.end')}" >
+			<!--关键字：-->
+			<input type="text" name="keyword" style="width: 200px;" value="{:I('request.keyword')}" placeholder="手机号/用户姓名">
+			<input type="submit" class="btn btn-primary" onclick="return search();" value="搜索" />
+			<a class="btn btn-danger" href="{:U('MoneyLog/index')}">清空</a>
+			<input type="submit" class="btn btn-primary" onclick="return excel();" value="导出Excel" />
+		</form>
+		<a style="font-size: 20px;color: red">总付金额:&yen;{$total['total_money']}</a> &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;
+		<a style="font-size: 20px;color: red">平台所得:&yen;{$total['total_platform_money']}</a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
+		<a style="font-size: 20px;color: red">商家所得:&yen;{$total['total_agent_money']}</a>
+		<form method="post" class="js-ajax-form">
+			<table class="table table-hover table-bordered">
+				<thead>
+					<tr>
+						<th align="center">ID</th>
+						<th>用户名称</th>
+						<th>用户手机号</th>
+						<th>用户类型</th>
+						<th>总付金额</th>
+						<th>平台所得</th>
+						<th>商家所得</th>
+						<th>交易类型</th>
+						<th>交易方式</th>
+						<th>交易时间</th>
+					</tr>
+				</thead>
+				<tbody>
+					<foreach name="lists" key="k" item="vo">
+					<tr>
+						<td align="center">{$k+1}</td>
+						<td>{$vo['parent_name']}</td>
+						<td>{$vo['phone']}</td>
+						<td>{$vo['u_type']==1?'家长':''}</td>
+						<td>{$vo['money']}</td>
+						<td>{$vo['platform_money']}</td>
+						<td>{$vo['agent_money']}</td>
+						<td>
+							<?php
+								if($vo['status']==5){
+								echo "课程订单支付";
+								}
+								if($vo['status']==6){
+								echo "托管课程支付";
+								}
+								if($vo['status']==7){
+								echo "线上课堂支付";
+								}
+								if($vo['status']==8){
+								echo "线下活动支付";
+								}
+							?>
+						</td>
+						<td>{$vo['paytype']==1?'支付宝':'微信'} </td>
+						<td>{$vo.m_time}</td>
+					</tr>
+					</foreach>
+				</tbody>
+			</table>
+			<div class="pagination">{$page}</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+<script>
+    function search() {
+        $("#formurl").attr('action', "{:U('MoneyLog/index')}");
+        return true;
+    }
+    function excel() {
+        $("#formurl").attr('action', "{:U('MoneyLog/oexcel')}");
+        return true;
+    }
+</script>
+</body>
+</html>

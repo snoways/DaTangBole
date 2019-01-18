@@ -1,0 +1,214 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a>托管订单列表</a></li>
+		</ul>
+		<form class="well form-search" id="formurl" method="post" action="{:U('HostingOrder/index')}">
+			孩子性别：
+			<select name="sex" style="width: 120px;">
+				<option value="0">选择性别</option>
+				<option value="1" <if condition="$_POST['sex'] eq 1">selected</if>>男生</option>
+				<option value="2" <if condition="$_POST['sex'] eq 2">selected</if>>女生</option>
+			</select>
+			订单状态：
+			<select name="status" style="width: 120px;">
+				<option value="0">全部</option>
+				<foreach name="status" key="key" item="item">
+					<option value="{$key}" <if condition="$_POST['status'] eq $key">selected</if>>{$item}</option>
+				</foreach>
+			</select>
+			关键字：
+			<input type="text" name="keyword" style="width: 200px;" value="{:I('request.keyword')}" placeholder="订单编号/孩子姓名/年级">
+			<!--地区：
+			<select name="province">
+				<option value="0" selected >选择省</option>
+				<foreach name="province" item="pro" >
+					<option value="{$pro['areaid']}" <if condition="$_POST['province'] eq $pro['areaId']">selected</if>>{$pro['areaname']}</option>
+				</foreach>
+			</select>
+			<select name="city">
+				<option value="0" selected >选择市</option>
+			</select>
+			<select name="area">
+				<option value="0" selected >选择区</option>
+			</select>-->
+			<input type="submit" class="btn btn-primary" onclick="return search();" value="搜索" />
+			<a class="btn btn-danger" href="{:U('HostingOrder/index')}">清空</a>
+			<input type="submit" class="btn btn-primary" onclick="return excel();" value="导出Excel" />
+		</form>
+		<div style="color: red;margin-bottom: 5px;font-size: 18px;">
+			总金额 : {$total}￥
+		</div>
+		<form method="post" class="js-ajax-form">
+			<table class="table table-hover table-bordered">
+				<thead>
+					<tr>
+						<th align="center">ID</th>
+						<th>订单编号</th>
+						<th>托管机构</th>
+						<th>学生姓名</th>
+						<th>学生性别</th>
+						<th>会员手机号</th>
+						<th>托管时长</th>
+						<th>下单时间</th>
+						<th>总课时费</th>
+						<th>机构实际应得</th>
+						<th>平台应得金额</th>
+						<th>{:L('STATUS')}</th>
+						<th align="center">{:L('ACTIONS')}</th>
+					</tr>
+				</thead>
+				<tbody>
+					<foreach name="lists" key="k" item="vo">
+					<tr>
+						<td align="center">{$k+1}</td>
+						<td>{$vo['sn']}</td>
+						<td>{$vo['s_name']}</td>
+						<td>{$vo['child_name']}</td>
+						<td>{$vo['child_sex']==1?男:女}</td>
+						<td>{$vo['f_phone']}</td>
+						<td>{$vo.time_length}<if condition="$vo['type'] eq 1">天<else/>个月</if></td>
+						<td>{$vo.o_time}</td>
+						<td>{$vo.total_money}</td>
+						<td>{$vo.money}</td>
+						<td>{$vo.platform_money}</td>
+						<td>
+							<?php
+								if($vo['o_status']==1){
+									echo "待支付";
+								}elseif($vo['o_status']==2){
+									echo "上课中";
+								}elseif($vo['o_status']==3){
+									echo "已完成";
+								}elseif($vo['o_status']==4){
+									echo "已取消";
+								}elseif($vo['o_status']==5){
+									if($vo['tui_status']==1){
+									  if($vo['st_status']==1){
+										echo "商家审核中";
+									  }else{
+										echo "商家已处理";
+									  }
+									}elseif($vo['tui_status']==2){
+										echo "已退款";
+									}else{
+										echo "退款申请被驳回";
+									}
+									/*echo "申请退款";*/
+								}
+							?>
+						</td>
+						<!--<td align="center">
+							<if condition="$vo['o_status'] eq 1">
+							<a href="javascript:;" class="pay" data-id="{$vo['sn']}">支付</a>
+							</if>
+						</td>-->
+
+						<td align="center">
+							<if condition="$vo['o_status'] eq 5 && $vo['tui_status'] eq 1 && $vo['st_status'] eq 2">
+								<!--<a href="javascript:;" class="tongyi" data-id="{$vo.oid}">去退款</a>-->
+							</if>
+							<if condition="$vo['o_status'] eq 2">
+								<span class="btn btn-link finish" data-id="{$vo.oid}">已完成</span>
+							</if>
+						</td>
+					</tr>
+					</foreach>
+				</tbody>
+			</table>
+			<div class="pagination">{$page}</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+	<script>
+        function search() {
+            $("#formurl").attr('action', "{:U('HostingOrder/index')}");
+            return true;
+        }
+        function excel() {
+            $("#formurl").attr('action', "{:U('HostingOrder/oexcel')}");
+            return true;
+        }
+
+        $('.pay').click(function () {
+            var sn=$(this).attr('data-id');
+			$.ajax({
+				type:"GET",
+				url:"{:U('HostingOrder/pay')}",
+				data:{sn:sn},
+				success:function(json){
+				    window.location.reload();
+				}
+			});
+        })
+
+        //选择地区城市
+        $('select[name="province"]').on('change',function(){
+            var str = "";
+            $('select[name="city"]').html("");
+            var areaid = $(this).val();
+            $.ajax({
+                type:"GET",
+                url:"{:U('HostingOrder/city')}",
+                data:{areaid:areaid},
+                datatype: "json",
+                success:function(json){
+                    var data = JSON.parse(json);
+                    if(data!=""){
+                        var city = "{$_POST['city']}";
+                        str = '<option value="0" selected >选择市</option>';
+                        for(var i=0;i<data.length;i++){
+                            str += '<option value="'+data[i].areaid+'" <if condition="'+city+' eq '+data[i].areaid+'">selected</if> >'+data[i].areaname+'</option>';
+                        }
+                        $('select[name="city"]').append(str);
+                    }
+                }
+            });
+        });
+        //选择地区城市
+        $('select[name="city"]').on('change',function(){
+            var str = "";
+            $('select[name="area"]').html("");
+            var areaid = $(this).val();
+            $.ajax({
+                type:"GET",
+                url:"{:U('HostingOrder/city')}",
+                data:{areaid:areaid},
+                datatype: "json",
+                success:function(json){
+                    var data = JSON.parse(json);
+                    if(data!=""){
+                        str = '<option value="0" selected >选择区</option>';
+                        for(var i=0;i<data.length;i++){
+                            str += '<option value="'+data[i].areaid+'"">'+data[i].areaname+'</option>';
+                        }
+                        $('select[name="area"]').append(str);
+                    }
+                }
+            });
+        });
+
+        $('.tongyi').click(function () {
+            //同意
+            var id=$(this).data('id');
+            console.log(id)
+            layer.confirm('您确定同意该退款申请吗?', {icon: 3, title:'提示'}, function(index){
+
+                $.post("__CONTROLLER__/status",
+                    {'id':id, 'status':1},
+                    function(json){
+                        var data = JSON.parse(json);
+                        if (data.code==1){
+                            window.location.reload();
+                        }else{
+                            layer.alert(data.msg);
+                        }
+                    },"text");
+                layer.close(index);
+            });
+        })
+	</script>
+</body>
+</html>

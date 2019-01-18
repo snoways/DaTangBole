@@ -1,0 +1,119 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a>退款申请列表</a></li>
+		</ul>
+		<form class="well form-search" method="post" action="{:U('Withdraw/refund_actity')}">
+			审核状态：
+			<select name="status" style="width: 90px;">
+				<option value="0" selected>全部</option>
+				<option value="3" <if condition="I('status') eq 3">selected</if>>申请中</option>
+				<option value="4" <if condition="I('status') eq 4">selected</if>>已退款</option>
+				<!--<option value="3" <if condition="I('status') eq 3">selected</if>>已驳回</option>-->
+			</select>
+			<input type="submit" class="btn btn-primary" value="搜索" />
+			<a class="btn btn-danger" href="{:U('Withdraw/refund_actity')}">清空</a>
+		</form>
+		<form method="post" class="js-ajax-form">
+			<table class="table table-hover table-bordered">
+				<thead>
+					<tr>
+						<th align="center">ID</th>
+						<th>用户ID</th>
+						<th>用户类型</th>
+						<th>活动名称</th>
+						<th>发布人</th>
+						<th>退款金额</th>
+						<th>订单号</th>
+						<th>状态</th>
+						<th>退款原因</th>
+						<th>申请时间</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<foreach name="lists" key="k" item="vo">
+					<tr>
+						<td align="center">{$k+1}</td>
+						<td>{$vo['uid']}</td>
+						<td>家长</td>
+						<td>{$vo.title}</td>
+						<td><if condition="$vo['shop_id'] eq -1">平台<else/>商家</if></td>
+						<td>{$vo['now_refund_money']}</td>
+						<td>{$vo['sn']}</td>
+						<td>
+							<if condition="$vo['status'] eq 3">
+								<if condition="$vo['refund_status'] eq 2">
+									申请中
+									<elseif condition="$vo['refund_status'] eq 3"/>
+									商家已同意退款
+								</if>
+								<elseif condition="$vo['status'] eq 4 && $vo['refund_status'] eq 4"/>
+								已退款
+							</if>
+						</td>
+						<td>{$vo['reason']?$vo['reason']:"无"} </td>
+						<td>{$vo.sign_time}</td>
+						<td align="center">
+							<if condition="$vo['status'] eq 3 && $vo['refund_status'] eq 3">
+								<a href="javascript:;" data-id="{$vo['id']}" class='pass'>通过申请</a>
+								<elseif condition="$vo['shop_id'] eq -1 && $vo['status'] eq 3 && $vo['refund_status'] eq 2" />
+								<a href="javascript:;" data-id="{$vo['id']}" class='pass'>通过申请</a>
+								<else/>
+								无
+							</if>
+						</td>
+					</tr>
+					</foreach>
+				</tbody>
+			</table>
+			<div class="pagination">{$page}</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+	<script src="http://cdn.bootcss.com/jquery/1.12.3/jquery.min.js"></script>
+	<script>
+        $(".pass").click(function () {
+            var id = $(this).attr('data-id');
+            layer.confirm('确认通过退款申请吗?', {icon: 3, title:'提示'}, function(index){
+
+                $.post("__CONTROLLER__/activityRefunds",
+                    {"id":id},
+                    function(json){
+                    	if (json==1){
+                            layer.msg("退款成功",function(){
+                                window.location.reload();
+							})
+						}else {
+                            layer.msg(json,function(){
+                                window.location.reload();
+                            });
+						}
+
+                    },"text");
+                layer.close(index);
+            });
+
+        })
+
+//        $("#reason").click(function () {
+//            var id = $(this).attr('data-id');
+//            layer.prompt({title: '请输入驳回退款申请的原因', formType: 2}, function(name, index){
+//                if (name)//如果返回的有内容
+//                {
+//                    $.post("__CONTROLLER__/refuse",
+//                        {"id":id, "reason":name},
+//                        function(json){
+//                            window.location.reload();
+//                        },"text");
+//                }else
+//                {
+//                    return false;
+//                }
+//            });
+//        })
+	</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<admintpl file="header"/>
+<style type="text/css">
+    .input-medium {
+        width: 79%;
+        display: inline-table;
+    }
+
+    .input-small {
+        width: 22%;
+        display: inline-table;
+    }
+
+    .label_att span {
+        text-align: right;
+        padding-top: 10px;
+        font-size: 14px;
+    }
+</style>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="javascript:;">分享设置</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form" action="{:U('Share/Setting')}">
+        <div class="control-group">
+            <div class="controls">
+                <b>{$data['s_type']==1?'课程':($data['s_type']==2?'活动':'')}标题：{$ob_title}</b>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label"><span style="color: red;">*</span>图片</label>
+            <div class="controls">
+                <table class="table table-bordered" style="width: 320px;">
+                    <tr>
+                        <td>
+                            <div style="text-align: center; padding-top: 10px;">
+                                <input type="hidden" name="image_path" id="img1" value="{$re.image_path}" >
+                                <if condition="!empty($re['image_path'])">
+                                    <a href="javascript:upload_one_image('图片上传','#img1',null,'Managed');">
+                                        <img src="/{$re.image_path}" id="img1-preview" style="width: 315px;height: 195px;"/>
+                                    </a>
+                                    <else/>
+                                    <a href="javascript:upload_one_image('图片上传','#img1',null,'Managed');">
+                                        <img src="__TMPL__Public/assets/images/default-thumbnail.png" id="img1-preview" style="width: 315px;height: 195px;"/>
+                                    </a>
+                                </if>
+                                <br><br>
+                                <input type="button" class="btn btn-small"
+                                       onclick="$('#img1-preview').attr('src','__TMPL__Public/assets/images/default-thumbnail.png');$('#img1').val('');return false;" value="取消图片">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <!--<th>建议图片宽高为1050*650，大小不要超过200K</th>-->
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label"><span style="color: red;">*</span>标题：</label>
+            <div class="controls">
+                <input type="text" name="title" class="input-medium" value="{$re.title}" required>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label"><span style="color: red;">*</span>描述：</label>
+            <div class="controls">
+            <textarea name="description" style='resize:none;width: 79%;height: 300px;'>{$re.description}</textarea>
+            </div>
+        </div>
+        <div class="form-actions">
+            <input type="hidden" name="id" value="{$re.id}"/>
+            <input type="hidden" name="object_id" value="{$data.object_id}"/>
+            <input type="hidden" name="type" value="{$data.s_type}"/>
+            <input type="hidden" name="form_request" value='{$form_request}'/>
+            <button type="submit" class="btn btn-primary js-ajax-submit">{:L('SAVE')}</button>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script type="text/javascript">
+    //编辑器路径定义
+    var editorURL = GV.WEB_ROOT;
+</script>
+</body>
+</html>

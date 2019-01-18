@@ -1,0 +1,4 @@
+.hrstarcontain .line img{width: 40px;cursor: pointer;margin-right: 5px;}
+.hrstartable{display: table;margin-bottom: 10px;}
+.hrstartable > *{display: table-cell;vertical-align: middle}
+.hrstarw5em{width: 5em;}

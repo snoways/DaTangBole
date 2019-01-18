@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title>用户协议</title>
+		<script type="text/javascript" src="js/com.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/stylea.css">
+		<link rel="stylesheet" type="text/css" href="css/weui.min.css">
+		<link rel="stylesheet" type="text/css" href="css/jquery-weui.css">
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery-weui.js"></script>
+		<script type="text/javascript" src="js/template-native.js"></script>
+	</head>
+	<body >
+
+		<div ontouchstart class="content_box">
+			<div class="content_scroll">
+				<div id="box"></div>
+			</div>
+		</div>
+
+		<script type="text/html" id="tpl">
+			<div class="pad10 bgcolorfff font14 color666"><%-tuwen%></div>
+		</script>
+
+		<script type="text/javascript">
+			var token=localStorage.getItem('user_token');
+
+			if(Getvariable('token')){
+				token=Getvariable('token');
+			}
+
+			var data = {
+				path_img:path_img,
+				tuwen:''
+			};
+			function renderhtml() {
+				document.getElementById('box').innerHTML = template('tpl',data);
+			}
+
+			pre_loading(0);
+			// 初始化加载
+			$.ajax({
+				url:path_inter+"Client/Common/config",
+				dataType:'json',
+				type:'post',
+				data:{},
+				success:function(res){
+					if(user_overdue(res)){
+						pre_loading(100);
+						data.tuwen=res.data.business_agreement;
+						renderhtml();
+					}
+				},
+				error:function(){
+					$.toast('获取数据失败','text');
+				}
+			});
+		</script>
+	</body>
+</html>

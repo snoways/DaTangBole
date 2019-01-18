@@ -1,0 +1,121 @@
+<admintpl file="header" />
+<style>
+    .thumbs{
+        height: 40px;
+        width: auto;
+    }
+</style>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="__CONTROLLER__/index">活动评论</a></li>
+    </ul>
+    <form class="well form-search" method="post" action="{:U('__CONTROLLER__/index')}">
+        评论人:
+        <input type="text" name="keyword" style="width: 200px;" value="{:I('request.keyword')}" placeholder="评论人姓名或电话号">
+        活动标题：
+        <input type="text" name="title" style="width: 200px;" value="{:I('request.title')}" placeholder="活动名称">
+        <input type="submit" class="btn btn-primary" value="搜索" />
+        <a class="btn btn-danger" href="{:U('__CONTROLLER__/index')}">清空</a>
+    </form>
+
+    <form method="post" class="js-ajax-form" action="__CONTROLLER__/delete" >
+        <div style="margin-bottom: 8px;">
+            <button type="submit" class="btn btn-danger">一键删除</button>
+        </div>
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <th width="16"><label><input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x"></label></th>
+                <th align="center">ID</th>
+                <th>活动标题</th>
+                <th>评论人</th>
+                <th>评论时间</th>
+                <th>内容</th>
+                <th align="center">{:L('ACTIONS')}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach name="list" key="k" item="vo">
+                <tr>
+                    <td><input type="checkbox" class="js-check"  name="ids[]" value="{$vo.id}"></td>
+                    <td> {$vo['id']} </td>
+                    <td>{$vo['title']}</td>
+                    <td>{$vo['user_name']}</td>
+                    <td>{$vo['create_time']}</td>
+                    <td>
+                        <a href="javascript:;" class="show_content" title="点击查看">
+                        {:mb_substr($vo['content'], 0, 30, 'utf-8')}
+                        <php>
+                            $len = mb_strlen($vo['content'],"utf-8");
+                            echo $len>30?'......':'';
+                        </php>
+                        </a>
+                        <div style="display: none;">
+                            <div style="margin: 15px;">{$vo['content']}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <a href="javascript:;" data-id="{$vo['id']}" class="del"><i class="fa fa-close"></i></a>
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+        <div class="pagination">{$page}</div>
+    </form>
+</div>
+<script type="text/javascript" src="__PUBLIC__/layer/layer.js"></script>
+
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script>
+
+    $(".js-check-all").click(function () {
+        var state = $(this).get(0).checked;
+        $(".js-check").prop({checked:true});
+        if(state){
+            $(".js-check").attr('checked',true);
+        }else{
+            $(".js-check").removeAttr("checked");
+        }
+    });
+
+    $(".del").click(function () {
+        var id = $(this).attr('data-id');
+        layer.confirm('确定要删除该评论吗?', {icon: 3, title:'提示'}, function(index){
+
+            $.post("__CONTROLLER__/delete",
+                {"ids":[id]},
+                function(json){
+                    var data = JSON.parse(json);
+                    if (data.status){
+                        window.location.reload();
+                    }else{
+                        layer.alert(data.msg);
+                    }
+
+                },"text");
+            layer.close(index);
+        });
+    });
+
+    $('.show_content').click(function () {
+        var $html = $(this).next().html();
+        if ($html) {
+            layer.open({
+                type: 1,
+                shade: false,
+                title: false, //不显示标题
+                area: ['55%', '70%'], //宽高
+                content: $(this).next().html()//捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
+            });
+        } else {
+            layer.msg('没有内容');
+        }
+
+    });
+</script>
+</body>
+</html>

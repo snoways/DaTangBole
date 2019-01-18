@@ -1,0 +1,97 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<div class="well" style="display: flex;justify-content: space-around;font-size: 16px;">
+			<div>代理商名称：{$lists['s_name']}</div>
+			<div>历史总金额：<span style="font-size: 20px;">{$lists['total_money']}</span></div>
+			<div>可用余额：<span style="font-size: 20px;">{$lists['balance']}</span></div>
+			<div>冻结金额：<span style="font-size: 20px;">{$lists['freeze']}</span></div>
+		</div>
+		<form method="post" class="js-ajax-form">
+			<table class="table table-hover table-bordered">
+				<thead>
+					<tr>
+						<th>交易单号</th>
+						<th>交易类型</th>
+						<th>交易金额</th>
+						<th>交易方式</th>
+						<th>交易时间</th>
+					</tr>
+				</thead>
+				<tbody>
+				<php>
+					$transaction_type = [1=>"收入",2=>"支出"];
+					$paytype = $vo['transaction_type']==1?
+					($vo['paytype']==1?'支付宝':'微信'):
+					($vo['paytype']==1?'1银行卡':'支付宝')
+				</php>
+					<foreach name="lists['capital_flow']" key="k" item="vo">
+					<tr>
+						<td>{$vo['sn']}</td>
+						<td>{$transaction_type[$vo['transaction_type']]}</td>
+						<td>{$vo['money']}</td>
+						<td>{$paytype}</td>
+						<td>{$vo.create_time}</td>
+					</tr>
+					</foreach>
+				</tbody>
+			</table>
+			<div class="pagination">{$page}</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+	<script src="http://cdn.bootcss.com/jquery/1.12.3/jquery.min.js"></script>
+	<script>
+        $(".pass").click(function () {
+            var id = $(this).attr('data-id');
+            var type = $(this).attr('data-type');
+            layer.confirm('确认通过提现申请吗?', {icon: 3, title:'提示'}, function(index){
+
+                $.post("__CONTROLLER__/pass",
+                    // {"id":id,'type':type,'str':'t'},
+                    {"id":id,'type':type},
+                    function(json){
+
+                        layer.alert(json.msg,{
+                            closeBtn:1
+						},function () {
+							window.location.reload();
+                        });
+                    },"json");
+                layer.close(index);
+            });
+
+        })
+
+        $(".reason").click(function () {
+            var id = $(this).attr('data-id');
+            layer.prompt({title: '请输入驳回提现申请的原因', formType: 2}, function(name, index){
+                if (name)//如果返回的有内容
+                {
+                    $.post("__CONTROLLER__/refuse",
+                        {"id":id, "reason":name,type:2},
+                        function(json){
+                            layer.msg("操作成功");
+                            window.location.reload();
+                        },"text");
+                }else
+                {
+                    return false;
+                }
+            });
+        });
+        $(document).on('click','.show_info',function () {
+            var id = $(this).data('id');
+            layer.open({
+                type: 2,
+                title: 'layer mobile页',
+                shadeClose: true,
+                shade: 0.8,
+                area: ['380px', '90%'],
+                content: '{:U("Withdraw/show_info")}'+'/id/'+id
+            });
+        })
+	</script>
+</body>
+</html>

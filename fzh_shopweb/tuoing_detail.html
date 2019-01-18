@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title>托管订单详情</title>
+		<script type="text/javascript" src="js/com.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/stylea.css">
+		<link rel="stylesheet" type="text/css" href="css/weui.min.css">
+		<link rel="stylesheet" type="text/css" href="css/jquery-weui.css">
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery-weui.js"></script>
+		<script type="text/javascript" src="js/template-native.js"></script>
+	</head>
+	<body >
+		<div id="box"></div>
+		<script type="text/html" id="tpl">
+			<div>
+				<!-- 头部 -->
+				<div class="tableblock">
+					<div class="bgcolorf3f3" style="width:28%;padding:4px 0;">
+						<div class="txt_center">
+							<img class="inline" style="width:14px;height:14px;" src="img/finished.png">
+						</div>
+						<%if(da.status == 2){%>
+							<div class="color85 txt_center font12">授课中</div>
+						<%}%>
+						<%if(da.status == 3){%>
+							<div class="color85 txt_center font12">已完成</div>
+						<%}%>
+						<%if(da.status == 5 && da.tui_status==1 && da.st_status==1){%>
+							<div class="color85 txt_center font12">退款待处理</div>
+						<%}%>
+						<%if(da.status == 5 && da.tui_status==1 && da.st_status==2){%>
+							<div class="color85 txt_center font12">退款已处理</div>
+						<%}%>
+						<!--<%if(da.status == 5 && da.tui_status==2){%>-->
+							<!--<div class="color85 txt_center font12">已退款</div>-->
+						<!--<%}%>-->
+						<!--<%if(da.status == 5 && da.tui_status==3){%>-->
+							<!--<div class="color85 txt_center font12">已驳回</div>-->
+						<!--<%}%>-->
+					</div>
+					<div class="pad_r10">
+						<div class="clear pad_t10 pad_b10">
+							<%if(da.status == 2){%>
+							<div onclick="conf()" class="R txt_center colorfff bgcolorzt font12" style="width:70px;height:24px;line-height:24px;border-radius:20px;">确认完成</div>
+							<%}%>
+							<%if(da.status==5 && da.tui_status==1 && da.st_status==1){%>
+							<!--<div onclick="noagreetui()" class="R txt_center colorzt font12" style="width:70px;height:24px;line-height:24px;border-radius:20px;border:1px solid #ff6000;">拒绝退款</div>-->
+							<div onclick="agreetui()" class="R txt_center colorzt font12 mar_r10" style="width:70px;height:24px;line-height:24px;border-radius:20px;border:1px solid #ff6000;">已处理</div>
+							<%}%>
+						</div>
+					</div>
+				</div>
+
+				<div class="bgcolorfff" style="padding:0 14px;">
+
+					<div class="tableblock" style="padding-top:14px;padding-bottom:14px;border-bottom:1px dashed #ccc;">
+						<div class="color666 col-xs-4">
+							<img class="inblock" style="width:28px;height:28px;border-radius: 50%" src="<%=path_img+da.p_img%>">
+							<div class="color333 font13 inblock txt_oneline" style="margin-left:10px;width:55%;"><%=da.parent_name%></div>
+						</div>
+						<div class="color666 txt_center font12 col-xs-3"><%=da.class_num%>课时</div>
+						<div class="txt_right colorf6 font13 col-xs-5" style="font-weight: bold;">总课时费￥<%=da.money%></div>
+					</div>
+
+					<div class="clear" style="padding:14px 0 18px 50px;">
+						<div class="L">
+							<img style="width:72px;height:50px;" src="<%=path_img+da.img%>">
+						</div>
+						<div class="L" style="margin-left:10px;width:50%;">
+							<div class="font12 color666 txt_oneline" ><%=da.hc_title%></div>
+							<div class="font12 color666 txt_oneline"><%=da.time_length%>
+								<%if(da.type == 2){%>
+									<span>个月</span>
+								<%}%>
+								<%if(da.type == 1){%>
+									<span>天</span>
+								<%}%>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="pad10 bgcolorfff mar_t5">
+					<div class="tableblock color666 font12">
+						<div class="col-xs-8">联系方式：{{da.phone}}</div>
+						<div class="col-xs-4 txt_right">
+							<img src="img/telicon.png" width="50" alt="" onclick="bophone()">
+						</div>
+					</div>
+				</div>
+				<div class="bgcolorfff" style="padding:14px;margin-top:5px;">
+					<div class="tableblock">
+						<div class="color666 font12" style="width:20%;line-height: 22px;">订单编号</div>
+						<div class="txt_right color333 font12 txt_oneline" style="width:80%;line-height: 22px;"><%=da.sn%></div>
+					</div>
+					<div class="tableblock">
+						<div class="color666 font12" style="width:20%;line-height: 22px;">下单时间</div>
+						<div class="txt_right color333 font12 txt_oneline" style="width:80%;line-height: 22px;"><%=da.o_time%></div>
+					</div>
+					<div class="tableblock">
+						<div class="color666 font12" style="width:20%;line-height: 22px;">托管时间</div>
+						<div class="txt_right color333 font12 txt_oneline" style="width:80%;line-height: 22px;"><%=date_period%></div>
+					</div>
+					<div class="tableblock">
+						<div class="color666 font12" style="width:20%;line-height: 22px;">订单状态</div>
+						<%if(da.status == 2){%>
+							<div class="txt_right color333 font12 txt_oneline" style="width:80%;line-height: 22px;">授课中</div>
+						<%}%>
+						<%if(da.status == 3){%>
+							<div class="txt_right color333 font12 txt_oneline" style="width:80%;line-height: 22px;">已完成</div>
+						<%}%>
+						<%if(da.status==5 && da.tui_status==1 && da.st_status==1){%>
+							<div class="txt_right color333 font12 txt_oneline" style="width:80%;line-height: 22px;">退款待处理</div>
+						<%}%>
+						<%if(da.status==5 && da.tui_status==1 && da.st_status==2){%>
+							<div class="txt_right color333 font12 txt_oneline" style="width:80%;line-height: 22px;">退款已处理</div>
+						<%}%>
+						<%if(da.status==5 && da.tui_status==2){%>
+							<div class="txt_right color333 font12 txt_oneline" style="width:80%;line-height: 22px;">已退款</div>
+						<%}%>
+						<%if(da.status==5 && da.tui_status==3){%>
+							<div class="txt_right color333 font12 txt_oneline" style="width:80%;line-height: 22px;">已驳回</div>
+						<%}%>
+					</div>
+					
+					<div class="tableblock">
+						<div class="color666 font12" style="width:20%;line-height: 22px;">订单总额</div>
+						<div class="txt_right colorff4 font12 txt_oneline" style="width:80%;line-height: 22px;color:#ff4400;">￥<%=da.money%></div>
+					</div>
+					<%if(da.status == 5){%>
+					<div class="tableblock">
+						<div class="color666 font12" style="width:20%;line-height: 22px;">应退款</div>
+						<div class="txt_right colorff4 font12 txt_oneline" style="width:80%;line-height: 22px;color:#ff4400;">￥<%=$imports.num2(da.refunds_money)%></div>
+					</div>
+					<div class="tableblock">
+						<div class="color666 font12" style="width:20%;line-height: 22px;">退款原因</div>
+						<div class="txt_right colorff4 font12 txt_oneline" style="width:80%;line-height: 22px;color:#ff4400;"><%=da.t_reason%></div>
+					</div>
+					<%}%>
+
+				</div>
+			</div>	
+		</script>
+		<script type="text/javascript">
+			pre_loading(0);
+
+			var token=localStorage.getItem('user_token');
+			if(Getvariable('token')){
+				token=Getvariable('token');
+			}
+
+			var data = {
+				path_img:path_img,
+				oprate:true,
+				date_period:'',
+				da:''
+			};
+			function renderhtml(){
+				document.getElementById('box').innerHTML = template('tpl',data);
+			}
+
+			var id;
+			if(!Getvariable('pid')){
+				$.toast('少参数pid','text');
+				pre_loading(3);
+			}else{
+				id=Getvariable('pid');
+				init();
+			}
+
+			function init(){
+				$.ajax({
+					url:path_inter+"ManagedClient/HostingOrder/getDetail",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						oid:id
+					},
+					success:function(res){
+						if(user_overdue(res)){
+							pre_loading(100);
+							data.da = res.data;
+
+							data.date_period=res.data.date_period;//2018-8-1,2018-9-30;
+							data.date_period=data.date_period.replace(/,/g,'~');
+
+							renderhtml();
+						}
+					},
+					error:function(){
+						$.toast('获取数据失败','text');
+					}
+				});
+			}
+
+
+
+
+
+			// 确认完成
+			function conf(){
+				if(!data.oprate){
+					return false;
+				}
+
+				$.confirm("确认已完成？",'', function() {
+					data.oprate=false;
+					$.ajax({
+						url:path_inter+"ManagedClient/HostingOrder/finish",
+						dataType:'json',
+						type:'post',
+						data:{
+							token:token,
+							oid:data.da.oid
+						},
+						success:function(res){
+							data.oprate=true;
+
+							if(user_overdue(res)){
+								data.da.status=3;  //  修改状态
+								renderhtml();
+								$.toast('已确认完成');
+							}
+						},
+						error:function(){
+							data.oprate=true;
+							pre_loading(1);
+						}
+					});
+				},function(){
+				});
+			}
+			//同意退款
+			function agreetui(){
+				if(!data.oprate){
+					return false;
+				}
+				$.confirm("确认同意？",'', function() {
+					data.oprate=false;
+					$.ajax({
+						url:path_inter+"ManagedClient/HostingOrder/status",
+						dataType:'json',
+						type:'post',
+						data:{
+							token:token,
+							oid:data.da.oid,
+							status:1
+						},
+						success:function(res){
+							data.oprate=true;
+							if(user_overdue(res)){
+								$.toast('审核通过');
+								data.da.st_status=2;//商家已审核通过
+								renderhtml();
+							}
+						},
+						error:function(){
+							data.oprate=true;
+							pre_loading(1);
+						}
+					});
+				},function(){
+
+				});
+			}
+			//拒绝退款
+			function noagreetui(){
+				if(!data.oprate){
+					return false;
+				}
+				$.confirm("确认拒绝？",'', function() {
+					data.oprate=false;
+					$.ajax({
+						url:path_inter+"ManagedClient/HostingOrder/status",
+						dataType:'json',
+						type:'post',
+						data:{
+							token:token,
+							oid:data.da.oid,
+							status:2
+						},
+						success:function(res){
+							data.oprate=true;
+							if(user_overdue(res)){
+								$.toast('审核不通过');
+								data.da.tui_status=3;//已驳回
+								renderhtml();
+							}
+						},
+						error:function(){
+							data.oprate=true;
+							pre_loading(1);
+						}
+					});
+				},function(){
+
+				});
+			}
+			function bophone(){
+				botel(data.da.phone);
+			}
+		</script>
+	</body>
+</html>

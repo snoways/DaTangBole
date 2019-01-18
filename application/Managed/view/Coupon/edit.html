@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>编辑优惠券</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- bootstrap -->
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap.css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+
+  <!-- libraries -->
+  <link href="__PUBLIC__/Shopadmin/css/lib/uniform.default.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/select2.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/font-awesome.css" type="text/css" rel="stylesheet"/>
+
+  <!-- global styles -->
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/layout.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/elements.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/icons.css">
+
+  <!-- this page specific styles -->
+  <link rel="stylesheet" href="__PUBLIC__/Shopadmin/css/compiled/form-showcase.css" type="text/css" media="screen"/>
+
+  <!-- open sans font -->
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <script type="text/html" id="photos-item-wrapper">
+    <li id="savedimage{id}">
+      <input id="photo-{id}" type="hidden" name="photos_url[]" value="{filepath}">
+      <input id="photo-{id}-name" type="text" name="photos_alt[]" value="{name}" style="width: 160px;" title="图片名称">
+      <img id="photo-{id}-preview" src="{url}" style="height:250px;width: 250px;" onclick="parent.image_preview_dialog(this.src);">
+      <a href="javascript:upload_one_image('图片上传','#photo-{id}');">替换</a>
+      <a href="javascript:(function(){$('#savedimage{id}').remove();})();">移除</a>
+    </li>
+  </script>
+  <link href="__PUBLIC__/js/artDialog/skins/default.css" rel="stylesheet" />
+
+  <script type="text/javascript">
+      //全局变量
+      var GV = {
+          ROOT: "__ROOT__/",
+          WEB_ROOT: "__WEB_ROOT__/",
+          JS_ROOT: "public/js/",
+          APP:'{$Think.MODULE_NAME}'/*当前应用名*/
+      };
+  </script>
+  <script src="__PUBLIC__/js/wind.js"></script>
+</head>
+<body>
+
+<include file="common/menu" />
+
+
+<!-- main container -->
+<div class="content">
+
+  <div id="pad-wrapper" class="form-page">
+    <div class="row header">
+      <div class="col-md-12">
+        <h3>编辑优惠券</h3>
+      </div>
+    </div>
+    <form method="post" class="form-horizontal js-ajax-form" action="{:U('Coupon/edit')}">
+    <div class="row form-wrapper">
+      <div class="col-md-8 column">
+        <fieldset>
+          <div class="field-box">
+            <label class="inputlh">标题</label>
+            <div class="col-md-8">
+              <input type="text" name="title" value="{$info['title']}" class="form-control" required>
+              <input type="hidden" name="id" value="{$info['id']}">
+            </div>
+          </div>
+          <div class="field-box">
+            <label class="inputlh">使用位置</label>
+            <div class="col-md-8">
+              <select class="form-control" name="pp_id">
+                <foreach name="terms" item="item">
+                  <option value="{$item.id}" <if condition="$info['pp_id'] eq $item['id']">selected</if> >{$item.name}</option>
+                </foreach>
+              </select>
+            </div>
+          </div>
+          <div class="field-box">
+            <label class="inputlh">消费金额</label>
+            <div class="col-md-8">
+              <input type="text" name="min_consumption" value="{$info['min_consumption']}" class="form-control" required>
+            </div>
+          </div>
+          <div class="field-box">
+            <label class="inputlh">满减金额</label>
+            <div class="col-md-8">
+              <input type="text" name="money" value="{$info['money']}" class="form-control" required>
+            </div>
+          </div>
+          <div class="field-box">
+            <label class="inputlh">有效日期</label>
+            <div class="col-md-8">
+              <input type="text" class="js-date" name="start_date" value="{$info.start_date|default=''}" autocomplete="off" required>
+              至  <input type="text" class="js-date" name="expire_date" value="{$info.expire_date|default=''}" autocomplete="off" required>
+            </div>
+          </div>
+        </fieldset>
+        <div class="field-box">
+          <label class="inputlh"></label>
+          <div class="col-md-8">
+            <button type="submit" class="btn btn-primary mar_r5 js-ajax-submit">保存</button>
+            <a class="btn btn-default" href="{:U('Coupon/index')}">返回</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    </form>
+  </div>
+</div>
+<!-- end main container -->
+
+<!-- scripts for this page -->
+<script src="__PUBLIC__/Shopadmin/js/wysihtml5-0.3.0.js"></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/jquery.uniform.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/theme.js"></script>
+<!--laydate-->
+<script src="__PUBLIC__/Shopadmin/laydate/laydate.js"></script>
+<!--laryer-->
+<script src="__PUBLIC__/Shopadmin/layer/layer.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/common.js"></script>
+<script type="text/javascript">
+    //编辑器路径定义
+    var editorURL = GV.WEB_ROOT;
+
+    //初始化
+//    getshengshiqu($('#sheng').val());
+
+    // 省变化的时候
+    $('#sheng').change(function(){
+        var zhi=$(this).val();
+        getshengshiqu(zhi);
+    });
+</script>
+
+
+
+
+
+</body>
+</html>

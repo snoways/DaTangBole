@@ -1,0 +1,143 @@
+<admintpl file="header" />
+
+	<!-- 第一步 引入css-->
+	<link rel="stylesheet" href="__PUBLIC__/star/css/star.css">
+
+	<!-- 第二步 引入jq和star.js-->
+	<!--<script src="__PUBLIC__/star/js/jquery.min.js"></script>-->
+</head>
+
+<body>
+<div class="wrap">
+	<ul class="nav nav-tabs">
+		<li ><a href="{:U('Educational/index')}">教育机构列表</a></li>
+		<li><a href="{:U('Educational/add')}">教育机构添加</a></li>
+		<li class="active"><a href="{:U('Educational/star')}">教育机构评价</a></li>
+	</ul>
+<form method="post" class="form-horizontal js-ajax-form" action="{:U('Educational/star')}" >
+	<input type="hidden" name="id" value="{$info['id']}">
+	<div class="hrstarcontain">
+		<!--第三步-->
+		<div class="hrstartable">
+			<div class="hrstarw5em">教学环境</div>
+			<div>
+				<div class="line">
+					<for start="0" end="$info['star1']">
+						<img src="public/star/img/star_ok.png" alt="">
+					</for>
+					<php>$end1=5-$info['star1'];</php>
+					<for start="0" end="$end1">
+						<img src="public/star/img/star_no.png" alt="">
+					</for>
+				</div>
+			</div>
+		</div>
+		<div class="hrstartable">
+			<div class="hrstarw5em">师资团队</div>
+			<div>
+				<div class="line">
+					<for start="0" end="$info['star2']">
+						<img src="public/star/img/star_ok.png" alt="">
+					</for>
+					<php>$end2=5-$info['star2'];</php>
+					<for start="0" end="$end2">
+						<img src="public/star/img/star_no.png" alt="">
+					</for>
+				</div>
+			</div>
+		</div>
+		<div class="hrstartable">
+			<div class="hrstarw5em">教学质量</div>
+			<div>
+				<div class="line">
+					<for start="0" end="$info['star3']">
+						<img src="public/star/img/star_ok.png" alt="">
+					</for>
+					<php>$end3=5-$info['star3'];</php>
+					<for start="0" end="$end3">
+						<img src="public/star/img/star_no.png" alt="">
+					</for>
+				</div>
+			</div>
+		</div>
+		<div class="hrstartable">
+			<div class="hrstarw5em">服务态度</div>
+			<div>
+				<div class="line">
+					<for start="0" end="$info['star4']">
+						<img src="public/star/img/star_ok.png" alt="">
+					</for>
+					<php>$end4=5-$info['star4'];</php>
+					<for start="0" end="$end4">
+						<img src="public/star/img/star_no.png" alt="">
+					</for>
+				</div>
+			</div>
+		</div>
+		<div class="hrstartable">
+			<div class="hrstarw5em">总体评价</div>
+			<div>
+				<div class="line">
+					<for start="0" end="$info['star5']">
+						<img src="public/star/img/star_ok.png" alt="">
+					</for>
+					<php>$end5=5-$info['star5'];</php>
+					<for start="0" end="$end5">
+						<img src="public/star/img/star_no.png" alt="">
+					</for>
+				</div>
+			</div>
+		</div>
+		<input type="hidden" name="star1" value="{$info['star1']}">
+		<input type="hidden" name="star2" value="{$info['star2']}">
+		<input type="hidden" name="star3" value="{$info['star3']}">
+		<input type="hidden" name="star4" value="{$info['star4']}">
+		<input type="hidden" name="star5" value="{$info['star5']}">
+	</div>
+
+
+	<!--查看值用的   测试-->
+	<button type="submit" class="btn btn-primary " id="btn">{:L('SAVE')}</button>
+	<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+	<div id="showzhi"></div>
+</form>
+</div>
+<script>
+	//第四步
+    function hrstarInit(){
+        $('.hrstarcontain .line img').click(function(){
+            var i=$(this).index();
+            var linei=$(this).closest('.hrstartable').index();
+            $(this).closest('.line').find('img').attr('src','public/star/img/star_no.png');
+            var imgs=$(this).closest('.line').find('img');
+            for(var a=0;a<imgs.length;a++){
+                if(a<=i){
+                    $(imgs[a]).attr('src','public/star/img/star_ok.png');
+                }
+            }
+
+            $('input[name=star'+(linei+1)+']').val(i+1);
+        });
+    }
+	//查看值用的   测试
+//	$('#btn').click(function(){
+//		var zhiarr=hrstargetzhi();//第五步-获取值用这个
+//		$('#showzhi').html(zhiarr);
+//	});
+
+    hrstarInit();
+
+    function hrstargetzhi(){
+        var arr=[];
+        var zhi1=$('input[name=star1]').val();
+        var zhi2=$('input[name=star2]').val();
+        var zhi3=$('input[name=star3]').val();
+        var zhi4=$('input[name=star4]').val();
+        var zhi5=$('input[name=star5]').val();
+
+        arr.push(zhi1,zhi2,zhi3,zhi4,zhi5);
+        return arr;
+    }
+</script>
+</body>
+</html>

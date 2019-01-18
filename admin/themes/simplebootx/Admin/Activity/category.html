@@ -1,0 +1,61 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap">
+	<ul class="nav nav-tabs">
+		<li class="active"><a href="{:U('Activity/category')}">{:L('活动分类管理')}</a></li>
+		<li><a href="{:U('Activity/addCate')}">{:L('活动分类添加')}</a></li>
+	</ul>
+	<form method="post" class="js-ajax-form" action="{:U('Activity/sort')}">
+		<div class="table-actions">
+			<button type="submit" class="btn btn-primary btn-small js-ajax-submit">{:L('SORT')}</button>
+		</div>
+		<table class="table table-hover table-bordered table-list">
+			<thead>
+			<tr>
+				<th width="50">{:L('SORT')}</th>
+				<th width="50">ID</th>
+				<th>{:L('标题')}</th>
+				<th>{:L('上下级关系')}</th>
+				<th>布局类型</th>
+				<th>默认选中</th>
+				<th>{:L('ACTIONS')}</th>
+			</tr>
+			</thead>
+			<tbody>
+				<foreach name="list" item="v">
+					<tr >
+						<if condition="$v['pid'] neq 0">
+						<td align="center" style="padding-left: 40px;">
+						<input type="text" class="small" name="sort[]" value="{$v['sort']}" style="max-width: 40px;text-align: center;">
+						<input type="hidden" name="id[]" value="{$v['id']}">
+						<else/>
+						<td align="center">
+						<input type="text" class="small" name="sort[]" value="{$v['sort']}" style="max-width: 40px;text-align: center;">
+						<input type="hidden" name="id[]" value="{$v['id']}">
+						</if>
+						</td>
+						<td> {$v['id']} </td>
+						<td> {$v['name']} </td>
+						<td>{:getCatePath($v['id'])}</td>
+						<td>{$v['layout_type']}</td>
+						<td>{$v['is_selected']==1?'是':'否'}</td>
+						<td>
+                            <!--<a href="{:U('Activity/addCate',array('id'=>$v['id']))}">添加子分类</a> |-->
+							<if condition="($v['pid'] eq 0) && ($v['is_selected'] eq 0)">
+								<a href="{:U('Activity/is_selected',array('id'=>$v['id']))}" class="js-ajax-dialog-btn" >默认选中</a> |
+							</if>
+                            <a href="{:U('Activity/editCate',array('id'=>$v['id']))}">编辑分类</a> |
+                            <a href="{:U('Activity/delCate',array('id'=>$v['id']))}" class="js-ajax-delete" >删除分类</a>
+						</td>
+					</tr>
+				</foreach>
+			</tbody>
+		</table>
+	</form>
+</div>
+<script type="text/javascript" src="__PUBLIC__/layer/layer.js"></script>
+
+<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

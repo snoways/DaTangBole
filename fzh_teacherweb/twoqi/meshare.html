@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title>我的分享</title>
+		<script src="../js/com.js" ></script>
+		<link rel="stylesheet" href="../css/weui.min.css" />
+		<link rel="stylesheet" href="../css/jquery-weui.css" />
+		<link rel="stylesheet" href="../css/stylea.css" />
+		<script src="../js/jquery.min.js" ></script>
+	</head>
+	<body>
+		<div class="content_box" style="background: #efefef">
+			<div class="content_scroll">
+				<!--内容开始-->
+				<div style="width: 50%;margin-left: 25%;padding: 35.2% 0">
+					<div class="img_box img100">
+						<div class="img_content">
+							<img src="" id="maimg" class="imgone">
+						</div>
+					</div>
+				</div>
+				<div style="width: 84%;margin: 0 auto">
+					<a href="javascript:share();" class="block font15 colorfff txt_center bgcolorzt pad_t10 pad_b10" style="border-radius: 100px;">分享给好友</a>
+				</div>
+				<!--内容结束-->
+			</div>
+		</div>
+		<script>
+			var token = localStorage.getItem("user_token");
+
+			if(Getvariable('token')){
+				token=Getvariable('token');
+			}
+
+			$.ajax({
+				url:path_inter+"Teacher/Course/inviteCode",
+				dataType:'json',
+				type:'post',
+				data:{token:token},
+				success:function(res){
+					if(user_overdue(res.code,res.msg)){
+						$('#maimg').attr('src',path_img+res.data.image);
+						pre_loading(100);
+					}
+				},
+				error:function(){
+					pre_loading(1);
+				}
+			});
+
+			function share(){
+				app_share();
+			}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>老师详情</title>
+  <script src="js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="css/ku/hui.css">
+  <link rel="stylesheet" href="css/ku/weui.min.css">
+  <link rel="stylesheet" href="css/ku/jquery-weui.min.css">
+  <link rel="stylesheet" href="css/ku/style.css">
+  <script src="js/ku/hui.js"></script>
+  <script src="js/ku/vue.min.js"></script>
+  <script src="js/ku/jquery-1.12.4.min.js"></script>
+  <script src="js/ku/jquery-weui.js"></script>
+  <script src="js/ku/swiper_jqueryweui.js"></script>
+</head>
+
+<body>
+<div class="content_boxp" id="app" v-cloak>
+  <div class="content_box pad_wei">
+    <div class="content_scroll">
+      <!--内容开始-->
+      <div class="mar_b5 bgcolorfff pad10">
+        <div class="tableblock pad_b10">
+          <div class="col-xs-2">
+            <div class="img_box img100 rela">
+              <span class="inblock abso font12 colorfff bgcolorzt wrem3 txt_center lh1 border_radiu20" style="padding: 3px 0;bottom: 0;right: 0;z-index: 2">
+                <span v-if="shuju.t_type==1">家教</span>
+                <span v-if="shuju.t_type==2">老师</span>
+                <span v-if="shuju.t_type==3">外教</span>
+              </span>
+              <a :href="'renzheng_xinxi.html?pid='+shuju.t_id" class="img_content border_radius50 font0">
+                <img :src="path_img+shuju.t_img" class="imgone">
+              </a>
+            </div>
+          </div>
+          <div class="col-xs-10">
+            <div class="tableblock">
+              <div>
+                <div class="pad_l10 font15 mar_b5">
+                  <div class="tableblock">
+                    <a class="col-xs-7" :href="'renzheng_xinxi.html?pid='+shuju.t_id">
+                      <span class="inblock sex_icon" :class="{man:shuju.sex=='1'}"></span>
+                      <span class="inblock pad_l5 font16">{{shuju.name}}</span>
+                      <span class="inblock font12 pad_l5 color666">{{shuju.age}}岁</span>
+                    </a>
+                    <div class="txt_right col-xs-5">
+                      <div @click="bophone()" class="R inblock wrem7 bgcolorzt colorfff font12 txt_center pad_t3 pad_b3" style="border-radius: 30px">
+                        <img src="img/twoqi/jigou_tel.png" class="mar_r5" height="14" alt=""/><span class="inblock">联系电话</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- 教师会员标识-->
+                <!-- <div class="font12 color333 pad_l10 mar_b10">
+                  <div class="inblock border_radiu4 lh1" style="background: linear-gradient(#fad6a3,#fdaf3c);padding: 3px 6px;">
+                    <img src="img/gold.png" height="12" alt="">
+                    <span class="inblock" v-if="shuju.level_name">{{shuju.level_name}}</span>
+                    <span class="inblock" v-if="!shuju.level_name">普通用户</span>
+                  </div>
+                </div> -->
+                <a class="tableblock" :href="'renzheng_xinxi.html?pid='+shuju.t_id">
+                  <div class="col-xs-8">
+                    <div class="pad_l10 font0 mar_b5 colorzt">
+                      <span class="star" :class="{all:shuju.score>=1,half:shuju.score>=0.5 && shuju.score<1}"></span>
+                      <span class="star" :class="{all:shuju.score>=2,half:shuju.score>=1.5 && shuju.score<2}"></span>
+                      <span class="star" :class="{all:shuju.score>=3,half:shuju.score>=2.5 && shuju.score<3}"></span>
+                      <span class="star" :class="{all:shuju.score>=4,half:shuju.score>=3.5 && shuju.score<4}"></span>
+                      <span class="star" :class="{all:shuju.score==5,half:shuju.score>=4.5 && shuju.score<5}"></span>
+                      <span class="inblock lineh_normal font12 mar_l5">{{shuju.score|number1}}</span>
+
+                      <span class="mar_l10 inblock font12 color666">销量：{{shuju.sale_num}}</span>
+                    </div>
+                  </div>
+                  <div class="txt_right col-xs-4">
+                    <img src="img/twoqi/huo.png" class="inblock" height="12" alt="">
+                    <span class="colorzt inblock font12">{{shuju.view_num}}</span>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="border_b pad_b10">
+          <a class="pad_l5 biaoqian font12 color999 block" :href="'renzheng_xinxi.html?pid='+shuju.t_id">
+            <span class="zz_icon inblock" v-if="shuju.renzheng=='1'">身份认证</span>
+            <span class="zx_icon inblock" v-if="shuju.renzheng=='-1'">身份认证</span>
+            <span class="zz_icon inblock" v-if="shuju.zizhi=='1'">资质荣誉</span>
+            <span class="zx_icon inblock" v-if="shuju.zizhi=='-1'">资质荣誉</span>
+            <span class="zz_icon inblock" v-if="shuju.xueli=='1'">毕业院校</span>
+            <span class="zx_icon inblock" v-if="shuju.xueli=='-1'">毕业院校</span>
+            <span class="zz_icon inblock" v-if="shuju.ceping=='1'">心理测评</span>
+            <span class="zx_icon inblock" v-if="shuju.ceping=='-1'">心理测评</span>
+            <span class="zz_icon inblock" v-if="shuju.jiankang=='1'">健康证</span>
+            <span class="zx_icon inblock" v-if="shuju.jiankang=='-1'">健康证</span>
+          </a>
+        </div>
+        <div class="font12 pad_t10">
+          <span class="tag" v-for="(el,i) in shuju.label">{{el}}</span>
+        </div>
+      </div>
+
+      <div class="mar_b5 pad_l10 pad_r10 bgcolorfff">
+        <div class="pad_t10 pad_b10 border_b pad_l10">
+          <img src="img/onlineicon.png" style="width: 16px;height: 16px" class="mar_r5" alt=""/>
+          <span class="inblock font15 colorzt">线上课堂</span>
+        </div>
+        <!-- 视频 后台最多返回1个  movie.ogg-->
+        <div class="bgcolorfff pad10 mar_b5 rela" v-if="shuju.online_class.length>0">
+          <a class="nohover font12 color999 bgcolorfff border_all border_radiu4 inblock abso" href="javascript:;" @click="seemoreVideo" style="padding: 6px 12px;right: 10px;top: 10px;z-index: 10">查看更多</a>
+          <div class="col-xs-12 inblock rela mar_r5" v-for="(el,i) in shuju.online_class" @click="govideodet(el.oc_id)">
+            <div class="imgp" style="padding-bottom: 63.63%">
+              <img :src="path_img+el.img_url" alt="" v-if="el.img_url && el.img_url.indexOf('http')==-1">
+              <img v-else :src="el.img_url" alt="">
+            </div>
+            <div class="mengceng"></div>
+            <img src="img/twoqi/playbtn.png" class="videolistplaybtn" alt="">
+          </div>
+        </div>
+        <div class="bgcolorfff pad10 mar_b5" style="white-space: nowrap;overflow-x:auto;" v-if="shuju.online_class.length==0">
+          <div class="empty">暂无视频</div>
+        </div>
+      </div>
+
+      <div class="mar_b5 pad_l10 pad_r10 bgcolorfff">
+        <div class="pad_t10 pad_b10 border_b pad_l10">
+          <img src="img/icon5.png" style="width: 16px;height: 14px" class="mar_r5" alt=""/>
+          <span class="inblock font15 colorzt">教授科目</span>
+          <span class="inblock font12 color666">{{description}}</span>
+        </div>
+        <div class="pad_t10 pad_b10">
+          <ul class="clear font13 color666">
+            <li class="col-xs-4 L pad5" v-for="(el,i) in shuju.subject">
+              <a href="javascript:;" class="block border_all border_radiu4 pad2 txt_center xz" :class="{on:subjectIndex==i}"
+                 @click="subjectItemClick(i,el)">
+                <div>{{el.grade}}</div>
+                <div>{{el.subject}}</div>
+                <div class="color999">
+                  <b class="colorzt font14">￥{{el.price}}</b>
+                  <span class="font12"> / 课时</span>
+                </div>
+                <div class="color999 font12">
+                  购买人数：{{el.sale}}
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+ <!--     <div class="mar_b5 pad_l10 pad_r10 bgcolorfff">
+        <div class="pad_t10 pad_b10 border_b pad_l10 clear">
+          <img src="img/icon2.png" class="mar_r5" height="14" alt=""/>
+          <span class="inblock font12 colorzt">空闲时间</span>
+          <div class="R color999 font12" style="padding-top: 2px">
+            <span id="kongxianbtn" class="inblock">展开</span>
+            <img src="img/twoqi/xiaoxi_arrowb.png" height="6" class="inblock" alt="" id="kongxianimg">
+          </div>
+        </div>
+        <div id="kongxianContent" style="display: none">
+          &lt;!&ndash;日历&ndash;&gt;
+          <div class="txt_center pad_b5 pad_t5 bgcolorf3f3">
+            <input id="time_format" placeholder="请选择年月" style="width: 10em; text-align: center; background: url(img/xiala.png) right center no-repeat; background-size: 8px auto;" />
+          </div>
+          <div class="bgcolorfff pad10">
+            <div>
+              <ul class="clear txt_center">
+                <li class="L w7">
+                  <span class="rili_ww">日</span>
+                </li>
+                <li class="L w7">
+                  <span class="rili_ww">一</span>
+                </li>
+                <li class="L w7">
+                  <span class="rili_ww">二</span>
+                </li>
+                <li class="L w7">
+                  <span class="rili_ww">三</span>
+                </li>
+                <li class="L w7">
+                  <span class="rili_ww">四</span>
+                </li>
+                <li class="L w7">
+                  <span class="rili_ww">五</span>
+                </li>
+                <li class="L w7">
+                  <span class="rili_ww">六</span>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <ul class="clear txt_center">
+                <li class="L w7 pad_t2 pad_b2" v-for="(el,index) in month_day">
+                  <a href="javascript:;" class="rili_ww" v-html="el.day" :class="{gray:!el.isclick,now_day:el.now_day,cur:el.check}" @click="click_xz(index,el)"></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="empty" v-if="selectDay==''">请先选择要预约的时间</div>
+          <div class="pad_t10 pad_b10 border_b txt_center">
+            <input type="text" id="calendarInput" class="color999 font14 txt_center w100 Hide"/>
+            <span class="color999 font14 txt_center">{{selectDay}}</span>
+          </div>
+          <ul class="pad_b10">
+            <li v-for="(el,i) in kongxianTimes" class="border_b pad_t8 pad_b8 pad_l10 pad_r10">
+              <div class="tableblock">
+                <div class="font14">{{el.text}}</div>
+                <div class="txt_right">
+                  <a href="javascript:;" class="txt_center inblock wrem6 bgcolorzt pad_t3 pad_b3 colorfff font12" style="border-radius: 30px" @click="lijiYuyue(i,el)">立即预约</a>
+                </div>
+              </div>
+            </li>
+          </ul>
+          <div class="empty" v-if="kongxianTimes.length==0 && selectDay!=''">暂无空闲时间</div>
+        </div>
+      </div>-->
+
+      <div class="bgcolorfff pad_l10 pad_r10">
+        <div class="findteaDetTab tableblock font15 color666 txt_center border_b" style="height: 46px;">
+          <div>
+            <a href="javascript:;" :class="{on:tabIndex==0}" @click="tabClick(0)" class="inblock pad_l5 pad_r5 h100">教学特点</a>
+          </div>
+          <div>
+            <a href="javascript:;" :class="{on:tabIndex==1}" @click="tabClick(1)" class="inblock pad_l5 pad_r5 h100">教育/教学经历</a>
+          </div>
+          <div>
+            <a href="javascript:;" :class="{on:tabIndex==2}" @click="tabClick(2)" class="inblock pad_l5 pad_r5 h100">学员评价({{shuju.assess_num}})</a>
+          </div>
+        </div>
+        <div class="findteaDetCon1" v-if="tabIndex==0">
+          <!-- 教学特点-->
+          <div class="tuwen padsm" v-if="shuju.features && shuju.features!=''" v-html="shuju.features"></div>
+          <div class="empty" v-if="!shuju.features">暂无数据</div>
+        </div>
+        <div class="findteaDetCon2" v-if="tabIndex==1">
+          <!-- 教育/教学经历-->
+          <div class="tuwen padsm" v-if="shuju.experience && shuju.experience!=''" v-html="shuju.experience"></div>
+          <div class="empty" v-if="!shuju.experience">暂无数据</div>
+        </div>
+        <div class="findteaDetCon3" v-if="tabIndex==2">
+          <!-- 学员评价-->
+          <ul>
+            <li v-for="(el,i) in shuju.assess" :class="{border_bb:i!=shuju.assess.length-1}" class="pad_b10">
+              <div class="pad_t10 pad_r10 pad_l10">
+                <div class="tableblock pad_b10">
+                  <div style="width: 14%;">
+                    <div class="img_box img100">
+                      <div class="img_content border_radius50">
+                        <img v-if="el.status==1" :src="path_img+el.p_img" class="imgone">
+                        <img v-if="el.status==2" src="img/tx.png" alt="" class="imgone">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="pad_l10">
+                    <div class="tableblock">
+                      <div class="color999 font14" v-if="el.status==1">{{el.child_name}}</div>
+                      <div class="color999 font14" v-if="el.status==2">匿名</div>
+                      <div class="txt_right" style="width: 130px">
+                        <span class="font14 color999">{{el.a_time}}</span>
+                      </div>
+                    </div>
+                    <div class="color999 font14 pad_t5">已向老师学习了{{el.subject}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="pad10 font14 color666" style="padding-top: 0;">{{el.content}}</div>
+              <!-- 最多三张图片-->
+              <div class="mar_t10">
+                <img :src="el.img1" @click="showbigtu(el,this)" width="50" height="50" v-if="el.img1" class="mar_r5" alt="">
+                <img :src="el.img2" @click="showbigtu(el,this)" width="50" height="50" v-if="el.img2" class="mar_r5" alt="">
+                <img :src="el.img3" @click="showbigtu(el,this)" width="50" height="50" v-if="el.img3" class="mar_r5" alt="">
+              </div>
+            </li>
+          </ul>
+          <div class="empty" v-if="shuju.assess.length==0">暂无评价</div>
+        </div>
+      </div>
+      <!--内容end-->
+    </div>
+  </div>
+
+  <!-- 底部弹出的选择规格框 start-->
+  <div class="box_shadow_one" :class="{Hide:box_shadow_hide}"></div>
+  <div class="findteaDetKuang bgcolorfff">
+    <div class="bgcolorzt pad_t5 pad_b5 pad_l10 pad_r10">
+      <img src="img/icon3.png" width="18" class="mar_r5" alt=""/>
+      <span class="inblock colorfff font14">{{currDate}}</span>
+      <div class="R">
+        <img src="img/x2.png" id="kclose" width="15" alt=""/>
+      </div>
+    </div>
+
+    <div class="neirong" style="height: 400px;overflow-y:auto;overflow-x:hidden;">
+      <div class="pad10 border_b colorzt">
+        <img src="img/twoqi/rili.png" height="14" class="mar_r5" alt=""/>
+        <span class="inblock">选择购买日期</span>
+      </div>
+      <!--日历-->
+      <div class="txt_center pad_b5 pad_t5 bgcolorf3f3">
+        <input id="time_format2" placeholder="请选择年月" style="width: 10em; text-align: center; background: url(img/xiala.png) right center no-repeat; background-size: 8px auto;" />
+      </div>
+      <div class="bgcolorfff pad10">
+        <div>
+          <ul class="clear txt_center">
+            <li class="L w7">
+              <span class="rili_ww">日</span>
+            </li>
+            <li class="L w7">
+              <span class="rili_ww">一</span>
+            </li>
+            <li class="L w7">
+              <span class="rili_ww">二</span>
+            </li>
+            <li class="L w7">
+              <span class="rili_ww">三</span>
+            </li>
+            <li class="L w7">
+              <span class="rili_ww">四</span>
+            </li>
+            <li class="L w7">
+              <span class="rili_ww">五</span>
+            </li>
+            <li class="L w7">
+              <span class="rili_ww">六</span>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <ul class="clear txt_center">
+            <li class="L w7 pad_t2 pad_b2" v-for="(el,index) in month_day">
+              <a href="javascript:;" class="rili_ww" v-html="el.day" :class="{gray:!el.isclick,now_day:el.now_day,cur:el.check}" @click="click_xz(index,el)"></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="pad_t10 pad_b10 border_b txt_center" v-if="selectDay==''">请先选择要预约的时间</div>
+      <div class="pad_t10 pad_b10 border_b txt_center">
+        <input type="text" id="calendarInput2" class="color999 font14 txt_center w100 Hide"/>
+        <span class="color999 font14 txt_center">{{selectDay}}</span>
+      </div>
+
+      <div class="pad10 border_b colorzt">
+        <img src="img/icon19.png" height="14" class="mar_r5" alt=""/>
+        <span class="inblock">选择时间</span>
+      </div>
+      <div class="pad10 font0">
+        <span v-for="(el,i) in kongxianTimes" :class="{monthon:kongxianTimesIndex==i}" @click="timeclick(i)" class="inblock font12 color666 border_all border_radiu4 mar_r5 mar_b5" style="padding: 6px 12px">{{el.text}}</span>
+      </div>
+    </div>
+
+    <div class="tableblock" style="height: 46px">
+      <div class="color666 font14 border_t font11">
+        <div class="pad_l10">
+          已选：<span class="colorzt">{{selectDay}} {{kongxianSelectText}}</span>
+        </div>
+      </div>
+      <a class="wrem5 bgcolorzt colorfff font15 txt_center" href="javascript:;" @click="nextfun()">下一步</a>
+    </div>
+  </div>
+  <!-- 底部弹出的选择规格框 end-->
+
+  <!-- 底部固定 start-->
+  <div class="footer">
+    <div class="tableblock h100">
+      <div class="col-xs-8">
+        <div class="pad_l10">
+          <div class="inblock"  @click="contact(shuju)">
+            <img src="img/twoqi/contact.png" alt="" height="20" class="inblock">
+            <span class="font14 colorzt inblock">咨询</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-4 font16 color333 bgcolorccc txt_center" v-if="shuju.subject.length==0">立即约课</div>
+      <div class="col-xs-4 font16 colorfff bgcolorzt txt_center" v-if="shuju.subject.length>0" onclick="lijiYueke()">立即约课</div>
+    </div>
+  </div>
+  <!-- 底部固定 end-->
+</div>
+<script>
+  sessionStorage.removeItem('datadetailclassnum');//清除立即预约记住的购买数量
+  sessionStorage.removeItem('yhqselected1');//清空 立即预约记住的优惠券
+
+  var xingqiText = ['日', '一', '二', '三', '四', '五', '六'];
+  var timer = [{day: "2018-06-14", end: "14:45:00", start: "14:28:00"}, {
+    day: "2017-12-22",
+    end: "14:45:00",
+    start: "14:28:00"
+  }];
+
+  function rili(year, month) {
+    var myDate = new Date();
+    var n_year = myDate.getFullYear();
+    var n_month = myDate.getMonth() + 1;
+    var n_day = myDate.getDate();
+
+    myDate.setFullYear(year, month - 1, 1);
+    var month_oneday_zhou = myDate.getDay();
+    var all_day = 30;
+    if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
+      all_day = 31;
+    }
+    else if (month == 2) {
+      if (year % 4 == 0) {
+        all_day = 28;
+      }
+      else {
+        all_day = 29;
+      }
+    }
+    vm.month_day=[];
+
+    if (month_oneday_zhou != 0) {
+      for (var i = 0; i < month_oneday_zhou; i++) {
+        vm.month_day.push({day: "&nbsp;", isclick: false, now_day: false, check: false});
+      }
+    }
+
+    if (year < n_year) {
+      for (var i = 1; i < (all_day + 1); i++) {
+        vm.month_day.push({day: i, isclick: false, now_day: false, check: false});
+      }
+    }
+    else if (year == n_year) {
+      if (month < n_month) {
+        for (var i = 1; i < (all_day + 1); i++) {
+          vm.month_day.push({day: i, isclick: false, now_day: false, check: false});
+        }
+      }
+      else if (month == n_month) {
+        for (var i = 1; i < (all_day + 1); i++) {
+          if (i < n_day) {
+            vm.month_day.push({day: i, isclick: false, now_day: false, check: false});
+          }
+          else {
+            //判断当前时间是否有空闲时间
+            var i_day = i;
+            if (i < 10) {
+              i_day = "0" + i_day;
+            }
+            var kx_day = year + "-" + month + "-" + i_day;
+            var kx_zt = false;
+            for (var j = 0; j < vm.shuju.time.length; j++) {
+              if (vm.shuju.time[j].day == kx_day) {
+                kx_zt = true;
+                break;
+              }
+            }
+            vm.month_day.push({day: i, isclick: kx_zt, now_day: kx_zt, check: false});
+//					if(i==n_day)
+//					{
+//						vm.month_day.push({day:i,isclick:kx_zt,now_day:true,check:false});
+//					}
+//					else
+//					{
+//						vm.month_day.push({day:i,isclick:kx_zt,now_day:true,check:false});
+//					}
+          }
+        }
+      }
+      else {
+        for (var i = 1; i < (all_day + 1); i++) {
+          //判断当前时间是否有空闲时间
+          var i_day = i;
+          if (i < 10) {
+            i_day = "0" + i_day;
+          }
+          var kx_day = year + "-" + month + "-" + i_day;
+          var kx_zt = false;
+          for (var j = 0; j < vm.shuju.time.length; j++) {
+            if (vm.shuju.time[j].day == kx_day) {
+              kx_zt = true;
+              break;
+            }
+          }
+          vm.month_day.push({day: i, isclick: kx_zt, now_day: kx_zt, check: false});
+        }
+      }
+    }
+    else {
+      if (parseInt(month) < 10) {
+        month = "0" + parseInt(month);
+      }
+      for (var i = 1; i < (all_day + 1); i++) {
+        //判断当前时间是否有空闲时间
+        var i_day = i;
+        if (i < 10) {
+          i_day = "0" + i_day;
+        }
+        var kx_day = year + "-" + month + "-" + i_day;
+        var kx_zt = false;
+        for (var j = 0; j < vm.shuju.time.length; j++) {
+          if (vm.shuju.time[j].day == kx_day) {
+            kx_zt = true;
+            break;
+          }
+        }
+        vm.month_day.push({day: i, isclick: kx_zt, now_day: false});
+      }
+    }
+//	for(var i=1;i<(all_day+1);i++)
+//	{
+//		if(year<n_year)
+//		{
+//			vm.month_day.push({day:i,isclick:false});
+//		}
+//		else if(year==n_year)
+//		{
+//			if(month<n_month)
+//			{
+//				vm.month_day.push({day:i,isclick:false});
+//			}
+//		}
+//
+//	}
+  }
+
+  function time_zh() {
+    str = new Date();
+    var year = str.getFullYear();
+    var month = str.getMonth() + 1;
+    var day = str.getDate();
+    var hour = str.getHours();
+    var minute = str.getMinutes();
+    var second = str.getSeconds();
+    var zhouji = str.getDay();
+    if (month < 10) {
+      month = "0" + month;
+    }
+    if (day < 10) {
+      day = "0" + day;
+    }
+    if (hour < 10) {
+      hour = "0" + hour;
+    }
+    if (minute < 10) {
+      minute = "0" + minute;
+    }
+    if (second < 10) {
+      second = "0" + second;
+    }
+    return {riqi: year + "-" + month + "-" + day, time: hour + ":" + minute + ":" + second, zhou: zhouji};
+  }
+
+  function chushi() {
+    var xingqi = time_zh().zhou;
+    var local_tome = time_zh().riqi;
+    vm.selectDay = local_tome + ' 星期' + xingqiText[xingqi];
+    vm.slect_date = local_tome;
+    vm.xingqi = "星期" + xingqiText[xingqi];
+    var kongxianTimesArr = [];
+//			console.log(vm.selectDay)
+    for (var i = 0; i < vm.shuju.time.length; i++) {
+      if (vm.shuju.time[i].day == local_tome) {
+        var start = vm.shuju.time[i].start;
+        start = start.substring(0, start.lastIndexOf(':'));
+        var end = vm.shuju.time[i].end;
+        end = end.substring(0, end.lastIndexOf(':'));
+        kongxianTimesArr.push({text: start + '-' + end, id: vm.shuju.time[i].id});
+      }
+    }
+    vm.kongxianTimes = kongxianTimesArr;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+  var token=localStorage.getItem('user_token');
+
+  if(Getvariable('token')){
+    token=Getvariable('token');
+  }
+
+  var vm = new Vue({
+    el: '#app',
+    data: {
+      path_img: path_img,
+      shuju: {
+        online_class:[],
+        features: '',
+        experience: '',
+        assess: [],
+        subject: [],
+        t_img: "",
+        sex: '',
+        score: '',
+        time: []//防止内联日历初始化报错
+      },
+      //空闲时间
+      kongxianTimes: [],//[{text: '09:00-11:00'}, {text: '14:00-18:00'}]
+      kongxianTimesIndex:-1,
+      kongxianSelectText:'',
+
+      selectDay: '',//2017-11-01 星期三
+      hour_time_id: "",
+      now_year: "",
+      now_month: "",
+      //tab
+      tabIndex: 0,
+      subject_id: "",
+      subject_name: "",
+      //选择课程
+      subjectIndex:-1,
+      kuang: {
+        money: 55,
+        danwei: '课时',
+        inputzhi: 1
+      },
+      box_shadow_hide: true,
+      loading: false,
+      page: 1,
+      slect_date: "",
+      xingqi: "",
+      hour_time: "",
+      month_day: [],
+      shjian: "",
+
+      currDate:'',
+
+      //选中课程后 教授科目右边出现描述文字
+      description:''
+    },
+    created:function(){
+      //初始加载
+      pre_loading(0);
+      var pid = Getvariable('pid');
+      if (!pid) {
+        pre_loading(3);
+      }else{
+        $.ajax({
+          url: path_inter + "parents/teacher/detail",
+          dataType: 'json',
+          type: 'post',
+          data: {
+            token: token,
+            t_id: pid
+          },
+          success: function (res) {
+            pre_loading(100);
+            if (user_overdue(res.code,res.msg)) {
+              //视频
+              for(var i=0;i<res.data.online_class.length;i++){
+                res.data.online_class[i].img_url=path_img+res.data.online_class[i].img_url;
+                res.data.online_class[i].video_url=path_img+res.data.online_class[i].video_url;
+              }
+              //评价上传的图片
+              for(var j=0;j<res.data.assess.length;j++){
+                if(res.data.assess[j].img1){
+                  res.data.assess[j].img1=path_img+res.data.assess[j].img1;
+                }
+                if(res.data.assess[j].img2){
+                  res.data.assess[j].img2=path_img+res.data.assess[j].img2;
+                }
+                if(res.data.assess[j].img3){
+                  res.data.assess[j].img3=path_img+res.data.assess[j].img3;
+                }
+              }
+
+              vm.shuju = res.data;
+              rili(vm.now_year, vm.now_month);
+
+              iscollect(Getvariable("pid"), res.data.collection);
+              appTeacherName(res.data.name);//给app传老师名字
+            }
+          },
+          error: function () {
+            pre_loading(1);
+          }
+        });
+      }
+    },
+    mounted:function(){
+      var nowDate = new Date();
+      this.now_year = nowDate.getFullYear();
+      this.now_month = nowDate.getMonth() + 1;
+      if (this.now_month < 10) {
+        this.now_month = "0" + this.now_month;
+      }
+      years = [];
+      for (var i = 0; i < 20; i++) {
+        years.push((this.now_year + i) + "年");
+      }
+      $("#time_format").val(this.now_year + "年 " + this.now_month + "月");
+      $("#time_format2").val(this.now_year + "年 " + this.now_month + "月");
+
+      pagedo();
+    },
+    methods:{
+      showbigtu:function(el,that){
+        //查看评价大图
+        var arr=[];
+        var index=$(that).index();
+        if(el.img1){
+          arr.push(el.img1);
+        }
+        if(el.img2){
+          arr.push(el.img2);
+        }
+        if(el.img3){
+          arr.push(el.img3);
+        }
+        var pb1 = $.photoBrowser({
+          items: arr,
+          initIndex:index
+        });
+        pb1.open();  //打开
+      },
+      bophone:function(){
+        botel(vm.shuju.phone);
+      },
+      seemoreVideo:function(){
+        //查看更多
+        appTeacherVideoList(vm.shuju.t_id);
+      },
+      timeclick:function(i){
+        this.kongxianTimesIndex = i;
+        this.kongxianSelectText=this.kongxianTimes[this.kongxianTimesIndex].text;
+      },
+      contact: function (el) {
+        app_contact(el.accid);
+      },
+      click_xz: function (index, el) {
+        if (!el.isclick) {
+          return false;
+        }
+        for(var i=0;i<vm.month_day.length;i++){
+          vm.month_day[i].check = false;
+        }
+        el.check = true;
+        var cc = el.day;
+        var xingqi = (index % 7);
+        if (parseInt(vm.now_month) < 10) {
+          vm.now_month = "0" + parseInt(vm.now_month);
+        }
+        if (parseInt(el.day) < 10) {
+          cc = "0" + parseInt(el.day);
+        }
+        vm.selectDay = vm.now_year + "-" + vm.now_month + "-" + cc + ' 星期' + xingqiText[xingqi];
+        vm.slect_date = vm.now_year + "-" + vm.now_month + "-" + cc;
+        vm.xingqi = "星期" + xingqiText[xingqi];
+        var kongxianTimesArr = [];
+        for (var i = 0; i < vm.shuju.time.length; i++) {
+          if (vm.shuju.time[i].day == vm.slect_date) {
+            var start = vm.shuju.time[i].start;
+            start = start.substring(0, start.lastIndexOf(':'));
+            var end = vm.shuju.time[i].end;
+            end = end.substring(0, end.lastIndexOf(':'));
+            kongxianTimesArr.push({text: start + '-' + end, id: vm.shuju.time[i].id});
+          }
+        }
+        vm.kongxianTimes = kongxianTimesArr;
+        console.log(vm.kongxianTimes);
+
+        vm.kongxianTimesIndex =-1;
+        vm.kongxianSelectText='';
+      },
+      lijiYuyue: function (i, el) {
+        //页面中的 立即预约
+        if (token) {
+          vm.kongxianTimesIndex = i;
+          vm.kongxianSelectText=vm.kongxianTimes[vm.kongxianTimesIndex].text;
+          vm.hour_time = el.text;
+          vm.hour_time_id = el.id;
+
+//          $('.findteaDetKuang').css('transform', 'translate(0,0)');
+//          vm.box_shadow_hide = false;
+        } else {
+          go_login();//去登陆
+        }
+      },
+      nextfun: function (){
+        //弹框里面的 下一步
+        if (token){
+          var str = {
+            class_num:1,
+            price:0,
+            subject:vm.shuju.subject,
+            teacher_id: Getvariable('pid'),
+            subject_id: vm.subject_id,
+            subject_name: vm.subject_name,
+            teach_date: vm.slect_date,
+            teach_time: vm.hour_time,
+            teacher_time_id: vm.hour_time_id,
+            xinqi: vm.xingqi
+          };
+          localStorage.setItem("yuyue", JSON.stringify(str));
+          location.href = "find_teacher_yuyue.html?pid=yuyue&aid=no";
+        } else {
+          go_login();//去登陆
+        }
+      },
+      tabClick: function (zhi) {
+        vm.tabIndex = zhi;
+      },
+      govideodet:function(id){
+        appTeacherVideoDet(id);
+      },
+      subjectItemClick: function (zhi, el) {
+        vm.subjectIndex = zhi;
+        vm.subject_id = el.subject_id;
+        vm.subject_name = el.subject_name;
+        //选择课程，价格会变
+        vm.kuang.money = vm.shuju.subject[vm.subjectIndex].price;
+        vm.description=el.description;
+      }
+    }
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  var years;
+  function pagedo(){
+    $("#time_format").picker({
+      title: "选择日期",
+      cols: [
+        {
+          textAlign: 'center',
+          values: years
+        },
+        {
+          textAlign: 'center',
+          values: ['01月', '02月', '03月', '04月', '05月', '06月', '07月', '08月', '09月', '10月', '11月', '12月']
+        }
+      ],
+      onChange:function(el, values, displayValues){
+        var nian=parseInt(values[0].split("年")[0]);
+        var month=parseInt(values[1].split("月")[0]);
+        vm.now_year=nian;
+        vm.now_month=month;
+
+        var y=vm.now_year.toString();
+        var m=vm.now_month;
+        if(m<10){
+          m='0'+m;
+        }
+        rili(y,m);
+        vm.kongxianTimes=[];//切换年月后，只有点击了日，才能看到具体的时间（几点-几点）
+      }
+    });
+    $("#time_format2").picker({
+      title: "选择日期",
+      cols: [
+        {
+          textAlign: 'center',
+          values: years
+        },
+        {
+          textAlign: 'center',
+          values: ['01月', '02月', '03月', '04月', '05月', '06月', '07月', '08月', '09月', '10月', '11月', '12月']
+        }
+      ],
+      onChange: function (el, values, displayValues) {
+        var nian = parseInt(values[0].split("年")[0]);
+        var month = parseInt(values[1].split("月")[0]);
+        vm.now_year = nian;
+        vm.now_month = month;
+
+        var y = vm.now_year.toString();
+        var m = vm.now_month;
+        if (m < 10) {
+          m = '0' + m;
+        }
+        rili(y, m);
+        vm.kongxianTimes = [];//切换年月后，只有点击了日，才能看到具体的时间（几点-几点）
+      }
+    });
+
+    //点击x 点击遮罩
+    $('#kclose,.box_shadow_one').click(function () {
+      $('.findteaDetKuang').css('transform', 'translate(0,100%)');
+      vm.box_shadow_hide = true;
+    });
+
+    var kongxianopen = false;//空闲时间展开状态true
+    $('#kongxianbtn').click(function () {
+      kongxianopen = !kongxianopen;
+      if (kongxianopen) {
+        $('#kongxianContent').slideDown();
+        $(this).text('收起');
+        $('#kongxianimg').attr('src','img/twoqi/xiaoxi_arrowt.png');
+      } else {
+        $('#kongxianContent').slideUp();
+        $(this).text('展开');
+        $('#kongxianimg').attr('src','img/twoqi/xiaoxi_arrowb.png');
+      }
+    });
+  }
+
+  function toTwo(num){
+    return num<10?'0'+num:num;
+  }
+  function lijiYueke(){
+    //立即约课
+//    var currtime=new Date();
+//    var xingqiArr=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+//    var datestr=currtime.getFullYear()+'-'+toTwo(currtime.getMonth()+1)+'-'+toTwo(currtime.getDate())+' '+xingqiArr[currtime.getDay()]+' '+toTwo(currtime.getHours())+':'+toTwo(currtime.getMinutes())+':'+toTwo(currtime.getSeconds());
+//    vm.currDate=datestr;
+
+//    $('.findteaDetKuang').css('transform', 'translate(0,0)');
+//    vm.box_shadow_hide = false;
+
+    //弹框里面的 立即预约
+    if (token) {
+      if (vm.subjectIndex == -1) {
+        $.toast('请选择科目', 'text');
+        return false;
+      }
+      var str = {
+        teacher_id: Getvariable('pid'),
+        class_num: vm.kuang.inputzhi,
+        subject_id: vm.subject_id,
+        subject_name: vm.subject_name,
+//        teach_date: vm.slect_date,
+//        teach_time: vm.hour_time,
+//        teacher_time_id: vm.hour_time_id,
+        xinqi: vm.xingqi,
+        price: vm.kuang.money
+      };
+      localStorage.setItem("yuyue", JSON.stringify(str));
+      location.href = path_js + "/find_teacher_yuyue.html?pid=yuyue&aid=no";
+    } else {
+      go_login();//去登陆
+    }
+
+  }
+
+
+
+
+</script>
+</body>
+</html>

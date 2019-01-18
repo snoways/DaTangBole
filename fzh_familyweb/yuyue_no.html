@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>预约失败</title>
+  <script src="js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="css/ku/hui.css">
+  <link rel="stylesheet" href="css/ku/style.css">
+  <script src="js/ku/hui.js"></script>
+  <script src="js/ku/template-web.js"></script>
+</head>
+<body>
+
+<div ontouchstart class="content_box">
+  <div class="content_scroll no">
+    <!--内容开始-->
+    <div id="contain"></div>
+    <!--内容end-->
+  </div>
+</div>
+
+<script type="text/html" id="tpl">
+  <div class="bgcolorfff txt_center" style="padding: 30px 0">
+    <img src="img/yuyue_no.png" height="75" alt=""/>
+    <div class="font18 colorredq mar_t10">预约失败！</div>
+    <div class="mar_t10 font12">
+      非常抱歉，您的课程未能预约成功，如有任何问题<br/>
+      请联系客服处理 <a class="colorzt" href="javascript:;" onclick="botelfun()"><%=kefu_tel%></a>
+    </div>
+    <div style="margin-top: 20px">
+      <div class="tableblock">
+        <div class="txt_right pad_r10 font14">
+          <a href="javascript:history.go(-1);" class="color666 inblock border_all border_radiu4 wrem8 txt_center pad_t5 pad_b5">返回重新预约</a>
+        </div>
+        <div class="txt_left pad_l10">
+          <span onclick="gotofindt()" class="colorzt inblock border_all border_radiu4 wrem8 txt_center pad_t5 pad_b5" style="border-color:#ff6000">预约其他老师</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</script>
+
+
+<script>
+  //初始加载
+  pre_loading(0);
+
+  if(Getvariable('kefu_tel')){
+    var data={
+      kefu_tel: ''
+    };
+    function renderhtml(){
+      document.getElementById('contain').innerHTML=template('tpl', data);
+    }
+
+    data.kefu_tel = Getvariable('kefu_tel');
+    renderhtml();
+    pre_loading(100);
+  }else{
+    pre_loading(3);
+  }
+
+  function botelfun(){
+    botel(data.kefu_tel);
+  }
+
+  function gotofindt(){
+    appgotoFindTeacher();
+  }
+</script>
+</body>
+</html>

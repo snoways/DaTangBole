@@ -1,0 +1,178 @@
+<!-- 活动详情 -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>我的分享-游记详情</title>
+    <script src="../js/ku/common_nojq.js"></script>
+    <link rel="stylesheet" href="../css/ku/hui.css">
+    <link rel="stylesheet" href="../css/ku/weui.min.css">
+    <link rel="stylesheet" href="../css/ku/jquery-weui.min.css">
+    <link rel="stylesheet" href="../css/ku/style.css">
+    <script src="../js/ku/hui.js"></script>
+    <script src="../js/ku/vue.min.js"></script>
+    <script src="../js/ku/jquery-1.12.4.min.js"></script>
+    <script src="../js/ku/jquery-weui.js"></script>
+    <script src="../js/ku/swiper_jqueryweui.js"></script>
+</head>
+<style>
+    .youjicontent * {
+        max-width: 100%;
+    }
+</style>
+
+<body>
+
+    <div id="app" v-cloak>
+        <div class="w100 youjiimg">
+            <img class="imgone" :src="path_img+shuju.img_url" alt="" @click="openApp(parentId)">
+        </div>
+        <div class="youjititle bgcolorfff mar_b10 clear pad_l20 pad_r20 pad_t10 pad_b10">
+            <p class="b" @click="openApp(parentId)">西澳珀斯市区及周边游玩攻略，快跟随我的脚步来游览吧，经典景点一个也不能错过！</p>
+            <p class="clear youjitag f10 color666"><span class="R" @click="openApp(parentId)">分享</span><span>{{shuju.viewnum}}</span><span>{{shuju.commentnum}}</span><span>{{shuju.zannum}}</span></p>
+        </div>
+        <div class="bgcolorfff mar_b10 clear pad_l20 pad_r20 pad_t10 pad_b10">
+            <span class="R viewcomment f11 color666" @click="openApp(parentId)">查看全部评论</span><span class="L youjialwayscomment"><i class="bgcoloryellow inblock border_radiu4 mar_r10" style="width: 6px; height: 20px;"></i> 已有评论{{shuju.commentnum}}条</span> 
+        </div>
+        <div class="youjiactivity_info bgcolorfff mar_b10 clear pad_l20 pad_r20 pad_t10 pad_b10">
+            <p>天数:{{shuju.travel_days}}天</p>
+            <p>时间:{{shuju.travel_month}}</p>
+            <p>消费:{{shuju.price}}元</p>
+            <p>人物:{{shuju.person}}</p>
+        </div>
+        <div class="youjicontent pad_wei bgcolorfff clear pad_l20 pad_r20 pad_t10 pad_b10" v-html="shuju.content"></div>
+        <div class="youjifooter footer bgcolorfff clear pad_l20 pad_r20 pad_t10 pad_b10">
+            <p @click="openApp(parentId)"><span>赞</span></p>
+            <p @click="openApp(parentId)"><span>发表评论</span></p>
+        </div>
+        <!-- 微信弹出 -->
+        <div v-if="weixinshow" @click="weixinshow = false" class="L_box_shadow colorfff"><img class="w100" src="../img/shareweixin.png" alt=""></div>
+    </div>
+    <script>
+        pre_loading(0);
+        var parentId = "";
+        if (!Getvariable('parent_id')) {
+            parentId = "";
+        } else {
+            parentId = Getvariable('parent_id');
+        }
+
+
+
+        var aid; //活动id
+        if (!Getvariable('pid')) {
+            $.toast('少pid', 'text');
+        } else {
+            aid = Getvariable('pid');
+            vueinit();
+        }
+        // 轮播图
+        var swiper = new Swiper('.swiper-container');
+        var vm;
+
+        function vueinit() {
+            vm = new Vue({
+                el: '#app',
+                data: {
+                    path_img: path_img,
+                    shuju: {},
+                    parent_id: parentId,
+                    weixinshow: false
+                },
+                methods: {
+                    itemclick: function (index) {
+                        pb1.open(index);
+                    },
+                    tabclick: function (i) {
+                        this.tabshow = [0, 0, 0, 0]
+                        this.tabshow[i] = 1;
+                    },
+                    openApp: function (a) {
+
+
+                       var spellId = (vm.shuju.spell_id == undefined ? " " : vm.shuju.spell_id);
+                        
+                        var open_IOS = 'shareparent://?business_type=2&pid='+aid+"&spell_id="+spellId; // ios
+                        var open_Adr = 'shareparents://project.com?business_type=2&pid='+aid+"&spell_id="+spellId; // android
+                        // console.log(open_Adr)
+                        // console.log(open_IOS)
+                        if(/android/i.test(navigator.userAgent)){
+                            window.location.href = open_Adr;
+                            window.setTimeout(function () {
+                                window.location.href = '/fzh_teacherweb/twoqi/sign.html?parent_id=' + a;
+                            }, 6000);
+                        }
+                        if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)){
+                            window.location.href = open_IOS;
+                            window.setTimeout(function () {
+                                window.location.href = '/fzh_teacherweb/twoqi/sign.html?parent_id=' + a;
+                            }, 6000);
+                        }
+                        if (navigator.userAgent.toLowerCase().indexOf("micromessenger") > -1) {
+                            vm.weixinshow = true;
+                        }
+                    }
+                },
+                created: function () {
+                    var that = this;
+                    $.ajax({
+                        url: path_inter + "ManagedClient/travels/getDetail",
+                        dataType: 'json',
+                        type: 'post',
+                        data: {
+                            travels_id: aid,
+                            // request: "web"
+                        },
+                        success: function (res) {
+                            if (user_overdue(res.code, res.msg)) {
+                                vm.shuju = res.data;
+                                pre_loading(100);
+
+                                that.$nextTick(function () {
+                                    pagedo();
+                                });
+                            }
+                        },
+                        error: function () {
+                            pre_loading(1);
+                        }
+                    });
+                }
+            });
+        }
+
+
+        function pagedo() {
+            //确定下载链接
+            if (/android/i.test(navigator.userAgent)) {
+                //安卓
+                $('#download').attr('href', familylink_adr);
+            }
+            if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
+                //苹果
+                $('#download').attr('href', familylink_ios);
+            }
+
+            $('#ioslink').attr('href', familylink_ios);
+            $('#adrlink').attr('href', familylink_adr);
+            $('#iosimg').attr('src', familyma_ios);
+            $('#adrimg').attr('src', familyma_adr);
+        }
+
+        function imginit(index) {
+            var pb1 = $.photoBrowser({
+                items: [
+                    $('#iosimg').attr('src'),
+                    $('#adrimg').attr('src')
+                ],
+                initIndex: index
+            });
+            pb1.open();
+        }
+    </script>
+
+</body>
+
+</html>

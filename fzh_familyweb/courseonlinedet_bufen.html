@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title></title>
+  <script src="js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="css/ku/hui.css">
+  <link rel="stylesheet" href="css/ku/weui.min.css">
+  <link rel="stylesheet" href="css/ku/jquery-weui.min.css">
+  <link rel="stylesheet" href="css/ku/style.css">
+  <script src="js/ku/hui.js"></script>
+  <script src="js/ku/jquery-1.12.4.min.js"></script>
+  <script src="js/ku/jquery-weui.js"></script>
+  <script src="js/ku/vue.min.js"></script>
+</head>
+<body>
+
+<div id="app" v-cloak>
+
+    <!-- 老师start-->
+    <div class="pad_l10 pad_r10 pad_t10 bgcolorfff" v-if="flag==1">
+      <div class="tableblock pad_b10">
+        <div class="col-xs-2">
+          <div class="img_box img100 rela">
+              <span class="inblock abso font12 colorfff bgcolorzt wrem3 txt_center lh1 border_radiu20" style="padding: 3px 0;bottom: 0;right: 0;z-index: 2">
+                <span v-if="shuju.t_type==1">家教</span>
+                <span v-if="shuju.t_type==2">老师</span>
+                <span v-if="shuju.t_type==3">外教</span>
+              </span>
+            <div class="img_content border_radius50 font0" @click="teacherdet()">
+              <img :src="path_img+shuju.t_img" class="imgone">
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-10">
+          <div class="tableblock">
+            <div>
+              <div class="pad_l10 font15 mar_b5">
+                <div class="tableblock">
+                  <div class="col-xs-7" @click="teacherdet()">
+                    <span class="inblock sex_icon" :class="{man:shuju.sex=='1'}"></span>
+                    <span class="inblock pad_l5 font16">{{shuju.name}}</span>
+                    <span class="inblock font12 pad_l5 color666">{{shuju.age}}岁</span>
+                  </div>
+                  <div class="txt_right col-xs-5">
+                    <div @click="bophone()" class="R inblock wrem7 bgcolorzt colorfff font12 txt_center pad_t3 pad_b3" style="border-radius: 30px">
+                      <img src="img/twoqi/jigou_tel.png" class="mar_r5" height="14" alt=""/><span class="inblock">联系电话</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- 教师会员标识-->
+              <!-- <div class="font12 color333 pad_l10 mar_b10">
+                <div class="inblock border_radiu4 lh1" style="background: linear-gradient(#fad6a3,#fdaf3c);padding: 3px 6px;">
+                  <img src="img/gold.png" height="12" alt="">
+                  <span class="inblock" v-if="shuju.level_name">{{shuju.level_name}}</span>
+                  <span class="inblock" v-if="!shuju.level_name">普通用户</span>
+                </div>
+              </div> -->
+              <div class="tableblock" @click="teacherdet()">
+                <div class="col-xs-8">
+                  <div class="pad_l10 font0 mar_b5 colorzt">
+                    <span class="star" :class="{all:shuju.score>=1,half:shuju.score>=0.5 && shuju.score<1}"></span>
+                    <span class="star" :class="{all:shuju.score>=2,half:shuju.score>=1.5 && shuju.score<2}"></span>
+                    <span class="star" :class="{all:shuju.score>=3,half:shuju.score>=2.5 && shuju.score<3}"></span>
+                    <span class="star" :class="{all:shuju.score>=4,half:shuju.score>=3.5 && shuju.score<4}"></span>
+                    <span class="star" :class="{all:shuju.score==5,half:shuju.score>=4.5 && shuju.score<5}"></span>
+                    <span class="inblock lineh_normal font12 mar_l5">{{shuju.score|number1}}</span>
+
+                    <span class="mar_l10 inblock font12 color666">销量：{{shuju.sale_num}}</span>
+                  </div>
+                </div>
+                <div class="txt_right col-xs-4">
+                  <img src="img/twoqi/huo.png" class="inblock" height="12" alt="">
+                  <span class="colorzt inblock font12">{{shuju.view_num}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="border_b pad_b10">
+        <div class="pad_l5 biaoqian font12 color999 block" @click="teacherdet()">
+          <span class="zz_icon inblock" v-if="shuju.renzheng=='1'">身份认证</span>
+          <span class="zx_icon inblock" v-if="shuju.renzheng=='-1'">身份认证</span>
+          <span class="zz_icon inblock" v-if="shuju.zizhi=='1'">资质荣誉</span>
+          <span class="zx_icon inblock" v-if="shuju.zizhi=='-1'">资质荣誉</span>
+          <span class="zz_icon inblock" v-if="shuju.xueli=='1'">毕业院校</span>
+          <span class="zx_icon inblock" v-if="shuju.xueli=='-1'">毕业院校</span>
+          <span class="zz_icon inblock" v-if="shuju.ceping=='1'">心理测评</span>
+          <span class="zx_icon inblock" v-if="shuju.ceping=='-1'">心理测评</span>
+          <span class="zz_icon inblock" v-if="shuju.jiankang=='1'">健康证</span>
+          <span class="zx_icon inblock" v-if="shuju.jiankang=='-1'">健康证</span>
+        </div>
+      </div>
+    </div>
+    <!-- 老师end-->
+
+    <!-- 托管/机构 start-->
+    <div class="pad_l10 pad_r10 pad_t10 bgcolorfff" v-if="flag==2 || flag==3">
+      <div class="tableblock">
+        <div style="width: 23%;" class="vertop">
+          <div class="img_box img100 rela">
+            <!-- icon为空说明不是会员，不显示出来即可-->
+            <img :src="path_img+shuju.icon" v-if="shuju.icon" width="18" class="abso" style="top: 1px;left: 1px;z-index: 1" alt="">
+            <div class="img_content">
+              <img class="border_radiu4 border_all imgone" :src="path_img+shuju.s_img" alt=""/>
+            </div>
+          </div>
+        </div>
+        <div class="pad_l10">
+          <div class="tableblock pad_l5 border_b" @click="tuoguandet()">
+            <div>
+              <p class="font16">{{shuju.s_name}}</p>
+              <p class="font13 color999 mar_b5">{{shuju.s_content}}</p>
+              <div class="tableblock pad_b5">
+                <div class="col-xs-8">
+                  <div class="pad_l5 font0 mar_b5 colorzt">
+                    <span :class="[shuju.star>=1?'all':'',shuju.star>=0.5 && shuju.star<1?'half':'']" class="inblock star"></span>
+                    <span :class="[shuju.star>=2?'all':'',shuju.star>=1.5 && shuju.star<2?'half':'']" class="inblock star"></span>
+                    <span :class="[shuju.star>=3?'all':'',shuju.star>=2.5 && shuju.star<3?'half':'']" class="inblock star"></span>
+                    <span :class="[shuju.star>=4?'all':'',shuju.star>=3.5 && shuju.star<4?'half':'']" class="inblock star"></span>
+                    <span :class="[shuju.star>=5?'all':'',shuju.star>=4.5 && shuju.star<5?'half':'']" class="inblock star"></span>
+                    <span class="inblock lineh_normal font12 mar_l5">{{shuju.star|number1}}</span>
+                  </div>
+                </div>
+                <div class="txt_right col-xs-4">
+                  <img src="img/twoqi/huo.png" class="inblock" height="12" alt="">
+                  <span class="colorzt inblock font12">{{shuju.view_num}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="font12 color999 pad_t10 pad_b10">
+            <!-- 下面这个是固定的 点击这个并不需要跳转到认证信息页面，下面的图片都在形象展示里面-->
+            <span class="zz_icon mar_r5 inblock">身份认证</span>
+            <span class="zz_icon mar_r5 inblock">资质荣誉</span>
+            <span class="zz_icon mar_r5 inblock">健康证</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 托管/机构 end-->
+
+</div>
+
+
+<script>
+  //初始加载
+  pre_loading(0);
+
+  var flag,pid,token;//flag 1老师 2机构 3托管
+  if(!Getvariable('flag') || !Getvariable('pid') || !Getvariable('token')){
+    pre_loading(3);
+  }else{
+    flag=Getvariable('flag');
+    pid=Getvariable('pid');
+    token=Getvariable('token');
+    init();
+  }
+
+  var vm;
+  function init(){
+    vm = new Vue({
+      el: '#app',
+      data: {
+        path_img: path_img,
+        flag:'',
+        shuju:{}
+      },
+      created:function(){
+        if(flag==1){
+          //老师
+          $.ajax({
+            url: path_inter + "parents/teacher/detail",
+            dataType: 'json',
+            type: 'post',
+            data: {
+              token: token,
+              t_id: pid
+            },
+            success: function (res) {
+              pre_loading(100);
+              if (user_overdue(res.code,res.msg)) {
+                vm.shuju = res.data;
+                vm.flag=1;
+              }
+            },
+            error: function () {
+              pre_loading(1);
+            }
+          });
+        }else if(flag==2){
+          //机构
+          $.ajax({
+            url:path_inter+"parents/Educational/detail",
+            dataType:'json',
+            type:'post',
+            data:{token: token, st_id: pid},
+            success:function(res){
+              pre_loading(100);
+              if (user_overdue(res.code,res.msg)) {
+                vm.shuju = res.data;
+                vm.flag=2;
+              }
+            },
+            error:function(){
+              pre_loading(1);
+            }
+          });
+        }else if(flag==3){
+          //托管
+          $.ajax({
+            url:path_inter+"parents/Managed/detail",
+            dataType:'json',
+            type:'post',
+            data:{token: token, st_id: pid},
+            success:function(res){
+              pre_loading(100);
+              if (user_overdue(res.code,res.msg)) {
+                vm.shuju = res.data;
+                vm.flag=3;
+              }
+            },
+            error:function(){
+              pre_loading(1);
+            }
+          });
+        }
+      },
+      methods:{
+        tuoguandet:function(){
+          if(flag==2){
+            //机构
+            appJigouDet(vm.shuju.st_id);
+          }else if(flag==3){
+            //托管
+            appTuoguanDet(vm.shuju.st_id);
+          }
+        },
+        bophone:function(){
+          botel2(vm.shuju.phone);
+        },
+        teacherdet:function(){
+          //老师
+          appTeacherDet(vm.shuju.t_id);
+        }
+      }
+    });
+  }
+</script>
+</body>
+</html>

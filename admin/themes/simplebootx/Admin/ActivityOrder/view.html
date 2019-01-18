@@ -1,0 +1,79 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a>订单列表</a></li>
+    </ul>
+
+    <div style="margin-bottom: 20px">
+        <table style="width: 40%">
+            <tr>
+                <th align="left"> 订单编号 </th>
+                <td>{$sn}</td>
+            </tr>
+            <tr>
+                <th align="left"> 活动标题 </th>
+                <td>{$act_name}</td>
+            </tr>
+            <tr>
+                <th align="left"> 下单时间 </th>
+                <td>{$sign_time}</td>
+            </tr>
+            <tr>
+                <th align="left"> 出发时间 </th>
+                <td>{$start_date}</td>
+            </tr>
+            <tr>
+                <th align="left"> 报名人姓名 </th>
+                <td>{$parent_name}</td>
+            </tr>
+            <tr>
+                <th align="left"> 报名人电话 </th>
+                <td>{$parent_phone}</td>
+            </tr>
+            <tr>
+                <th align="left"> 订单总金额 </th>
+                <td>{$pay_money}</td>
+            </tr>
+            <tr>
+                <th align="left"> 订单状态 </th>
+                <td>
+                    {$statuss[$status]}
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <h3> 报名人信息 </h3>
+    <table class="table"  style="width: 80%;margin-top: 12px">
+            <tr>
+                <th>姓名人</th>
+                <th>成人/小孩</th>
+                <th>男/女</th>
+                <th>手机号</th>
+                <th>证件类型</th>
+                <th>证件号</th>
+            </tr>
+            <foreach name="list" key="k" item="vo">
+                <tr>
+                    <td>{$vo['member_name']}</td>
+                    <td>{$vo['member_type']==1?'成人':'小孩'}</td>
+                    <td>{$vo['sex']==1?'男':'女'}</td>
+                    <td>{$vo['member_phone']}</td>
+                    <td>{$vo['id_type']==1?'身份证':'护照'}</td>
+                    <td>{$vo['id_num']}</td>
+                </tr>
+            </foreach>
+    </table>
+
+    <!--<if condition="$data['status'] eq 3">-->
+        <!--<div>-->
+            <!--<a href="{:U('ActivityOrder/refund')}" class="btn btn-primary pay" data-id="{$vo['sn']}"> 退款 </a>-->
+        <!--</div>-->
+    <!--</if>-->
+
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

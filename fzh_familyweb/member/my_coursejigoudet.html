@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>课程详情</title>
+  <script src="../js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="../css/ku/hui.css">
+  <link rel="stylesheet" href="../css/ku/style.css">
+  <script src="../js/ku/hui.js"></script>
+  <script src="../js/ku/vue.min.js"></script>
+</head>
+<body>
+
+<div id="app" v-cloak>
+  <!--tab-->
+  <div class="header bgcolorddd pad_r10">
+    <div class="tableblock">
+      <div class="bgcolorf3f3 wrem8 txt_center font12 color666">
+        <div class="pad_l10 pad_r5">
+          <div v-if="detail.status==1">
+            <img src="../img/icon12.png" width="12"><br>
+            <i class="noh">待支付</i>
+          </div>
+          <div v-if="detail.status==2">
+            <img src="../img/icon12.png" width="12"><br>
+            <i class="noh">授课中</i>
+          </div>
+          <div v-if="detail.status==5">
+            <img src="../img/icon12.png" width="12"><br>
+            <i v-if="detail.status==5 && detail.tui_status==1">售后处理中</i>
+            <span v-if="detail.status==5 && detail.tui_status==2">已线下协商退款</span>
+            <!--<span v-if="detail.status==5 && detail.tui_status==3">被驳回</span>-->
+          </div>
+          <div v-if="detail.status==3">
+            <i class="noh">已完成</i>
+          </div>
+          <div v-if="detail.status==4">
+            <i class="noh">已取消</i>
+          </div>
+        </div>
+      </div>
+      <div class="txt_right font12">
+        <a href="javascript:;" v-if="detail.status==1" class="inblock mar_l5 pad_l10 pad_r10 pad_t2 border_radiu20 bgcolorccc colorfff" @click="cancel(detail)">取消订单</a>
+        <a href="javascript:;" v-if="detail.status==1" class="inblock mar_l5 pad_l10 pad_r10 pad_t2 border_radiu20 bgcolorzt colorfff" @click="go_pay()">去支付</a>
+        <a href="javascript:;" v-if="detail.status==2" class="inblock mar_l5 pad_l10 pad_r10 pad_t2 border_radiu20 bgcolorccc colorfff" @click="apply_after(detail)">申请售后</a>
+        <a href="javascript:;" v-if="detail.status==2" class="inblock mar_l5 pad_l10 pad_r10 pad_t2 border_radiu20 bgcolorzt colorfff" @click="go_complete(detail)">确认完成</a>
+        <a href="javascript:;" v-if="detail.status==3 && detail.assess==-1" class="inblock mar_l5 pad_l10 pad_r10 pad_t2 border_radiu20 bgcolorzt colorfff" @click="apply_evalua(detail)">评价</a>
+      </div>
+    </div>
+  </div>
+  <div class="content_box bgcolorf3f3">
+    <div class="content_scroll pad_tou">
+      <div class="pad10 mar_b5 bgcolorfff tableblock">
+        <div style="width: 75px" @click="gojigoucoursedet()">
+          <img :src="path_img+detail.img" width="65" height="40">
+        </div>
+        <div>
+          <div class="font13 color333">{{detail.title}}</div>
+          <div class="tableblock">
+            <div class="coloraaa font12">
+              <span class="inblock mar_r10">{{detail.subject}}</span>
+              <span class="inblock colorzt">{{detail.class_num}}</span>
+              <span class="inblock">课时</span>
+            </div>
+            <div class="txt_right wrem6 font13 colorzt"><b>￥{{detail.total_money}}</b></div>
+          </div>
+        </div>
+      </div>
+      <div class="bgcolorfff pad10 font12 has_border_b">
+        <div class="pad_t5 pad_b5 tableblock">
+          <div class="wrem4 color666">订单编号</div>
+          <div class="txt_right">{{detail.order_sn}}</div>
+        </div>
+        <div class="pad_t5 pad_b5 tableblock">
+          <div class="wrem4 color666">下单时间</div>
+          <div class="txt_right">{{detail.o_time}}</div>
+        </div>
+        <div class="pad_t5 pad_b5 tableblock">
+          <div class="wrem4 color666">会员类型</div>
+          <div class="txt_right">{{detail.usertype_name}}</div>
+        </div>
+        <div class="pad_t5 pad_b5 tableblock">
+          <div class="wrem4 color666">订单状态</div>
+          <div class="txt_right">
+            <span v-if="detail.status==1">待支付</span>
+            <span v-if="detail.status==2">授课中</span>
+            <span v-if="detail.status==5 && detail.tui_status==1">售后处理中</span>
+            <span v-if="detail.status==5 && detail.tui_status==2">已线下协商退款</span>
+            <!--<span v-if="detail.status==5 && detail.tui_status==3">被驳回</span>-->
+            <span v-if="detail.status==3">已完成</span>
+            <span v-if="detail.status==4">已取消</span>
+          </div>
+        </div>
+        <div class="pad_t5 pad_b5 tableblock">
+          <div class="wrem4 color666">订单总额</div>
+          <div class="txt_right colorzt">￥{{detail.total_money}}</div>
+        </div>
+      </div>
+      <!-- 退款理由-->
+      <div class="pad10 font12 color666 bgcolorfff border_b" v-if="detail.tui_status>0 && detail.t_reason">
+        <div v-html="detail.t_reason"></div>
+      </div>
+      <!-- 驳回原因-->
+      <div class="pad10 font12 color666 bgcolorfff border_b" v-if="detail.tui_status==3 && detail.b_reason">
+        <div v-html="detail.b_reason"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var token=localStorage.getItem("user_token");
+  if(Getvariable('token')){
+    token=Getvariable('token');
+  }
+
+  var vm = new Vue({
+    el: '#app',
+    data: {
+      path_img:path_img,
+      pid: "",
+      detail: {},
+      oprate: true
+    },
+    created:function(){
+      //初始加载
+      pre_loading(0);
+
+      if (!Getvariable("pid")) {
+        pre_loading(404, "订单信息错误，请重新打开");
+      }else {
+        this.pid = Getvariable("pid");
+
+        hui.post(
+          path_inter+'/parents/Educational/getOrderDetail',
+          {
+            token: token, oid: this.pid
+          },
+          function(data){
+            data = JSON.parse(data);
+            pre_loading(100);
+            if (user_overdue(data.code,data.msg)) {
+              vm.detail = data.data;
+
+              if (vm.detail.t_reason && vm.detail.t_reason != '') {
+                vm.detail.t_reason = "<span class='colorzt'>退款理由：</span>" + vm.detail.t_reason;
+              }
+              if (vm.detail.b_reason && vm.detail.b_reason != '') {
+                vm.detail.b_reason = "<span class='colorzt'>驳回原因：</span>" + vm.detail.b_reason;
+              }
+            }
+          },
+          function(){
+            //error
+            pre_loading(1);
+          }
+        );
+      }
+    },
+    methods:{
+      gojigoucoursedet:function(){
+        appJigouCourseDet(vm.detail.ec_id);
+      },
+      cancel: function (elem) {
+        if (!vm.oprate) {
+          return false;
+        }
+
+        //取消订单
+        hui.confirm('确认取消?','',function(){
+          vm.oprate = false;
+          hui.post(
+            path_inter+'/parents/Educational/cancelOrder',
+            {
+              token:token, oid: elem.oid
+            },
+            function(res){
+              vm.oprate = true;
+              res = JSON.parse(res);
+              if (user_overdue(res.code,res.msg)) {
+                if (res.code == 1) {
+                  elem.status = 4;
+                  hui.toast("订单已取消");
+                }
+              }
+            },
+            function(){
+              //error
+              vm.oprate = true;
+              hui.toast("订单取消失败");
+            }
+          );
+        },function(){
+
+        });
+      },
+      go_pay: function () {
+        //支付订单
+        appPayJigou(vm.detail.order_sn,vm.detail.o_time,vm.detail.usertype_name,vm.detail.total_money,vm.detail.title,2,vm.detail.subject,vm.detail.class_num);
+      },
+      apply_after: function (elem) {
+        //申请售后
+        location.href ="my_coursejigou_applyservice.html?hasback=false&pid=" + elem.oid;
+      },
+      go_complete: function (elem) {
+        if (!vm.oprate) {
+          return false;
+        }
+
+        //确认完成
+        hui.confirm('确认完成?','',function(){
+          vm.oprate = false;
+          hui.post(
+            path_inter+'/parents/Educational/finishOrder',
+            {
+              token:token,oid:elem.oid
+            },
+            function(res){
+              vm.oprate = true;
+              res = JSON.parse(res);
+              if (user_overdue(res.code,res.msg)) {
+                if (res.code == 1) {
+                  elem.status = 3;
+                  hui.toast("订单已完成");
+                }
+              }
+            },
+            function(){
+              //error
+              vm.oprate = true;
+              hui.toast("订单完成失败");
+            }
+          );
+        });
+      },
+      apply_evalua: function (elem) {
+        //评价
+        appgotoPingjiaCourse(1,elem.oid,elem.order_sn);
+      }
+    }
+  });
+</script>
+</body>
+</html>
+
+

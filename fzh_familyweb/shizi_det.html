@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <!-- 机构师资 托管师资都走这个页-->
+  <title></title>
+  <script src="js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="css/ku/hui.css">
+  <link rel="stylesheet" href="css/ku/weui.min.css">
+  <link rel="stylesheet" href="css/ku/jquery-weui.min.css">
+  <link rel="stylesheet" href="css/ku/style.css">
+  <script src="js/ku/hui.js"></script>
+  <script src="js/ku/template-web.js"></script>
+  <script src="js/ku/jquery-1.12.4.min.js"></script>
+  <script src="js/ku/jquery-weui.js"></script>
+  <script src="js/ku/swiper_jqueryweui.js"></script>
+</head>
+<body ontouchstart>
+
+<div class="content_box pad_wei">
+  <div class="content_scroll">
+    <!--内容开始-->
+    <div id="contain"></div>
+    <!--内容end-->
+  </div>
+</div>
+
+<!--shuju.icon需要判断下，有的有，有的没有（不是会员的就是空字符串）-->
+<script type="text/html" id="tpl">
+
+  <div class="pad_t20 pad_b20 bgcolorfff">
+    <div class="txt_center">
+      <%if(shuju.small_teacher_list.img.indexOf('http')==-1){%>
+      <img src="<%=path_img+shuju.small_teacher_list.img%>" alt="" style="width: 116px;height: 116px" class="border_radius50">
+      <%}else{%>
+      <img src="<%=shuju.small_teacher_list.img%>" alt="" style="width: 116px;height: 116px" class="border_radius50">
+      <%}%>
+    </div>
+    <div class="font16 color333 txt_center mar_t10"><%=shuju.small_teacher_list.name%></div>
+    <div class="font13 color999 txt_center"><%=shuju.small_teacher_list.desc%></div>
+  </div>
+
+  <div class="font14 color333 mar_t5 bgcolorfff pad10"><%-shuju.small_teacher_list.content%></div>
+
+
+
+  <!-- 底部固定 start-->
+  <div class="footer">
+    <div class="tableblock h100">
+      <div class="col-xs-8">
+        <div class="pad_l10">
+          <div class="inblock" onclick="zixun()">
+            <img src="img/twoqi/contact.png" alt="" height="20" class="inblock">
+            <span class="font14 colorzt inblock">咨询</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-4 font16 colorfff bgcolorzt txt_center" onclick="botelfun()">
+        <img src="img/twoqi/jigou_tel.png" class="inblock" height="15" alt="">
+        <span class="inblock">联系机构</span>
+      </div>
+    </div>
+  </div>
+  <!-- 底部固定 end-->
+</script>
+
+
+
+
+
+
+
+
+<script>
+  var token=localStorage.getItem('user_token');
+
+  if(Getvariable('token')){
+    token=Getvariable('token');
+  }
+
+  var flag;
+  if(Getvariable('flag')==1){
+    flag=1;
+    document.title='机构师资';
+  }else if(Getvariable('flag')==2){
+    flag=2;
+    document.title='托管师资';
+  }
+
+  var data={
+    path_img: path_img,
+    shuju: {},
+    oprate:true
+  };
+  function renderhtml(){
+    document.getElementById('contain').innerHTML=template('tpl', data);
+  }
+
+
+
+
+  //初始加载
+  pre_loading(0);
+  var pid,tid;
+
+  //页面参数
+  if (!Getvariable('pid') || !Getvariable('tid')) {
+    pre_loading(3);
+  }else{
+    pid = Getvariable('pid');//机构/托管 id
+    tid=Getvariable('tid');//机构/托管 老师id
+    if(flag==1){
+      //机构
+      $.ajax({
+        url:path_inter+"parents/Educational/smallTeacherDetail",
+        dataType:'json',
+        type:'post',
+        data:{token: token, st_id: pid,teacher_id:tid},
+        success:function(res){
+          pre_loading(100);
+          if (user_overdue(res.code,res.msg)) {
+            data.shuju = res.data;
+            renderhtml();
+            iscollect(pid, res.data.collection);
+          }
+        },
+        error:function(){
+          pre_loading(1);
+        }
+      });
+    }else if(flag==2){
+      //托管
+      $.ajax({
+        url:path_inter+"parents/managed/smallTeacherDetail",
+        dataType:'json',
+        type:'post',
+        data:{token: token, st_id: pid,teacher_id:tid},
+        success:function(res){
+          pre_loading(100);
+          if (user_overdue(res.code,res.msg)) {
+            data.shuju = res.data;
+            renderhtml();
+            iscollect(pid, res.data.collection);
+          }
+        },
+        error:function(){
+          pre_loading(1);
+        }
+      });
+    }
+  }
+
+
+
+  function zixun(){
+    app_contact(data.shuju.accid);
+  }
+  function botelfun(){
+    app_contact2(data.shuju.s_phone);
+  }
+
+
+
+
+
+</script>
+</body>
+</html>

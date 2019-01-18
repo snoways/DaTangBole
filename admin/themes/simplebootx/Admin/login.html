@@ -1,0 +1,98 @@
+<!doctype html>
+<html style="width: 100%;height: 100%">
+	<head>
+		<meta charset="UTF-8" />
+		<title>大唐伯乐 {:L('ADMIN_CENTER')}</title>
+		<meta http-equiv="X-UA-Compatible" content="chrome=1,IE=edge" />
+		<meta name="renderer" content="webkit|ie-comp|ie-stand">
+		<meta name="robots" content="noindex,nofollow">
+		<link href="__TMPL__Public/assets/css/admin_login.css" rel="stylesheet" />
+		<style>
+			body{background: url(__PUBLIC__/images/adminloginbg.jpg) no-repeat;background-size:cover;}
+			button,input{ -webkit-appearance:none;border-radius:0;color: #333;outline: none;border:none;}
+			input::-webkit-input-placeholder{font-family:'microsoft yahei','simhei','sans-serif';color: #666;}
+			.marok:before,.marok:after{content: '';display: table;}
+			.loginWrap{width: 350px;height: 400px;background: rgba(255,255,255,0.5);margin: 200px auto 0 auto}
+			.loginWrap h1{padding: 20px;text-align: center}
+			.table{display: table;width: 100%}
+			.tablec{display: table-cell;vertical-align: middle}
+			.baoguo{padding:0 20px;}
+			.baoguo .table{background: #fff;border-radius: 4px;height: 40px;margin-bottom: 10px;}
+			.baoguo .table .text{width: 80px;padding-left: 10px;color:#666}
+			.baoguo .table .inputs{padding-right: 10px;}
+			.baoguo .table input{width: 100%;font-size: 14px;}
+			.baoguo .table .yzmimg{width: 95px;}
+			.baoguo .table .yzmimg .verify_img{width: 100%;position: relative;top: 2px;}/*生成的二维码图片*/
+			.baoguo .loginbtn{margin-top: 50px;position: relative}
+			.baoguo .loginbtn button{width: 100%;background: linear-gradient(#5DA7D2,#4592C3);font-size: 16px;color:#fff;text-align: center;border-radius: 4px;font-family: 'microsoft yahei';padding: 10px 0;cursor: pointer}
+			.baoguo .tip{font-size: 12px;color:#fff;margin-top: 7px;text-align: center;}
+
+
+			.loginbtn{
+				text-align: center;
+			}
+			.loginbtn .tips_success{
+				color:blue;
+			}
+			.loginbtn .tips_error{
+				color:red;
+			}
+			.loginbtn button:focus{outline:none;}
+		</style>
+		<script>
+			if (window.parent !== window.self) {
+					document.write = '';
+					window.parent.location.href = window.self.location.href;
+					setTimeout(function () {
+							document.body.innerHTML = '';
+					}, 0);
+			}
+		</script>
+		
+	</head>
+<body style="width: 100%;height: 100%" class="marok">
+	<div class="loginWrap">
+		<h1><img style="width: 70px;" src="__PUBLIC__/images/logo.png" alt=""/></h1>
+		<form method="post" name="login" action="{:U('public/dologin')}" autoComplete="off" class="js-ajax-form">
+			<div class="baoguo">
+				<div class="table">
+					<div class="tablec text">用户名</div>
+					<div class="tablec inputs"><input class="input" id="js-admin-name" name="username" type="text" placeholder="{:L('USERNAME_OR_EMAIL')}" title="{:L('USERNAME_OR_EMAIL')}" value="{:cookie('admin_username')}" data-rule-required="true"  data-msg-required=""/></div>
+				</div>
+				<div class="table">
+					<div class="tablec text">密码</div>
+					<div class="tablec inputs"><input class="input" id="admin_pwd" type="password" name="password" placeholder="{:L('PASSWORD')}" title="{:L('PASSWORD')}" data-rule-required="true"  data-msg-required=""/></div>
+				</div>
+				<div class="table">
+					<div class="tablec text">验证码</div>
+					<div class="tablec inputs"><input class="input" type="text" name="verify" placeholder="{:L('ENTER_VERIFY_CODE')}" /></div>
+					<div class="tablec yzmimg">{:sp_verifycode_img('length=4&font_size=20&width=150&height=60&use_noise=1&use_curve=0','style="cursor: pointer;" title="点击获取"')}</div>
+				</div>
+				<div class="loginbtn">
+					<button type="submit" name="submit" class="btn js-ajax-submit" data-loadingmsg="{:L('LOADING')}">{:L('LOGIN')}</button>
+				</div>
+				<div class="tip" style="color: #0f1217">请用高版本浏览器使用此后台</div>
+				<!--{:sp_verifycode_img('length=4&font_size=20&width=160&height=42&use_noise=1&use_curve=0','style="cursor: pointer;" title="点击获取"')}-->
+			</div>
+		</form>
+	</div>
+<script>
+var GV = {
+    ROOT: "__ROOT__/",
+    WEB_ROOT: "__WEB_ROOT__/",
+    JS_ROOT: "public/js/"
+};
+</script>
+<script src="__PUBLIC__/js/wind.js"></script>
+<script src="__PUBLIC__/js/jquery.js"></script>
+<script src="__PUBLIC__/layer/layer.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/common.js"></script>
+<script>
+;(function(){
+	document.getElementById('js-admin-name').focus();
+})();
+</script>
+</body>
+</html>
+
+

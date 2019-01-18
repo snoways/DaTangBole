@@ -1,0 +1,133 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="__CONTROLLER__/index">视频列表</a></li>
+			<li><a href="__CONTROLLER__/add">添加视频</a></li>
+		</ul>
+		<form class="well form-search" id="formurl" method="post" action="{:U('Video/index')}">
+			关键字：
+			<input type="text" name="keyword" style="width: 250px;" value="{:I('request.keyword')}" placeholder="请输入标题关键字">
+			<input type="submit" class="btn btn-primary" onclick="return search();" value="搜索" />
+			<a class="btn btn-danger" href="{:U('Video/index')}">清空</a>
+		</form>
+		<form method="post" class="js-ajax-form" action="{:U('Video/sort')}">
+			<button class="sort btn btn-small btn-primary"> 排序 </button>
+			<table class="table table-hover table-bordered">
+				<thead>
+					<tr>
+						<th align="center">序号</th>
+						<th align="center">ID</th>
+						<th>标题</th>
+						<th>缩略图</th>
+						<th>视频</th>
+						<th>副标题</th>
+						<th>分类</th>
+						<th width="50">状态</th>
+						<th width="50">被举报次数</th>
+						<th>添加时间</th>
+						<th align="center">{:L('ACTIONS')}</th>
+					</tr>
+				</thead>
+				<tbody>
+					<foreach name="list" key="k" item="vo">
+					<tr>
+						<td align="center">
+							<input type="text" class="small" name="sort[]" value="{$vo['sort']}" style="max-width: 40px;text-align: center">
+							<input type="hidden" name="id[]" value="{$vo['id']}">
+						</td>
+						<td align="center">{$k+1}</td>
+						<td>{$vo['title']}</td>
+						<td><img style="max-width: 150px; max-height: 100px; width: 150px; height: 100px;" src="{$vo.img_url}" /></td>
+						<td>
+							<if condition="$vo['video_url'] neq null">
+								<video width="320" height="240" controls>
+									<source src="{$vo.video_url}" type="video/mp4">
+									您的浏览器不支持 video 标签。
+								</video>
+							</if>
+						</td>
+						<td><div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: 250px;">{$vo['subtitle']}</div></td>
+						<td>{$vo['category_name']}</td>
+						<td>
+							<if condition="$vo['status'] eq 1">
+								<a href="javascript:;" data-id="{$vo['id']}" class="status1"><i class="fa fa-check"></i></a>
+							<else />
+								<a href="javascript:;" data-id="{$vo['id']}" class="status12"><i class="fa fa-close"></i></a>
+							</if>
+
+						</td>
+						<td>{$vo['report_num']}</td>
+						<td>{$vo['add_time']}</td>
+						<td align="center">
+							<a href="__CONTROLLER__/edit/id/{$vo['id']}">编辑</a>
+							<a href="javascript:;" data-id="{$vo['id']}" class="del">删除</a>
+						</td>
+					</tr>
+					</foreach>
+				</tbody>
+			</table>
+			<div class="pagination">{$page}</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+	<script src="http://cdn.bootcss.com/jquery/1.12.3/jquery.min.js"></script>
+	<script>
+        $(".del").click(function () {
+            var id = $(this).attr('data-id');
+            layer.confirm('您确定要删除该视频吗?', {icon: 3, title:'提示'}, function(index){
+
+                $.post("__CONTROLLER__/del",
+                    {"id":id},
+                    function(json){
+                    	var data = JSON.parse(json);
+                    	if (data.code==1){
+                            window.location.reload();
+						}else{
+                    	    layer.alert(data.msg);
+						}
+
+                    },"text");
+                layer.close(index);
+            });
+        })
+
+        $(".status1").click(function () {
+            var id = $(this).attr('data-id');
+            layer.confirm('您确定要下架该视频吗?', {icon: 3, title:'提示'}, function(index){
+
+                $.post("__CONTROLLER__/status",
+                    {'id':id, 'status':1},
+                    function(json){
+                        var data = JSON.parse(json);
+                        if (data.code==1){
+                            window.location.reload();
+                        }else{
+                            layer.alert(data.msg);
+                        }
+                    },"text");
+                layer.close(index);
+            });
+        })
+
+        $(".status12").click(function () {
+            var id = $(this).attr('data-id');
+            layer.confirm('您确定要上架该视频吗?', {icon: 3, title:'提示'}, function(index){
+
+                $.post("__CONTROLLER__/status",
+                    {'id':id, 'status':2},
+                    function(json){
+                        var data = JSON.parse(json);
+                        if (data.code==1){
+                            window.location.reload();
+                        }else{
+                            layer.alert(data.msg);
+                        }
+                    },"text");
+                layer.close(index);
+            });
+        })
+	</script>
+</body>
+</html>

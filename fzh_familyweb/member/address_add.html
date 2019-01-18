@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>地址编辑</title>
+  <script src="../js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="../css/ku/hui.css">
+  <link rel="stylesheet" href="../css/ku/weui.min.css">
+  <link rel="stylesheet" href="../css/ku/jquery-weui.min.css">
+  <link rel="stylesheet" href="../css/ku/style.css">
+  <script src="../js/ku/hui.js"></script>
+  <script src="../js/ku/template-web.js"></script>
+  <script src="../js/ku/jquery-1.12.4.min.js"></script>
+  <script src="../js/ku/jquery-weui.js"></script>
+  <script src="../js/ku/city-picker.js"></script>
+</head>
+<body>
+
+<div class="content_box bgcolorf3f3">
+  <div class="content_scroll">
+
+    <div id="contain"></div>
+    <script type="text/html" id="tpl">
+      <div class="pad_l10 pad_r10 bgcolorfff font14">
+        <div class="border_b">
+          <input type="text" value="<%=address.name%>" id="username" placeholder="姓名" class="L_g_wrap pad10 otherinput">
+        </div>
+        <div class="border_b">
+          <input type="number" value="<%=address.tel%>" id="phone" placeholder="手机号码" class="L_g_wrap pad10 otherinput">
+        </div>
+        <div class="border_b">
+          <input type="text" id="shengshiqu" value="<%=address.add_city%>" placeholder="省、市、区" class="L_g_wrap pad10">
+        </div>
+        <div class="border_b">
+          <input type="text" id="address1" value="<%=address.addr_detail%>" placeholder="详细地址" class="L_g_wrap pad10 otherinput">
+        </div>
+        <div>
+          <input type="text" id="address2" value="<%=address.addr_other%>" placeholder="门牌号_单_室" class="L_g_wrap pad10 otherinput">
+        </div>
+      </div>
+    </script>
+
+    <div class="pad10 mar_t10 mar_b10">
+      <a href="javascript:;" onclick="submit_add()"
+         class="block pad10 txt_center bgcolorzt border_radiu20 colorfff font14">
+        保存
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  var token=localStorage.getItem("user_token");
+
+  if(Getvariable('token')){
+    token=Getvariable('token');
+  }
+
+  var data={
+    pid: "",
+    edit: false,
+    oprate: true,
+    address: {name: "", tel: "", add_city: "", addr_detail: "", pa: "", pb: "", pc: "", addr_other: ""},
+    edit_infor: {}
+  };
+  function renderhtml(){
+    document.getElementById('contain').innerHTML=template('tpl', data);
+  }
+
+  //初始加载
+  pre_loading(0);
+
+  if (Getvariable("pid")) {
+    //地址修改
+    data.edit = true;
+    var str = Getvariable("pid");
+    if (localStorage.getItem(str)) {
+      str = JSON.parse(localStorage.getItem(str));
+    }
+    data.edit_infor = str;
+
+    data.address.name = data.edit_infor.name;
+    data.address.tel = data.edit_infor.tel;
+    data.address.add_city = data.edit_infor.province + " " + data.edit_infor.city + " " + data.edit_infor.area;
+    data.address.pa = data.edit_infor.province;
+    data.address.pb = data.edit_infor.city;
+    data.address.pc = data.edit_infor.area;
+
+    if (data.edit_infor.province || data.edit_infor.city || data.edit_infor.area) {
+      console.log(data.address.add_city)
+    }
+    else {
+      data.address.add_city = "";
+    }
+    data.address.addr_detail = data.edit_infor.address;
+    data.address.addr_other = data.edit_infor.other;
+  }
+
+  renderhtml();
+  pre_loading(100);
+
+  $('#shengshiqu').click(function(){
+    //让其他的失去焦点 防止点击省市区的时候，其他的input还处于焦点状态
+    $('.otherinput').blur();
+  });
+  $("#shengshiqu").cityPicker({
+    title: "省、市、区",
+    onChange: function (picker, values, displayValues) {
+      console.log(values, displayValues);
+
+      for(var i=0;i<displayValues.length;i++){
+        if (i == 0) {
+          data.address.pa = displayValues[i];
+        }
+        else if (i == 1) {
+          data.address.pb = displayValues[i];
+        }
+        else if (i == 2) {
+          data.address.pc = displayValues[i];
+        }
+      }
+      data.address.add_city=displayValues[0]+' '+displayValues[1]+' '+displayValues[2];
+    }
+  });
+
+  function submit_add() {
+    //地址提交
+    if (!data.oprate) {
+      return false;
+    }
+
+    data.address.name=$('#username').val();
+    data.address.tel=$('#phone').val();
+    data.address.addr_detail=$('#address1').val();
+    data.address.addr_other=$('#address2').val();
+
+    if (data.address.name == "") {
+      $.toast("请添加联系人", "text");
+      return false;
+    }
+    if (data.address.tel == "") {
+      $.toast("请添加手机号", "text");
+      return false;
+    }
+    if (!/^1[3|4|5|6|7|8][0-9]\d{8}$/.test(data.address.tel)) {
+      $.toast("手机号不正确", "text");
+      return false;
+    }
+    if (data.address.add_city == "") {
+      $.toast("请选择地址", "text");
+      return false;
+    }
+    if (data.address.addr_detail == "") {
+      $.toast("请添加详细地址", "text");
+      return false;
+    }
+    if (data.address.addr_other == "") {
+      $.toast("请添加门牌号", "text");
+      return false;
+    }
+    data.oprate = false;
+
+    if (data.edit) {
+      //地址修改
+      $.ajax({
+        url: path_inter + "/parents/teacher/editAddress",
+        dataType: 'json',
+        type: 'post',
+        data: {
+          token: token,
+          a_id: data.edit_infor.a_id,
+          province: data.address.pa,
+          city: data.address.pb,
+          area: data.address.pc,
+          address: data.address.addr_detail,
+          name: data.address.name,
+          tel: data.address.tel,
+          other: data.address.addr_other
+        },
+        success: function (data) {
+          data.oprate = true;
+          if (user_overdue(data.code,data.msg)) {
+            if (data.code == 1) {
+              $.toast("修改成功", "text");
+//              history.replaceState(null,null,'member/address.html?&xz_addr=yes');
+              history.go(-1);
+            }
+          }
+        },
+        error: function () {
+          $.toast("修改失败", "text");
+          data.oprate = true;
+        }
+      });
+    }
+    else {
+      //地址新增
+      $.ajax({
+        url: path_inter + "/parents/teacher/addAddress",
+        dataType: 'json',
+        type: 'post',
+        data: {
+          token:token,
+          province: data.address.pa,
+          city: data.address.pb,
+          area: data.address.pc,
+          address: data.address.addr_detail,
+          name: data.address.name,
+          tel: data.address.tel,
+          other: data.address.addr_other
+        },
+        success: function (data) {
+          data.oprate = true;
+          if (user_overdue(data.code,data.msg)) {
+            if (data.code == 1) {
+              $.toast("添加成功", "text");
+//              history.replaceState(null,null,'member/address.html?&xz_addr=yes');
+              history.go(-1);
+            }
+          }
+        },
+        error: function () {
+          $.toast("添加失败", "text");
+          data.oprate = true;
+        }
+      });
+    }
+  }
+</script>
+</body>
+</html>

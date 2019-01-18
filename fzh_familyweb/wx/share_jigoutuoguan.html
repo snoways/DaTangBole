@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <title>我的分享</title>
+  <script src="../js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="../css/ku/hui.css">
+  <link rel="stylesheet" href="../css/ku/weui.min.css">
+  <link rel="stylesheet" href="../css/ku/jquery-weui.min.css">
+  <link rel="stylesheet" href="../css/ku/style.css">
+  <script src="../js/ku/hui.js"></script>
+  <script src="../js/ku/vue.min.js"></script>
+  <script src="../js/ku/jquery-1.12.4.min.js"></script>
+  <script src="../js/ku/jquery-weui.js"></script>
+  <script src="../js/ku/swiper_jqueryweui.js"></script>
+  <style>
+    .zz_icon{margin-right: 12px;}
+  </style>
+</head>
+<body>
+
+<div id="app" v-cloak>
+
+  <div class="content_box">
+    <div class="content_scroll bgcolorfff">
+
+      <div>
+        <img src="../img/shareqinzi/sharetitbg.png" class="block" alt="">
+      </div>
+
+      <div style="width: 18%;margin: 40px auto 0 auto;">
+        <div class="imgp border_all" style="padding-bottom: 100%">
+          <img :src="shuju.s_img" v-if="shuju.s_img && shuju.s_img.indexOf('http')!=-1" alt="">
+          <img :src="path_img+shuju.s_img" v-if="shuju.s_img && shuju.s_img.indexOf('http')==-1" alt="">
+        </div>
+      </div>
+
+      <div class="txt_center" style="width: 80%;margin: 20px auto 0 auto;">
+        <div class="font16 color333">{{shuju.s_name}}</div>
+        <div class="font13 color999 mar_t10">{{shuju.s_content}}</div>
+        <div class="font0 mar_t10 colorzt">
+          <span :class="[shuju.star>=1?'all':'',shuju.star>=0.5 && shuju.star<1?'half':'']" class="inblock star"></span>
+          <span :class="[shuju.star>=2?'all':'',shuju.star>=1.5 && shuju.star<2?'half':'']" class="inblock star"></span>
+          <span :class="[shuju.star>=3?'all':'',shuju.star>=2.5 && shuju.star<3?'half':'']" class="inblock star"></span>
+          <span :class="[shuju.star>=4?'all':'',shuju.star>=3.5 && shuju.star<4?'half':'']" class="inblock star"></span>
+          <span :class="[shuju.star>=5?'all':'',shuju.star>=4.5 && shuju.star<5?'half':'']" class="inblock star"></span>
+          <span class="inblock lineh_normal font12 mar_l5">{{shuju.star}}</span>
+        </div>
+        <div class="mar_t20 color999">
+          <span class="zz_icon inblock">身份认证</span>
+          <span class="zz_icon inblock">资质荣誉</span>
+          <span class="zz_icon inblock">健康证</span>
+        </div>
+        <div class="mar_t20 font12 color666">地址：{{shuju.address}}</div>
+      </div>
+
+      <div class="font13 color333 txt_center pad_t10" style="margin-top: 40px;">
+        <a href="javascript:;" id="download">浏览更多精彩分享 &gt;</a>
+      </div>
+
+      <div style="width: 88%;margin:40px auto 0 auto" class="pad_b20">
+        <div class="clear">
+          <div class="L col-xs-6">
+            <div class="pad_l10 pad_r10">
+              <div class="txt_center">
+                <div class="inblock" style="width: 80%">
+                  <div class="imgp padb100per">
+                    <img src="../img/alpha.png" id="iosimg" onclick="imginit(0)" alt="">
+                  </div>
+                </div>
+              </div>
+              <div class="txt_center mar_t10">
+                <a class="inblock font13 colorzt border_allzt border_radiu20 pad_t5 pad_b5 w100" href="#" id="ioslink">
+                  <img src="../img/shareqinzi/share_ios.png" alt="" style="width: 15px;height: 17px" class="mar_r5">
+                  <span class="inblock">IOS 客户端下载</span>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="L col-xs-6">
+            <div class="pad_l10 pad_r10">
+              <div class="txt_center">
+                <div class="inblock" style="width: 80%">
+                  <div class="imgp padb100per">
+                    <img src="../img/alpha.png" id="adrimg" onclick="imginit(1)" alt="">
+                  </div>
+                </div>
+              </div>
+              <div class="txt_center mar_t10">
+                <a class="inblock font13 colorzt border_allzt border_radiu20 pad_t5 pad_b5 w100" href="#" id="adrlink">
+                  <img src="../img/shareqinzi/share_adr.png" alt="" style="width: 15px;height: 17px" class="mar_r5">
+                  <span class="inblock">Andriod 客户端</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="txt_center color999 font12 pad_b10 mar_t20">请点击二维码放大后识别</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  pre_loading(0);
+
+  var pid;//机构/托管id
+  if(!Getvariable('pid')){
+    pre_loading(3);
+  }else{
+    pid=Getvariable('pid');
+    vueinit();
+  }
+
+  var vm;
+  function vueinit(){
+    vm = new Vue({
+      el: '#app',
+      data: {
+        path_img:path_img,
+        shuju:{}
+      },
+      methods:{
+
+      },
+      created:function(){
+        var that=this;
+        $.ajax({
+          url:path_inter+"parents/Share/getManagedDetail",
+          dataType:'json',
+          type:'post',
+          data:{
+            st_id: pid
+          },
+          success:function(res){
+            pre_loading(100);
+            if (user_overdue(res.code,res.msg)) {
+              vm.shuju = res.data;
+
+              that.$nextTick(function () {
+                pagedo();
+              });
+            }
+          },
+          error:function(){
+            pre_loading(1);
+          }
+        });
+      }
+    });
+  }
+
+
+  function pagedo(){
+    //确定下载链接
+    if(/android/i.test(navigator.userAgent)){
+      //安卓
+      $('#download').attr('href',familylink_adr);
+    }
+    if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)){
+      //苹果
+      $('#download').attr('href',familylink_ios);
+    }
+
+    $('#ioslink').attr('href',familylink_ios);
+    $('#adrlink').attr('href',familylink_adr);
+    $('#iosimg').attr('src',familyma_ios);
+    $('#adrimg').attr('src',familyma_adr);
+  }
+
+  function imginit(index){
+    var pb1 = $.photoBrowser({
+      items: [
+        $('#iosimg').attr('src'),
+        $('#adrimg').attr('src')
+      ],
+      initIndex:index
+    });
+    pb1.open();
+  }
+</script>
+
+</body>
+</html>

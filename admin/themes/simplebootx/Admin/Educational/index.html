@@ -1,0 +1,94 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="{:U('Educational/index')}">教育机构列表</a></li>
+			<li><a href="{:U('Educational/add')}">教育机构添加</a></li>
+		</ul>
+		<form class="well form-search" method="post" action="{:U('Educational/index')}">
+			审核状态：
+			<select name="s_status" style="width: 120px;">
+				<option value="0">全部</option>
+				<option value="1" <if condition="I('s_status') eq 1">selected</if> >未审核</option>
+				<option value="2" <if condition="I('s_status') eq 2">selected</if>>通过</option>
+				<option value="3" <if condition="I('s_status') eq 3">selected</if>>未通过</option>
+			</select>
+			推荐状态：
+			<select name="is_home" style="width: 120px;">
+				<option value="0">全部</option>
+				<option value="2" <if condition="I('is_home') eq 2">selected</if> >已推荐</option>
+			</select>
+			关键字：
+			<input type="text" name="keyword" style="width: 200px;" value="{:I('request.keyword')}" placeholder="名称/地址/描述/电话">
+			<input type="submit" class="btn btn-primary" value="搜索" />
+			<a class="btn btn-danger" href="{:U('Educational/index')}">清空</a>
+		</form>
+		<form method="post" class="js-ajax-form" action="{:U('Educational/sortSt')}">
+			<button class="sort btn btn-small btn-primary"> 排序 </button>
+			<table class="table table-hover table-bordered">
+				<thead>
+				<tr>
+					<th align="center" width="50">推荐排序</th>
+					<th width="50">ID</th>
+					<th width="100">图片</th>
+					<th width="150">地址</th>
+					<th width="120">名称</th>
+					<th width="120">电话</th>
+					<th width="120">描述</th>
+					<th width="50">会员等级</th>
+					<th width="50">推荐到首页</th>
+					<th width="50">审核状态</th>
+					<th width="120">操作</th>
+				</tr>
+				</thead>
+				<tbody>
+				<foreach name="list" key="k" item="vo">
+					<tr>
+						<td align="center">
+							<input type="text" class="small" name="sort[]" value="{$vo['sort']}" style="max-width: 40px;text-align: center">
+							<input type="hidden" name="id[]" value="{$vo['id']}">
+						</td>
+						<td>{$k+1}</td>
+						<td><img src="{$vo.s_img}" style="width: 40px;height: 40px"></td>
+						<td>{$vo.address}</td>
+						<td>{$vo.s_name}</td>
+						<td>{$vo.s_phone}</td>
+						<td>{$vo.s_content}</td>
+						<td>{$vo.level_name}</td>
+						<td>
+							<if condition="$vo['s_status'] eq 2">
+								<if condition="$vo['is_home'] eq 1">
+									<a href="{:U('Educational/recommend',array('id'=>$vo['id'], 'is_home'=>2))}" class="js-ajax-dialog-btn">推荐到首页</a>
+									<else />
+									<a href="{:U('Educational/recommend',array('id'=>$vo['id'], 'is_home'=>1))}" class="js-ajax-dialog-btn">取消推荐</a>
+								</if>
+							</if>
+						</td>
+						<td>{$vo['s_status']==1?'未审核':($vo['s_status']==2?'通过':($vo['s_status']==3?'未通过':'未上传认证资质'))}</td>
+						<td>
+							<!--<a href="{:U('Educational/img_add',array('id'=>$vo['id']))}">添加/修改图集</a>	|-->
+							<!--<a href="{:U('Educational/sort',array('id'=>$vo['id']))}">图集排序</a>	|-->
+							<if condition="$vo['status'] eq 1">
+								<a href="{:U('Smalltable/ban',array('id'=>$vo['id'],'status'=>2,'type'=>1))}" class="js-ajax-delete" data-msg="您确定要冻结该机构吗">冻结</a>	|
+								<else/>
+								<a href="{:U('Smalltable/ban',array('id'=>$vo['id'],'status'=>1,'type'=>1))}" class="js-ajax-delete" data-msg="您确定要解冻该机构吗">解冻</a>	|
+							</if>
+							<if condition="$vo['s_status'] eq 1">
+								<a href="{:U('Educational/review',array('id'=>$vo['id']))}">审核</a>	|
+							</if>
+							<a href="{:U('Educational/star',array('id'=>$vo['id']))}">评价</a>	|
+							<a href="{:U('Educational/imglist',array('id'=>$vo['id']))}">图集管理</a>	|
+							<a href="{:U('Educational/edit',array('id'=>$vo['id']))}">编辑</a>	|
+							<a href="{:U('Educational/delete',array('id'=>$vo['id']))}" class="js-ajax-delete">{:L('DELETE')}</a>
+						</td>
+					</tr>
+				</foreach>
+				</tbody>
+			</table>
+			<div class="pagination">{$page}</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

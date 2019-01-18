@@ -1,0 +1,36 @@
+<admintpl file="header" />
+<style>
+    .controls input[type='radio']{
+        margin-right: 32px;
+        display: inline-block;
+        margin-top: 0px;
+    }
+</style>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('Circle/report_reason')}">列表</a></li>
+        <li class="active"><a href="#">编辑</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form" action="{:U('Circle/edit_report_reason')}">
+        <fieldset>
+            <div id="content">
+                <div class="control-group">
+                    <label class="control-label">标题</label>
+                    <div class="controls">
+                        <input type="hidden" name="id" value="{$data['id']}" />
+                        <input type="text" name="title" value="{$data['title']}" required/>*
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary js-ajax-submit">{:L('EDIT')}</button>
+            <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

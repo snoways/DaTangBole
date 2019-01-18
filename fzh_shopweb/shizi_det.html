@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title>师资介绍</title>
+		<script type="text/javascript" src="js/com.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/stylea.css">
+		<link rel="stylesheet" type="text/css" href="css/weui.min.css">
+		<link rel="stylesheet" type="text/css" href="css/jquery-weui.css">
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery-weui.js"></script>
+		<script type="text/javascript" src="js/template-native.js"></script>
+	</head>
+	<body >
+
+		<div ontouchstart class="content_box">
+			<div class="content_scroll">
+				<div id="box"></div>
+			</div>
+		</div>
+
+		<script type="text/html" id="tpl">
+			<div class="bgcolorfff rela" style="padding: 20px 0">
+				<%if(shuju.top==1){%>
+				<span class="abso font14 colorfff wrem6 txt_center border_radiu4" style="z-index: 2;top: 10px;right: 10px;background: #ff9453;padding: 3px 0;" onclick="zhiding()">置顶</span>
+				<%}else if(shuju.top==2){%>
+				<span class="abso font14 colorfff wrem6 txt_center border_radiu4" style="z-index: 2;top: 10px;right: 10px;background: #ff6000;padding: 3px 0;" onclick="cancelzhiding()">取消置顶</span>
+				<%}%>
+				<div style="width: 30%;margin: 0 auto">
+					<div class="imgp" style="padding-bottom: 100%">
+						<%if(shuju.img.indexOf('http')==-1){%>
+						<img src="<%=path_img+shuju.img%>" class="border_radius50" alt="">
+						<%}else{%>
+						<img src="<%=shuju.img%>" class="border_radius50" alt="">
+						<%}%>
+					</div>
+				</div>
+				<div class="mar_t10 pad_t5 font16 color333 txt_center"><%=shuju.name%></div>
+				<div class="font14 color999 txt_center"><%=shuju.desc%></div>
+			</div>
+			<div class="mar_t5 bgcolorfff pad10 font14 color666">
+				<%-shuju.content%>
+			</div>
+		</script>
+
+		<script type="text/javascript">
+			var token=localStorage.getItem('user_token');
+
+			if(Getvariable('token')){
+				token=Getvariable('token');
+			}
+
+			var id;
+			if(!Getvariable('pid')){
+				$.toast('少参数pid','text');
+				pre_loading(3);
+			}else{
+				id = Getvariable('pid');
+				init();
+			}
+
+			var data = {
+				path_img:path_img,
+				shuju:{},
+				oprate:true
+			};
+			function renderhtml() {
+				document.getElementById('box').innerHTML = template('tpl',data);
+			}
+
+			function init(){
+				pre_loading(0);
+				$.ajax({
+					url:path_inter+"ManagedClient/teacher/getDetail",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						teacher_id:id
+					},
+					success:function(res){
+						if(user_overdue(res)){
+							pre_loading(100);
+							data.shuju=res.data;
+							renderhtml();
+						}
+					},
+					error:function(){
+						$.toast('获取数据失败','text');
+					}
+				});
+			}
+
+			function zhiding(){
+				if(!data.oprate){
+					return false;
+				}
+
+				data.oprate=false;
+				//置顶
+				$.ajax({
+					url:path_inter+"ManagedClient/teacher/recommend",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						teacher_id:data.shuju.teacher_id,
+						top:2
+					},
+					success:function(res){
+						data.oprate=true;
+						if(user_overdue(res)){
+							pre_loading(100);
+							data.shuju.top=2;
+							renderhtml();
+						}
+					},
+					error:function(){
+						data.oprate=true;
+						$.toast('获取数据失败','text');
+					}
+				});
+			}
+			function cancelzhiding(el,i){
+				if(!data.oprate){
+					return false;
+				}
+				data.oprate=false;
+				//取消置顶
+				$.ajax({
+					url:path_inter+"ManagedClient/teacher/recommend",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						teacher_id:data.shuju.teacher_id,
+						top:1
+					},
+					success:function(res){
+						data.oprate=true;
+						if(user_overdue(res)){
+							pre_loading(100);
+							data.shuju.top=1;
+							renderhtml();
+						}
+					},
+					error:function(){
+						data.oprate=true;
+						$.toast('获取数据失败','text');
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

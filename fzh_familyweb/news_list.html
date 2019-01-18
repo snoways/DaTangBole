@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title>新闻资讯</title>
+		<script src="js/ku/common_nojq.js"></script>
+		<link rel="stylesheet" href="css/ku/hui.css">
+		<link rel="stylesheet" href="css/ku/style.css">
+		<script src="js/ku/hui.js"></script>
+		<script src="js/ku/jquery-1.12.4.min.js"></script>
+		<script src="js/ku/jquery-weui.js"></script>
+		<script src="js/ku/template-web.js"></script>
+	</head>
+	<body>
+
+		<!-- 新闻跳到 news_detail 公告跳到gonggao_detail-->
+		<!--tab-->
+		<div id="containtab"></div>
+		<script type="text/html" id="tpltab">
+			<div class="header border_b txt_center font14 bgcolorfff color666">
+				<div class="tableblock">
+					<%for(var i=0;i<order_tab.length;i++){%>
+					<%var el=order_tab[i];%>
+					<div class="pad_l5 pad_r5 tab_b <%=tab_index==i?'colorzt cur':''%>">
+						<a href="javascript:;" onclick="tab_click(<%=i%>)" class="block pad_t2 b font14"><%=el%></a>
+					</div>
+					<%}%>
+				</div>
+			</div>
+			<div class="header2" style="height: 2.8125rem;top: 2.8125rem;">
+				<div class="tableblock bgcolorfff h100">
+					<div class="pad_l10 pad_r10">
+						<div class="search1 bgcolorfff">
+							<div class="border_radiu4 bgcoloreee">
+								<div class="tableblock pad_t5 pad_b5">
+									<div class="font14 colorccc pad_l10">
+										<input id="keywordzhi" type="text" placeholder="输入关键词搜索" width="100%" />
+									</div>
+									<div class="font14 color666 wrem3 txt_center" style="border-left: 1px solid #dcdcdc;">
+										<div onclick="searchfun()" class="block">
+											<img src="img/search.png" width="18">
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</script>
+
+		<!--新闻-->
+		<div class="content_box bgcolorf3f3" style="display: none;" id="tabcontent1">
+			<div class="content_scroll bgcolorfff" style="padding-top: 5.625rem">
+				<div id="contain1"></div>
+			</div>
+		</div>
+		<script type="text/html" id="tpl1">
+			<!--没有信息提示-->
+			<%if(list[0].length==0){%>
+			<div class="L_notice">暂无新闻~</div>
+			<%}%>
+			<!--内容开始-->
+			<ul class="pad_b10">
+				<%for(var i=0;i<list[0].length;i++){%>
+				<%var el=list[0][i];%>
+				<li class="pad_l10 pad_r10">
+					<a href="<%=el.href%>" class="tableblock border_b pad_t10 pad_b10">
+						<div class="wrem7 font14 color999"><i><%=el.daydate%></i></div>
+						<div>
+							<div class="pad_l5 txt_oneline b font14"><%=el.news_title%></div>
+						</div>
+					</a>
+				</li>
+				<%}%>
+			</ul>
+		</script>
+
+		<!--公告-->
+		<div class="content_box bgcolorf3f3" style="display: none" id="tabcontent2">
+			<div class="content_scroll bgcolorfff" style="padding-top: 5.625rem">
+				<div id="contain2"></div>
+			</div>
+		</div>
+		<script type="text/html" id="tpl2">
+			<!--没有信息提示-->
+			<%if(list[1].length==0){%>
+			<div class="L_notice">暂无公告~</div>
+			<%}%>
+			<!--内容开始-->
+			<ul class="pad_b10">
+				<%for(var i=0;i<list[1].length;i++){%>
+				<%var el=list[1][i];%>
+				<li class="pad_l10 pad_r10">
+					<a href="<%=el.href%>" class="tableblock border_b pad_t10 pad_b10">
+						<div class="wrem7 font14 color999"><i><%=el.daydate%></i></div>
+						<div>
+							<div class="pad_l5 txt_oneline b font14"><%=el.news_title%></div>
+						</div>
+					</a>
+				</li>
+				<%}%>
+			</ul>
+		</script>
+
+
+		<script>
+			//初始加载
+			pre_loading(0);
+
+			var token=localStorage.getItem("user_token");
+
+			if(Getvariable('token')){
+				token=Getvariable('token');
+			}
+
+			var data={
+				order_tab:["新闻资讯","平台公告"],
+				tab_index:0,
+				score:[1,2,3,4,5],
+				list:[[], []],
+				oprate:true,
+				loading:[false,false],
+				page:[1,1]
+			};
+			function rendertab(){
+				document.getElementById('containtab').innerHTML=template('tpltab', data);
+			}
+			function rendercontain1(){
+				document.getElementById('contain1').innerHTML=template('tpl1', data);
+			}
+			function rendercontain2(){
+				document.getElementById('contain2').innerHTML=template('tpl2', data);
+			}
+
+			//pid 确定当前tab是新闻还是公告
+			if(Getvariable("pid")){
+				data.tab_index=Getvariable("pid");
+				rendertab();
+				if(data.tab_index==0){
+					$('#tabcontent1').show();
+				}else if(data.tab_index==1){
+					$('#tabcontent2').show();
+				}
+			}else{
+				//不携带tab参数，默认是新闻
+				$('#tabcontent1').show();
+			}
+			rendertab();
+
+			function gettab1data(){
+				data.page[0]=1;
+				//请求新闻资讯
+				$.ajax({
+					url:path_inter+"/parents/home/newsList",
+					dataType:'json',
+					type:'post',
+					data:{token:token,page:data.page[0]},
+					success:function(res){
+						pre_loading(100);
+						if(user_overdue(res.code,res.msg))
+						{
+							for(var i=0;i<res.data.length;i++){
+								res.data[i].href="news_detail.html?pid="+res.data[i].news_id;
+								res.data[i].daydate=res.data[i].news_time.split(" ")[0];
+							}
+							data.list[0]=res.data;
+							if(data.list[0].length==0){
+								$('#tabcontent1').addClass('no_scroll');
+							}
+							rendercontain1();
+						}
+					},
+					error:function(){
+						pre_loading(1);
+					}
+				});
+			}
+			function gettab2data(){
+				data.page[1]=1;
+				//请求公告
+				$.ajax({
+					url:path_inter+"/parents/home/activityList",
+					dataType:'json',
+					type:'post',
+					data:{token:token,page:data.page[1]},
+					success:function(res){
+						pre_loading(100);
+						if(user_overdue(res.code,res.msg))
+						{
+							for(var i=0;i<res.data.length;i++){
+								res.data[i].href="gonggao_detail.html?pid="+res.data[i].news_id;
+								res.data[i].daydate=res.data[i].news_time.split(" ")[0];
+							}
+							data.list[1]=res.data;
+							if(data.list[1].length==0){
+								$('#tabcontent2').addClass('no_scroll');
+							}
+							rendercontain2();
+						}
+					},
+					error:function(){
+						pre_loading(1);
+					}
+				});
+			}
+			gettab1data();
+
+			//点击tab
+			function tab_click(index){
+				if(!data.oprate)
+				{
+					return false;
+				}
+				if(index!=data.tab_index)
+				{
+					data.tab_index=index;
+					if(data.tab_index==0){
+						$('#tabcontent1').show();
+						$('#tabcontent2').hide();
+						gettab1data();
+					}else if(data.tab_index==1){
+						$('#tabcontent1').hide();
+						$('#tabcontent2').show();
+						gettab2data();
+					}
+					rendertab();
+				}
+			}
+
+			function searchfun(){
+				//搜索
+				var keyword=$('#keywordzhi').val();
+				if(keyword==''){
+					$.toast('请输入关键词搜索','text');
+					return false;
+				}
+
+				if(data.tab_index==0){
+					//请求新闻资讯
+					$.ajax({
+						url:path_inter+"/parents/home/newsList",
+						dataType:'json',
+						type:'post',
+						data:{token:token,page:data.page[0],keyword:keyword},
+						success:function(res){
+							pre_loading(100);
+							if(user_overdue(res.code,res.msg))
+							{
+								for(var i=0;i<res.data.length;i++){
+									res.data[i].href="news_detail.html?pid="+res.data[i].news_id;
+									res.data[i].daydate=res.data[i].news_time.split(" ")[0];
+								}
+								data.list[0]=res.data;
+								if(data.list[0].length==0){
+									$('#tabcontent1').addClass('no_scroll');
+								}
+								data.page[0]++;
+								rendercontain1();
+							}
+						},
+						error:function(){
+							pre_loading(1);
+						}
+					});
+				}else if(data.tab_index==1){
+					//请求公告
+					$.ajax({
+						url:path_inter+"/parents/home/activityList",
+						dataType:'json',
+						type:'post',
+						data:{token:token,page:data.page[1],keyword:keyword},
+						success:function(res){
+							pre_loading(100);
+							if(user_overdue(res.code,res.msg))
+							{
+								for(var i=0;i<res.data.length;i++){
+									res.data[i].href="gonggao_detail.html?pid="+res.data[i].news_id;
+									res.data[i].daydate=res.data[i].news_time.split(" ")[0];
+								}
+								data.list[1]=res.data;
+								if(data.list[1].length==0){
+									$('#tabcontent2').addClass('no_scroll');
+								}
+								data.page[1]++;
+								rendercontain2();
+							}
+						},
+						error:function(){
+							pre_loading(1);
+						}
+					});
+				}
+			}
+
+			//加载
+			$(".content_box").infinite().on("infinite", function() {
+				if(data.list[data.tab_index].length==0||data.loading[data.tab_index]||!data.oprate)
+				{
+					return false;
+				}
+
+				data.oprate=false;
+				var obj=$(this);
+
+				load_addanimation("load_animation"+data.tab_index,obj);
+				var xq_url="news_detail.html?pid=";
+
+				var post_url=path_inter+"/parents/home/newsList";
+				if(data.tab_index==1)
+				{
+					post_url=path_inter+"/parents/home/activityList";
+					xq_url="gonggao_detail.html?pid=";
+				}
+				var chuan={token:token,page:data.page[data.tab_index]++};
+				var keyword=$('#keywordzhi').val();
+				if(keyword!=''){
+					chuan.keyword=keyword;
+				}
+
+				data.loading[data.tab_index]=true;
+				$.ajax({
+					url:post_url,
+					dataType:'json',
+					type:'post',
+					data:chuan,
+					success:function(res){
+						data.oprate=true;
+						if(user_overdue(res.code,res.msg))
+						{
+							for(var i=0;i<res.data.length;i++){
+								res.data[i].href=xq_url+res.data[i].news_id;
+								res.data[i].daydate=res.data[i].news_time.split(" ")[0];
+							}
+							data.list[data.tab_index]=data.list[data.tab_index].concat(res.data);
+
+							if(res.data.length==0)
+							{
+								load_closeanimation("load_animation"+data.tab_index,0);
+							}
+							else
+							{
+								load_closeanimation("load_animation"+data.tab_index,1);
+								data.loading[data.tab_index]=false;
+								data.page[data.tab_index]++;
+							}
+							if(data.tab_index==0){
+								rendercontain1();
+							}else if(data.tab_index==1){
+								rendercontain2();
+							}
+						}
+					},
+					error:function(){
+						data.oprate=true;
+						data.loading[data.tab_index]=false;
+					}
+				});
+			});
+		</script>
+	</body>
+</html>

@@ -1,0 +1,161 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li><a href="{:U('ActivityOrder/index')}">普通订单列表</a></li>
+			<li class="active"><a>拼团订单列表</a></li>
+		</ul>
+		<form class="well form-search" id="formurl" method="post" action="{:U('ActivityOrder/index')}">
+
+			拼团状态：
+			<select name="status" style="width: 120px;">
+				<option value="0">全部</option>
+				<foreach name="status" key="key" item="item">
+					<option value="{$key}" <if condition="I('status') eq $key">selected</if>>{$item}</option>
+				</foreach>
+			</select>
+			关键字：
+			<input type="text" name="keyword" style="width: 200px;" value="{:I('request.keyword')}" placeholder="订单编号/报名人姓名/报名人手机号">
+
+			<input type="submit" class="btn btn-primary" onclick="return search();" value="搜索" />
+			<a class="btn btn-danger" href="{:U('ActivityOrder/index')}">清空</a>
+			<input type="submit" class="btn btn-primary" onclick="return excel();" value="导出Excel" />
+		</form>
+		<div style="color: red;margin-bottom: 5px;font-size: 18px;">
+		 	 <!--总金额 : {$total}￥-->
+		</div>
+		<form method="post" class="js-ajax-form">
+			<table class="table table-hover table-bordered">
+				<thead>
+					<tr>
+						<th>拼团编号</th>
+						<th>成团<br/>人数</th>
+						<th>当前<br/>人数</th>
+						<th>拼团<br/>状态</th>
+						<th width="150">活动<br/>标题</th>
+						<th>套餐名称</th>
+						<th>订单编号</th>
+						<th>用户信息</th>
+						<th>联系人信息</th>
+						<th>总金额</th>
+						<th>出发日期</th>
+						<th>下单时间</th>
+						<th>订单状态</th>
+						<th>订单操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<foreach name="list" key="k" item="vo">
+					<tr>
+						<td rowspan="{:count($vo['list'])}">000{$vo['id']}</td>
+						<td rowspan="{:count($vo['list'])}">{$vo['people_num']}</td>
+						<td rowspan="{:count($vo['list'])}">{$vo['current_num']}</td>
+						<td rowspan="{:count($vo['list'])}">{$status[$vo['status']]}</td>
+						<td rowspan="{:count($vo['list'])}">{$vo['act_name']}</td>
+						<td rowspan="{:count($vo['list'])}">{$vo.attr_title}</td>
+						<td>{$vo['list'][0]['sn']}</td>
+						<td>报名人：{$vo['list'][0]['parent_name']}<br/>手机号：{$vo['list'][0]['parent_phone']}</td>
+						<td>联系人：{$vo['list'][0]['user_name']}<br/>手机号：{$vo['list'][0]['phone']}</td>
+						<td>{$vo['list'][0]['pay_money']}</td>
+						<td>{$vo['list'][0]['start_date']}</td>
+						<td>{$vo['list'][0]['sign_time']}</td>
+						<td>{$status1[$vo['list'][0]['status']]}</td>
+						<td align="center">
+							<a href="{:U('ActivityOrder/view',array('id'=>$vo['list'][0]['id']))}" > 查看 </a>
+						</td>
+						<!--<td rowspan="{:count($vo['list'])}">-->
+							<!--<a href="{:U('ActivityOrder/view',array('id'=>$vo['id']))}" > 查看 </a>-->
+						<!--</td>-->
+					</tr>
+						<volist name="vo['list']" id="vol" offset="1" length="$vo['people_num']">
+						<tr>
+							<td>{$vol['sn']}</td>
+							<td>报名人：{$vol['parent_name']}<br/>手机号：{$vol['parent_phone']}</td>
+							<td>联系人：{$vol['user_name']}<br/>手机号：{$vol['phone']}</td>
+							<td>{$vol.pay_money}</td>
+							<td>{$vol.start_date}</td>
+							<td>{$vol.sign_time}</td>
+							<td>{$status1[$vol['status']]}</td>
+							<td align="center">
+								<a href="{:U('ActivityOrder/view',array('id'=>$vol['id']))}" > 查看 </a>
+							</td>
+						</tr>
+						</volist>
+					</foreach>
+				</tbody>
+			</table>
+			<div class="pagination">{$page}</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+	<script>
+        function search() {
+            $("#formurl").attr('action', "{:U('ActivityOrder/index')}");
+            return true;
+        }
+        function excel() {
+            $("#formurl").attr('action', "{:U('ActivityOrder/oexcel')}");
+            return true;
+        }
+
+        $('.pay').click(function () {
+            var sn=$(this).attr('data-id');
+			$.ajax({
+				type:"GET",
+				url:"{:U('ActivityOrder/pay')}",
+				data:{sn:sn},
+				success:function(json){
+				    window.location.reload();
+				}
+			});
+        })
+
+        //选择地区城市
+        $('select[name="province"]').on('change',function(){
+            var str = "";
+            $('select[name="city"]').html("");
+            var areaid = $(this).val();
+            $.ajax({
+                type:"GET",
+                url:"{:U('ActivityOrder/city')}",
+                data:{areaid:areaid},
+                datatype: "json",
+                success:function(json){
+                    var data = JSON.parse(json);
+                    if(data!=""){
+                        var city = "{$_POST['city']}";
+                        str = '<option value="0" selected >选择市</option>';
+                        for(var i=0;i<data.length;i++){
+                            str += '<option value="'+data[i].areaid+'" <if condition="'+city+' eq '+data[i].areaid+'">selected</if> >'+data[i].areaname+'</option>';
+                        }
+                        $('select[name="city"]').append(str);
+                    }
+                }
+            });
+        });
+        //选择地区城市
+        $('select[name="city"]').on('change',function(){
+            var str = "";
+            $('select[name="area"]').html("");
+            var areaid = $(this).val();
+            $.ajax({
+                type:"GET",
+                url:"{:U('ActivityOrder/city')}",
+                data:{areaid:areaid},
+                datatype: "json",
+                success:function(json){
+                    var data = JSON.parse(json);
+                    if(data!=""){
+                        str = '<option value="0" selected >选择区</option>';
+                        for(var i=0;i<data.length;i++){
+                            str += '<option value="'+data[i].areaid+'"">'+data[i].areaname+'</option>';
+                        }
+                        $('select[name="area"]').append(str);
+                    }
+                }
+            });
+        });
+	</script>
+</body>
+</html>

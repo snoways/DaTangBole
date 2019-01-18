@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <title>我的分享-线下活动</title>
+  <script src="../js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="../css/ku/hui.css">
+  <link rel="stylesheet" href="../css/ku/weui.min.css">
+  <link rel="stylesheet" href="../css/ku/jquery-weui.min.css">
+  <link rel="stylesheet" href="../css/ku/style.css">
+  <script src="../js/ku/hui.js"></script>
+  <script src="../js/ku/vue.min.js"></script>
+  <script src="../js/ku/jquery-1.12.4.min.js"></script>
+  <script src="../js/ku/jquery-weui.js"></script>
+  <script src="../js/ku/swiper_jqueryweui.js"></script>
+</head>
+<body>
+
+<div id="app" v-cloak>
+
+  <div class="content_box">
+    <div class="content_scroll bgcolorfff">
+
+      <div>
+        <img src="../img/shareqinzi/sharetitbg.png" class="block" alt="">
+      </div>
+
+      <div style="width: 65%;margin:0 auto;" class="mar_t10 pad_t20 rela">
+        <a href="javascript:;" id="videodownload" class="block">
+          <img src="../img/twoqi/playbtn.png" class="abso" style="top: 50%;left: 50%;width: 38px;height: 38px;margin-left: -19px;margin-top: -19px;z-index: 1" alt="">
+          <div class="imgp" style="padding-bottom: 50%">
+            <img :src="path_img+shuju.img_url" alt="">
+          </div>
+        </a>
+      </div>
+      <!-- 标题去掉了-->
+      <!--<div style="width: 73%;margin:0 auto">-->
+        <!--<div class="colorfff font13 txt_center bgcolorzt pad_t10 pad_b10 border_radiu20">{{shuju.title}}</div>-->
+      <!--</div>-->
+      <div style="width: 65%;margin:15px auto 80px auto" class="font13 color333">
+        <div>机构名称：{{shuju.s_name}}</div>
+        <div>机构简介：{{shuju.content}}</div>
+        <!-- 活动地点去掉了-->
+        <!--<div>活动地点：线上活动</div>-->
+      </div>
+
+      <div class="font13 color333 txt_center">
+        <a href="javascript:;" id="download">用大唐伯乐，掌握更多教育机构活动内容 &gt;</a>
+      </div>
+
+      <div style="width: 88%;margin:20px auto 0 auto" class="pad_b20">
+        <div class="clear">
+          <div class="L col-xs-6">
+            <div class="pad_l10 pad_r10">
+              <div class="txt_center">
+                <div class="inblock" style="width: 80%">
+                  <div class="imgp padb100per">
+                    <img src="../img/alpha.png" onclick="imginit(0)" id="iosimg" alt="">
+                  </div>
+                </div>
+              </div>
+              <div class="txt_center mar_t10">
+                <a class="inblock font13 colorzt border_allzt border_radiu20 pad_t5 pad_b5 w100" href="#" id="ioslink">
+                  <img src="../img/shareqinzi/share_ios.png" alt="" style="width: 15px;height: 17px" class="mar_r5">
+                  <span class="inblock">IOS 客户端下载</span>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="L col-xs-6">
+            <div class="pad_l10 pad_r10">
+              <div class="txt_center">
+                <div class="inblock" style="width: 80%">
+                  <div class="imgp padb100per">
+                    <img src="../img/alpha.png" onclick="imginit(1)" id="adrimg" alt="">
+                  </div>
+                </div>
+              </div>
+              <div class="txt_center mar_t10">
+                <a class="inblock font13 colorzt border_allzt border_radiu20 pad_t5 pad_b5 w100" href="#" id="adrlink">
+                  <img src="../img/shareqinzi/share_adr.png" alt="" style="width: 15px;height: 17px" class="mar_r5">
+                  <span class="inblock">Andriod 客户端</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="txt_center color999 font12 pad_b10 mar_t20">请点击二维码放大后识别</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  pre_loading(0);
+
+  var vid;//视频id
+  if(!Getvariable('pid')){
+    $.toast('少pid','text');
+  }else{
+    vid=Getvariable('pid');
+    vueinit();
+  }
+
+  var vm;
+  function vueinit(){
+    vm = new Vue({
+      el: '#app',
+      data: {
+        path_img:path_img,
+        shuju:{}
+      },
+      methods:{
+        itemclick:function(index){
+          pb1.open(index);
+        }
+      },
+      created:function(){
+        var that=this;
+        $.ajax({
+          url:path_inter+"parents/Share/activityVideo",
+          dataType:'json',
+          type:'post',
+          data:{
+            vid:vid
+          },
+          success:function(res){
+            if(user_overdue(res.code,res.msg)){
+              vm.shuju=res.data;
+              pre_loading(100);
+
+              that.$nextTick(function () {
+                pagedo();
+              });
+            }
+          },
+          error:function(){
+            pre_loading(1);
+          }
+        });
+      }
+    });
+  }
+
+
+  function pagedo(){
+    //确定下载链接
+    if(/android/i.test(navigator.userAgent)){
+      //安卓
+      $('#download').attr('href',familylink_adr);
+      $('#videodownload').attr('href',familylink_adr)
+    }
+    if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)){
+      //苹果
+      $('#download').attr('href',familylink_ios);
+      $('#videodownload').attr('href',familylink_ios)
+    }
+
+    $('#ioslink').attr('href',familylink_ios);
+    $('#adrlink').attr('href',familylink_adr);
+    $('#iosimg').attr('src',familyma_ios);
+    $('#adrimg').attr('src',familyma_adr);
+  }
+  function imginit(index){
+    var pb1 = $.photoBrowser({
+      items: [
+        $('#iosimg').attr('src'),
+        $('#adrimg').attr('src')
+      ],
+      initIndex:index
+    });
+    pb1.open();
+  }
+</script>
+
+</body>
+</html>

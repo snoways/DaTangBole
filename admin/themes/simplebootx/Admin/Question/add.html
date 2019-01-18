@@ -1,0 +1,82 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li><a href="{:U('Question/index')}">测试题库列表</a></li>
+			<li  class="active"><a href="{:U('Question/add')}">测试题库添加</a></li>
+		</ul>
+		<form method="post" class="form-horizontal js-ajax-form" action="{:U('Question/add')}">
+			<fieldset>
+				<div class="control-group">
+					<label class="control-label">题目</label>
+					<div class="controls">
+						<textarea type="text" name="question" style="height: 100px;width: 500px" required></textarea>
+					</div>
+				</div>
+
+
+				<table border="1px #ooo" id="tab" cellpadding="0"
+					   cellspacing="0" width="30%">
+					<tr align="center">
+						<td width="30%"><input id="allCkb" type="checkbox"/></td>
+						<td width="30%">科目</td>
+						<td width="30%">成绩</td>
+					</tr>
+					<tr align="center">
+						<td width="30%"></td>
+						<td width="30%">语文</td>
+						<td width="30%">80</td>
+					</tr>
+				</table>
+				<div class="control-group">
+					<input type="button" onclick="addTr2('tab', -1)" value="添加">
+					<input type="button" onclick="delTr2()" value="删除">
+				</div>
+
+			</fieldset>
+			<div class="form-actions">
+				<input type="hidden" name="id" value="1" />
+				<button type="submit" class="btn btn-primary js-ajax-submit">{:L('SAVE')}</button>
+				<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+			</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+	<script type="text/javascript">
+		function addTr1(tab, row){
+			'<div class="control-group" id="remove">'+
+			'<div class="controls">'+
+			'<input type="button" onclick="addTr2('tab', 0)" value="添加">'+
+			'<input type="button" onclick="delTr2()" value="删除">'
+			'</div>'+
+			'</div>' ;
+			var trHtml='<div class="control-group" id="remove">'+'<div class="controls">'+
+					'<input type="checkbox" name="ckb"/>'+'<input type="text"name="an" >'+
+			        '</div>'+
+			        '</div>' ;
+			addTr(tab, row, trHtml);
+		}
+		function addTr2(tab, row){
+			alert(11);
+			var trHtml="<tr align='center'><td width='30%'><input type='checkbox' name='ckb'/></td><td width='30%'>地理</td><td width='30%'>60</td></tr>";
+			addTr(tab, row, trHtml);
+		}
+		function addTr(tab, row, trHtml){
+			//获取table最后一行 $("#tab tr:last")
+			//获取table第一行 $("#tab tr").eq(0)
+			//获取table倒数第二行 $("#tab tr").eq(-2)
+			var $tr=$("#"+tab+" tr").eq(row);
+			if($tr.size()==0){
+				alert("指定的table id或行数不存在！");
+				return;
+			}
+			$tr.after(trHtml);
+		}
+		$('#remove').live('click',function(){
+			$(this).prev().remove();
+			$(this).remove();
+		});
+	</script>
+</body>
+</html>

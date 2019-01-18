@@ -1,0 +1,127 @@
+<admintpl file="header" />
+<style>
+    .plus,.minus{
+        width: 21px;
+        height: 21px;
+        line-height: 21px;
+        text-align: center;
+        border-radius: 50%;
+        border: solid 1px #077aff;
+        color: #077aff;
+        display: inline-block;
+        margin-left: 30px;
+        cursor: pointer;
+    }
+    .minus{
+        border: solid 1px #ff2222;
+        color: #ff2222;
+    }
+</style>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('Activity/index')}">活动列表</a></li>
+        <li class="active"><a href="{:U('Activity/sign',array('id'=>$_GTE['id']))}">设置出游日期</a></li>
+    </ul>
+    <form action="{:U('Activity/sign')}" method="post" class="form-horizontal js-ajax-form" enctype="multipart/form-data">
+        <input type="hidden"  name="id" value="{$_GET['id']}" >
+        <div class="row-fluid">
+            <div class="span12">
+                <table class="table table-bordered">
+                    <if condition="empty($list)">
+                        <tr class="item">
+                            <th width="120">出游日期</th>
+                            <td >
+                                <input type="text" class="js-datetime date"  name="start[]" value="" placeholder="请输入出游日期" autocomplete="off" required/>
+                                <!--<input type="text" class="js-datetime date" name="end[]" value="" placeholder="请输入活动结束时间" required/>-->
+
+                                <span class="form-required plus" > + </span>
+                            </td>
+                        </tr>
+                        <else/>
+                        <foreach name="list" item="i" key = 'k' >
+
+                            <if condition="$k == 0">
+                                <tr class="item">
+                                    <th width="120">出游日期</th>
+                                    <td >
+                                        <input type="text" class="js-datetime date"  name="start[]" value="{$i['start']}"autocomplete="off" placeholder="请输入出游日期" required/>
+                                        <!--<input type="text" class="js-datetime date" name="end[]" value="{$i['end']}" placeholder="请输入活动结束时间" required/>-->
+
+                                        <span class="form-required plus" > + </span>
+                                    </td>
+                                </tr>
+                                <else />
+                                <tr class="item">
+                                    <th width="120">出游日期</th>
+                                    <td >
+                                        <input type="text" class="js-datetime date"  name="start[]" value="{$i['start']}"autocomplete="off" placeholder="请输入出游日期" required/>
+                                        <!--<input type="text" class="js-datetime date" name="end[]" value="{$i['end']}" placeholder="请输入活动结束时间" required/>-->
+
+                                        <span class="form-required minus" > - </span>
+                                    </td>
+                                </tr>
+                            </if>
+
+                        </foreach>
+                    </if>
+
+
+                </table>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button class="btn btn-primary js-ajax-submit" type="submit">提交</button>
+            <a class="btn" href="{:U('Activity/index')}">返回</a>
+        </div>
+    </form>
+</div>
+<script type="text/javascript" src="__PUBLIC__/layer/layer.js"></script>
+
+<script type="text/javascript" src="__PUBLIC__/js/common.js"></script>
+</body>
+<script>
+    $(".plus").click(function () {
+       var html = '<tr class="item">\n' +
+           '                        <th width="120">出游日期</th>\n' +
+           '                        <td >\n' +
+           '                            <input type="text" class="js-datetime date"  name="start[]" value="" autocomplete="off" placeholder="请输入出游日期" required/>\n' +
+           // '                            <input type="text" class="js-datetime date" name="end[]" value="" placeholder="请输入活动结束时间" required/>\n' +
+           '                            <span class="form-required minus" > - </span>\n' +
+           '                        </td>\n' +
+           '                    </tr>';
+       $('.table').append(html);
+    })
+
+    $(".minus").live('click',function () {
+        $(this).closest('.item').remove();
+    })
+
+    $(".js-datetime").live('click',function () {
+        var dateTimeInput = $(this);
+        if (dateTimeInput.length) {
+            Wind.use('datePicker', function () {
+                dateTimeInput.datePicker({
+                    format: 'yyyy-mm-dd',
+                });
+            });
+        }
+    });
+    var start = "{$timeInterval['start']}";
+    var end = "{$timeInterval['end']}";
+    $('button.js-ajax-submit').click(function () {
+        var status = true;
+        var list = $("input[name='start[]']");
+        $.each(list,function (e,i) {
+            if (i.value <= start || i.value >= end) {
+                layer.msg('出发日期必须在活动时间范围内');
+                $(this).focus();
+                $(this).css("border-color","#e74c3c");
+                status = false;
+            }
+        });
+        return status;
+    });
+</script>
+</html>

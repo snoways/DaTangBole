@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<!-- 清除缓存-->
+		<META HTTP-EQUIV="pragma" CONTENT="no-cache">
+		<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+		<META HTTP-EQUIV="expires" CONTENT="0">
+
+		<title>找老师</title>
+
+		<link rel="stylesheet" href="css/weui.min.css">
+		<link rel="stylesheet" href="css/jquery-weui.css">
+		<link rel="stylesheet" href="css/swiper.min.css">
+		<link rel="stylesheet" href="css/style.css">
+		<script src="js/jquery-1.12.4.min.js"></script>
+		<script src="js/jquery-weui.js"></script>
+		<script src="js/city-picker.js"></script>
+		<script src="js/swiper.min.js"></script>
+		<script src="js/avalon.js"></script>
+
+		<script src="js/ku/common_nojq.js"></script>
+		<style>
+			/*本页面添加这个 .content_box不用写 .header2top了*/
+			/*.weui-pull-to-refresh__layer{margin-top: 108px;top: 0}*/
+		</style>
+	</head>
+	<body ms-controller="comcontrol" class="ms-controller">
+		
+		<div class="header2" style="height: 104px;">
+			<!--<div class="pad_b5 bgcolorf5">
+				<div class="search1 pad10 bgcolorfff">
+					<div class="border_radiu4 bgcoloreee">
+						<a class="tableblock pad_r10 pad_t5 pad_b5" href="javascript:;" ms-click="@search()">
+							<div class="font14 color666 wrem5 txt_center border_r">搜老师</div>
+							<div class="font14 colorccc pad_l10">输入关键词搜索</div>
+						</a>
+					</div>
+				</div>
+			</div>-->
+			<div class="pad_b5 bgcolorf5">
+				<div class="search1 pad10 bgcolorfff">
+					<div class="border_radiu4 bgcoloreee">
+						<div class="tableblock pad_t5 pad_b5">
+							<div class="font14 color666 wrem5 txt_center" style="border-right: 1px solid #dcdcdc;">
+								<a href="javascript:;" ms-click="@slect_search()" class="font14" style="background: url(img/xiala.png) right center no-repeat; background-size: 6px auto; padding-right: 8px;">
+									{{@search_zt[@search_index].name}}
+								</a>
+								<!--<select name="seacr_kind" class="color666 font14" style="background: url(img/xiala.png) right center no-repeat; background-size: 8px auto; padding-right: 8px;">
+									<option class="font14" value="1">搜老师</option>
+									<option class="font14" value="2">搜课程</option>
+								</select>-->
+							</div>
+							<div class="font14 colorccc pad_l10">
+								<input ms-duplex="@seacr_txt" type="text" placeholder="输入关键词搜索" width="100%" />
+							</div>
+							<div class="font14 color666 wrem3 txt_center" style="border-left: 1px solid #dcdcdc;">
+								<a href="javascript:;" class="block" ms-click="@search()"><img src="img/search.png" width="18"></a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="listtab bgcolorfff lineh_normal">
+				<div class="tableblock font15 txt_center color666">
+					<a ms-class="{on:@listtabIndex==0}" href="javascript:;" class="block" ms-click="@listtabClick(0)">
+						<div class="item border_r">科目</div>
+					</a>
+					<a ms-class="{on:@listtabIndex==1}" href="javascript:;" class="block" ms-click="@listtabClick(1)">
+						<div class="item border_r">智能排序</div>
+					</a>
+					<a ms-class="{on:@listtabIndex==2}" href="javascript:;" class="block" ms-click="@listtabClick(2)">
+						<div class="item border_r">地区筛选</div>
+					</a>
+					<a ms-class="{on:@listtabIndex==3}" href="javascript:;" class="block" ms-click="@listtabClick(3)">
+						<div class="item">筛选</div>
+					</a>
+				</div>
+			</div>	
+		</div>
+	
+		<div class="content_box" style="padding-top: 108px;">
+			<div class="content_scroll">
+				<!--内容开始-->
+				<ul>
+					<li class="mar_b5 bgcolorfff pad10" ms-for="el in @list">
+						<a ms-attr="{href:'find_teacher_detail.html?pid='+el.t_id}" class="block">
+							<div class="tableblock pad_b10">
+								<div class="col-xs-2">
+									<div class="img_box img100">
+										<div class="img_content border_radius50">
+											<img ms-attr="{src:@path_img+el.t_img}" class="imgone">
+										</div>
+									</div>
+								</div>
+								<div>
+									<div class="pad_l5 font15 mar_b5">
+										<span class="inblock sex_icon" ms-class="{man:el.sex=='1'}"></span>
+										<span class="inblock pad_l5 wrem5 txt_oneline">{{el.name}}</span>
+										<span class="inblock font12 pad_l5 color666">{{el.age}}岁</span>
+									</div>
+									<div class="pad_l5 font12 mar_b10 txt_oneline">
+										<span class="inblock">
+											<i class="noh color666">年级：</i>{{el.t_grade}}
+										</span>
+										<span class="inblock pad_l10">
+											<em class="noh color666">科目：</em>{{el.subject}}
+										</span>
+									</div>
+									<div class="pad_l5 biaoqian font12 color999 txt_oneline">
+										<span class="zz_icon" ms-if="el.renzheng==1">认证</span>
+										<span class="zx_icon" ms-if="el.renzheng==-1">认证</span>
+
+										<span class="zz_icon" ms-if="el.zizhi==1">资质</span>
+										<span class="zx_icon" ms-if="el.zizhi==-1">资质</span>
+
+										<span class="zz_icon" ms-if="el.xueli==1">学历</span>
+										<span class="zx_icon" ms-if="el.xueli==-1">学历</span>
+									</div>
+								</div>
+								<div class="txt_right col-xs-4 colorzt">
+									<div class="pad_l5">
+										<div class="font12 mar_b5">
+											<span class="star sm" ms-class="{all:el.score>=1,half:el.score>=0.5 && el.score<1}"></span>
+											<span class="star sm" ms-class="{all:el.score>=2,half:el.score>=1.5 && el.score<2}"></span>
+											<span class="star sm" ms-class="{all:el.score>=3,half:el.score>=2.5 && el.score<3}"></span>
+											<span class="star sm" ms-class="{all:el.score>=4,half:el.score>=3.5 && el.score<4}"></span>
+											<span class="star sm" ms-class="{all:el.score==5,half:el.score>=4.5 && el.score<5}"></span>
+											<span class="inblock lineh_normal">{{el.score|number(1)}}</span>
+										</div>
+										<div class="price_div font16 mar_b5">
+											<b>￥{{el.price_int}}</b><b class="font12">.{{el.price_num}}</b><i class="noh font12">/课时</i>
+										</div>
+										<div class="color666 font10">
+											{{el.distance}}
+										</div>
+									</div>
+								</div>
+							</div>
+							<!--<div class="pad_t10 txt_center">-->
+								<!--<div class="tableblock font12">-->
+									<!--<div>-->
+										<!--<div class="border_r">-->
+											<!--<span class="font13">{{el.teachingYear}}</span><br>-->
+											<!--<span class="color666">教龄</span>-->
+										<!--</div>-->
+									<!--</div>-->
+									<!--<div>-->
+										<!--<div class="border_r">-->
+											<!--<span class="font13">{{el.studentsNum}}</span><br>-->
+											<!--<span class="color666">学生数</span>-->
+										<!--</div>-->
+									<!--</div>-->
+									<!--<div>-->
+										<!--<div class="border_r">-->
+											<!--<span class="font13">{{el.courseTimeLen}}</span><br>-->
+											<!--<span class="color666">授课时长</span>-->
+										<!--</div>-->
+									<!--</div>-->
+									<!--<div>-->
+										<!--<div>-->
+											<!--<span class="font13">{{el.goodWord}}</span><br>-->
+											<!--<span class="color666">好评</span>-->
+										<!--</div>-->
+									<!--</div>-->
+								<!--</div>-->
+							<!--</div>-->
+						</a>
+					</li>
+				</ul>
+				<div class="empty" ms-if="@list.length==0">暂无数据</div>
+				<!--内容end-->
+			</div>
+		</div>
+
+		<!-- tab start-->
+		<div class="box_shadow_one" ms-class="{Hide:@box_shadow_hide}" style="top: 108px"></div>
+		<div class="listtabCeng1" style="top: 103px" ms-if="@listtabIndex==0">
+			<div style="background: #F5F5F5;height: 300px;">
+				<div class="left font14 color666 bgcolorf5">
+					<ul>
+						<li ms-class="{on:@listTab1LeftIndex==-1}"><a href="javascript:;" class="block pad10 border_b" ms-click="@listTab1LeftClick(-1)">全部</a></li>
+						<li ms-class="{on:@listTab1LeftIndex==i}" ms-for="(i,el) in @listTab1LeftList"><a href="javascript:;" ms-click="@listTab1LeftClick(i)" class="block pad10 border_b">{{el.text}}</a></li>
+					</ul>
+				</div>
+				<div class="right bgcolorfff">
+					<ul class="pad10 clear txt_center color666">
+						<li class="mar_b10 L col-xs-4">
+							<div class="pad_l5 pad_r5">
+								<a href="javascript:;" class="border_all pad5 w100 block" ms-class="{on:@listTab1RightIndex==-1}" ms-click="@listTab1RightClick(-1)">全部</a>
+							</div>
+						</li>
+						<li class="mar_b10 L col-xs-4" ms-for="(i,el) in @listTab1RightList">
+							<div class="pad_l5 pad_r5">
+								<a href="javascript:;" class="border_all pad5 w100 block" ms-class="{on:@listTab1RightIndex==i}" ms-click="@listTab1RightClick(i)">{{el.text}}</a>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="listtabCeng2 font12" style="top: 103px" ms-if="@listtabIndex==1">
+			<div style="background: #f5f5f5;padding-top: 5px;">
+				<ul class="bgcolorfff">
+					<li ms-class="{on:@listTab2Index==0}"><a href="javascript:;" class="block pad10 border_b" ms-click="@listTab2Click(0)">智能排序</a></li>
+					<li ms-class="{on:@listTab2Index==1}"><a href="javascript:;" class="block pad10 border_b" ms-click="@listTab2Click(1)">课时费从低到高</a></li>
+					<li ms-class="{on:@listTab2Index==2}"><a href="javascript:;" class="block pad10 border_b" ms-click="@listTab2Click(2)">课时费从高到低</a></li>
+					<li ms-class="{on:@listTab2Index==3}"><a href="javascript:;" class="block pad10 border_b" ms-click="@listTab2Click(3)">综合评价从高到低</a></li>
+					<li ms-class="{on:@listTab2Index==4}"><a href="javascript:;" class="block pad10 border_b" ms-click="@listTab2Click(4)">距离由近及远</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="listtabCeng3 font12" style="top: 103px" ms-if="@listtabIndex==2">
+			<div class="zuo" style="background: #e6e6e6">
+				<ul>
+					<li ms-for="(i,el) in @listTab3ZuoList" ms-class="{on:@listTab3ZuoIndex==i}"><a href="javascript:;" class="block pad10 border_b" ms-click="@listTab3ZuoClick(i)">{{el.text}}</a></li>
+				</ul>
+			</div>
+			<div class="zhong" style="background:#f5f5f5">
+				<ul>
+					<li ms-for="(i,el) in @listTab3ZhongList" ms-class="{on:@listTab3ZhongIndex==i}"><a href="javascript:;" class="block pad10 border_b" ms-click="@listTab3ZhongClick(i)">{{el.text}}</a></li>
+				</ul>
+			</div>
+			<div class="you">
+				<ul>
+					<li ms-for="(i,el) in @listTab3YouList" ms-class="{on:@listTab3YouIndex==i}"><a href="javascript:;" class="block pad10 border_b" ms-click="@listTab3YouClick(i)">{{el.text}}</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="listtabCeng4" style="top: 103px" ms-if="@listtabIndex==3">
+			<div style="background: #f4f4f4;padding-top: 5px">
+				<div class="pad10 font12" style="background: #fff">
+					<div class="border_b">
+						<p class="color666">性别</p>
+						<ul class="pad_t10 pad_b10 clear">
+							<li class="col-xs-3 L">
+								<a href="javascript:;" ms-class="{on:@listtab4SexIndex==0}" class="block border_all border_radiu4 pad_t5 pad_b5 txt_center mar_r10" ms-click="@listtab4SexClick(0)">男</a>
+							</li>
+							<li class="col-xs-3 L">
+								<a href="javascript:;" ms-class="{on:@listtab4SexIndex==1}" class="block border_all border_radiu4 pad_t5 pad_b5 txt_center mar_r10" ms-click="@listtab4SexClick(1)">女</a>
+							</li>
+						</ul>
+					</div>
+					<div class="border_b pad_t10">
+						<p class="color666">价格</p>
+						<div class="pad_t10 pad_b10">
+							<div class="inblock border_all border_radiu4 pad_t5 pad_b5 col-xs-3"><input type="number" placeholder="最低价" class="txt_center w100" ms-duplex="@listtab4PriceLow"/></div>
+							<span class="inblock mar_r10 mar_l10 color999">—</span>
+							<div class="inblock border_all border_radiu4 pad_t5 pad_b5 col-xs-3"><input type="number" placeholder="最高价" class="txt_center w100" ms-duplex="@listtab4PriceHigh"/></div>
+						</div>
+					</div>
+					<div class="pad_t10">
+						<div class="tableblock">
+							<div class="pad_r5">
+								<a href="javascript:;" class="block hbtnbd" ms-click="@listtab4Reset()">重置</a>
+							</div>
+							<div class="pad_l5">
+								<a href="javascript:;" class="block hbtn" ms-click="@listtab4Queding()">确定</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- tab end-->
+		<script type="text/javascript" src="pagejs/find_teacher.js" ></script>
+		
+		<div class="box_shadow_two cursor" ms-click="@close_box()"></div>
+		<div class="box_select">
+			<ul>
+				<li><a href="javascript:;" ms-class="{cur:@search_index==0}" ms-click="@slect_search_index(0)">搜老师</a></li>
+				<li><a href="javascript:;" ms-class="{cur:@search_index==1}" ms-click="@slect_search_index(1)">搜课程</a></li>
+			</ul>
+		</div>
+	</body>
+</html>

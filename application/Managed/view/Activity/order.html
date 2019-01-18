@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>订单列表</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- bootstrap -->
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap.css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+
+  <!-- libraries -->
+  <link href="__PUBLIC__/Shopadmin/css/lib/uniform.default.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/select2.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/font-awesome.css" type="text/css" rel="stylesheet"/>
+
+  <!-- global styles -->
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/layout.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/elements.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/icons.css">
+
+  <!-- this page specific styles -->
+  <link rel="stylesheet" href="__PUBLIC__/Shopadmin/css/compiled/form-showcase.css" type="text/css" media="screen"/>
+
+  <!-- open sans font -->
+  <link
+    href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+    rel='stylesheet' type='text/css'>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+
+<include file="common/menu" />
+
+<php>
+
+  function getMemberNum($id){
+      return  D('ActOrderDetail')->where(array('order_id'=>$id))->count();
+  }
+
+</php>
+
+<!-- main container -->
+<div class="content">
+
+  <div id="pad-wrapper" class="form-page">
+    <div class="row header">
+      <div class="col-md-12">
+        <h3>订单管理</h3>
+      </div>
+    </div>
+    <div class="row" style="padding: 10px; border: 1px solid #ccc;  margin-bottom: 10px;background-color: #F5FAFD;">
+      <form class="form-inline" method="post" action="{:U('Activity/order')}">
+
+        <div class="form-group mar_r5">
+          <label for="shai3">订单状态：</label>
+          <select class="form-control" id="shai3" style="width: 150px" name="status">
+            <option value="0">全部</option>
+            <option value="1" <if condition="$status eq 1">selected</if> > 未支付 </option>
+            <option value="2" <if condition="$status eq 2">selected</if> >报名成功 </option>
+            <option value="3" <if condition="$status eq 3">selected</if> >已完成 </option>
+            <option value="5" <if condition="$status eq 5">selected</if> >已取消 </option>
+          </select>
+        </div>
+        <div class="form-group mar_r5">
+          <label for="shai3">活动：</label>
+          <select class="form-control"  style="width: 150px" name="activity">
+            <option value="0">全部</option>
+            <foreach name="activity" item="item">
+              <option value="{$item.id}" <if condition="$activityid eq $item['id']">selected</if> >{$item.title}</option>
+            </foreach>
+          </select>
+        </div>
+        <div class="form-group mar_r5">
+          <label for="shai4">关键字：</label>
+          <input type="text" name="keyword" class="form-control" id="shai4" style="width: 250px" placeholder="订单号/报名人姓名/报名人电话/活动名称" value="{$keyword}">
+        </div>
+        <button class="btn btn-primary mar_r5" type="submit">搜索</button>
+        <a class="btn btn-danger" href="{:U('Activity/order')}">清空</a>
+      </form>
+    </div>
+    <div class="table-wrapper products-table section">
+      <div class="row">
+        <table class="table table-hover" id="activitytable">
+          <thead>
+          <tr>
+            <th width="50">
+              ID
+            </th>
+            <th width="140">
+              <span class="line"></span>订单编号
+            </th>
+            <th width="230">
+              <span class="line"></span>活动名称
+            </th>
+            <th width="230">
+              <span class="line"></span>套餐名称
+            </th>
+            <th width="100">
+              <span class="line"></span>用户信息
+            </th>
+            <th width="80">
+              <span class="line"></span>订单联系人信息
+            </th>
+            <th width="80">
+              <span class="line"></span>报名人数
+            </th>
+            <th width="">
+              <span class="line"></span>总金额
+            </th>
+            <th width="">
+              <span class="line"></span>出发日期
+            </th>
+            <th width="">
+              <span class="line"></span>报名时间
+            </th>
+            <th width="">
+              <span class="line"></span>订单类型
+            </th>
+            <th width="">
+              <span class="line"></span>状态
+            </th>
+            <th width="">
+              <span class="line"></span>操作
+            </th>
+          </tr>
+
+          </thead>
+          <tbody>
+          <!-- row -->
+          <foreach name="list" key="k" item="vo">
+            <tr>
+              <php>$status = [ 1=>'未支付', 2=>'报名成功', 3=>'已完成', 5=>'已取消'];</php>
+              <td align="center">{$k+1}</td>
+              <td>{$vo['sn']}</td>
+              <td>{$vo['act_name']}</td>
+              <td>{$vo['attr_title']}</td>
+              <td>报名人：{$vo['parent_name']}<br/>手机号：{$vo['parent_phone']}</td>
+              <td>联系人：{$vo['user_name']}<br/>手机号：{$vo['phone']}</td>
+              <td>{:getMemberNum($vo['id'])}</td>
+              <td>{$vo.pay_money}</td>
+              <td>{$vo.start_date}</td>
+              <td>{$vo.sign_time}</td>
+              <td>{$vo['spell_id']>0?'拼团订单':'普通订单'}</td>
+              <td>{$status[$vo['status']]}</td>
+              <td align="center">
+                <a href="{:U('view',array('id'=>$vo['id']))}" > 查看 </a>
+                <!--<a class="order_status" data-id="{$vo['id']}" data-type="1" href="javascript:;"> 取消订单 </a>-->
+                <if condition="$vo['spell_id'] gt 0">
+                  | <a class="order_status" data-id="{$vo['id']}" data-type="2" href="javascript:;"> 转为普通订单 </a>
+                </if>
+                <if condition="$vo['status'] eq 2">
+                   | <a class="order_status" data-id="{$vo['id']}" data-type="3" href="javascript:;"> 完成订单 </a>
+                </if>
+              </td>
+            </tr>
+          </foreach>
+          </tbody>
+        </table>
+        <div class="pagination">{$page}</div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end main container -->
+
+<!-- scripts for this page -->
+<script src="__PUBLIC__/Shopadmin/js/wysihtml5-0.3.0.js"></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/jquery.uniform.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/theme.js"></script>
+<!--laryer-->
+<script src="__PUBLIC__/Shopadmin/layer/layer.js"></script>
+<script src="__PUBLIC__/layer/layer.js"></script>
+
+<script>
+  $(document).on('click', '.order_status', function () {
+    //上架
+    var id = $(this).data('id');
+    var type = $(this).data('type');
+    var title = type==1?'您确定要取消这笔订单吗？':(type==2?'您确定要将这笔订单转为普通订单？':(type==2?'您确定要完成订单？':'您确定要进行此操作？'));
+    layer.confirm(title, {icon: 3, title:'提示'}, function(index){
+        $.post("__CONTROLLER__/order_status",
+            {'id':id, 'type':type},
+            function(json){
+                layer.alert(json.info,function () {
+                    if (json.status===1){
+                        window.location.reload();
+                    }
+                });
+
+            },"json");
+        layer.close(index);
+    });
+  });
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>托管班详情</title>
+  <script src="js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="css/ku/hui.css">
+  <link rel="stylesheet" href="css/ku/weui.min.css">
+  <link rel="stylesheet" href="css/ku/jquery-weui.min.css">
+  <link rel="stylesheet" href="css/ku/style.css">
+  <script src="js/ku/hui.js"></script>
+  <script src="js/ku/vue.min.js"></script>
+  <script src="js/ku/jquery-1.12.4.min.js"></script>
+  <script src="js/ku/jquery-weui.js"></script>
+  <script src="js/ku/swiper_jqueryweui.js"></script>
+</head>
+<body>
+
+<div id="app" v-cloak style="position: absolute;left: 0;right: 0;bottom: 0;top: 0;overflow: hidden">
+  <div class="content_box pad_wei">
+    <div class="content_scroll">
+      <div class="imgp" style="padding-bottom: 56.25%;">
+        <img :src="shuju.img" alt="">
+      </div>
+
+      <div class="pad_l10 pad_r10 bgcolorfff">
+        <div class="pad_t10 pad_b10 font15 border_b">
+          <div class="color333">{{shuju.title}}</div>
+          <div class="colorzt mar_t10">
+            <span class="mar_r10 font16">￥{{shuju.month_price|number2}} <span class="font12">/月</span></span>
+            <span class="font12 color666">已有<span class="colorzt" v-if="shuju.buy_num==null">0</span><span class="colorzt" v-if="shuju.buy_num!=null">{{shuju.buy_num}}</span>人购买</span>
+          </div>
+        </div>
+        <div class="tableblock font12 color666 pad_t10 pad_b10">
+          <div>
+            <span class="mar_r10">￥{{shuju.day_price|number2}}/天 日缴费金额</span>
+          </div>
+          <div class="txt_right">
+            <div class="pad_l5 font0 mar_b5 colorzt">
+              <span class="star" :class="{all:shuju.star>=1,half:shuju.star>=0.5 && shuju.star<1}"></span>
+              <span class="star" :class="{all:shuju.star>=2,half:shuju.star>=1.5 && shuju.star<2}"></span>
+              <span class="star" :class="{all:shuju.star>=3,half:shuju.star>=2.5 && shuju.star<3}"></span>
+              <span class="star" :class="{all:shuju.star>=4,half:shuju.star>=3.5 && shuju.star<4}"></span>
+              <span class="star" :class="{all:shuju.star==5,half:shuju.star>=4.5 && shuju.star<5}"></span>
+              <span class="inblock lineh_normal font12 mar_l5">{{shuju.star|number1}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 托管信息start-->
+      <div class="pad_l10 pad_r10 pad_t10 bgcolorfff mar_b5 mar_t5">
+        <div class="tableblock">
+          <div style="width: 23%;" class="vertop" @click="tuoguandet()">
+            <div class="img_box img100 rela">
+              <!-- icon为空说明不是会员，不显示出来即可-->
+              <img :src="path_img+shuju.educational.icon" v-if="shuju.educational.icon" width="18" class="abso" style="top: 1px;left: 1px;z-index: 1" alt="">
+              <div class="img_content">
+                <img class="border_radiu4 border_all imgone" :src="path_img+shuju.educational.s_img" alt=""/>
+              </div>
+            </div>
+          </div>
+          <div class="pad_l10">
+            <div class="tableblock pad_l5 border_b" @click="tuoguandet()">
+              <div>
+                <p class="font16">{{shuju.educational.s_name}}</p>
+                <p class="font13 color999 mar_b5">{{shuju.educational.s_content}}</p>
+                <div class="tableblock pad_b5">
+                  <div class="col-xs-8">
+                    <div class="pad_l5 font0 mar_b5 colorzt">
+                      <span :class="[shuju.educational.star>=1?'all':'',shuju.educational.star>=0.5 && shuju.educational.star<1?'half':'']" class="inblock star"></span>
+                      <span :class="[shuju.educational.star>=2?'all':'',shuju.educational.star>=1.5 && shuju.educational.star<2?'half':'']" class="inblock star"></span>
+                      <span :class="[shuju.educational.star>=3?'all':'',shuju.educational.star>=2.5 && shuju.educational.star<3?'half':'']" class="inblock star"></span>
+                      <span :class="[shuju.educational.star>=4?'all':'',shuju.educational.star>=3.5 && shuju.educational.star<4?'half':'']" class="inblock star"></span>
+                      <span :class="[shuju.educational.star>=5?'all':'',shuju.educational.star>=4.5 && shuju.educational.star<5?'half':'']" class="inblock star"></span>
+                      <span class="inblock lineh_normal font12 mar_l5">{{shuju.educational.star|number1}}</span>
+                    </div>
+                  </div>
+                  <div class="txt_right col-xs-4">
+                    <img src="img/twoqi/huo.png" class="inblock" height="12" alt="">
+                    <span class="colorzt inblock font12">{{shuju.educational.view_num}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="font12 color999 pad_t10 pad_b10">
+              <!-- 下面这个是固定的 点击这个并不需要跳转到认证信息页面，下面的图片都在形象展示里面-->
+              <span class="zz_icon mar_r5 inblock">身份认证</span>
+              <span class="zz_icon mar_r5 inblock">资质荣誉</span>
+              <span class="zz_icon mar_r5 inblock">健康证</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 删掉不要了-->
+      <!--<div class="bgcolorfff">-->
+        <!--<a class="block pad10 mar_b5 font14" href="javascript:;" onclick="daohang()">-->
+          <!--<div class="tableblock">-->
+            <!--<div>-->
+              <!--{{shuju.educational.address}}-->
+            <!--</div>-->
+            <!--<div class="txt_right" style="width: 50px;">-->
+              <!--<div class="border_l">-->
+                <!--<img src="img/daohang.png" width="40">-->
+              <!--</div>-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</a>-->
+      <!--</div>-->
+      <!-- 托管信息end-->
+
+      <div class="mar_t5">
+        <div class="bgcolorfff pad_r10 pad_l10 border_b">
+          <div class="tuoguandetTab tableblock bgcolorfff border_b txt_center color666 font14" style="height: 46px;">
+            <a class="posra block" :class="{on:tabIndex==0}" onclick="tabClick(0)" href="javascript:;">
+              <span class="tuoguanTabBdr"></span>
+              <div>课程介绍</div>
+            </a>
+            <a onclick="tabClick(1)" href="javascript:;" :class="{on:tabIndex==1}" class="block">
+              <div>课程评价</div>
+            </a>
+          </div>
+        </div>
+
+        <div class="bgcolorfff" v-if="tabIndex==0">
+          <div style="padding: 20px" v-if="shuju.content.length>0">
+            <div class="color666 font14" id="tab1con" v-html="shuju.content"></div>
+          </div>
+          <div class="empty" v-else>暂无数据</div>
+        </div>
+
+        <div v-if="tabIndex==1">
+          <div class="empty bgcolorfff" v-if="shuju.assess.length==0">暂无评价</div>
+          <ul>
+            <li class="pad_l10 pad_r10 mar_b5 bgcolorfff" v-for="(el,i) in shuju.assess">
+              <div class="border_b pad_t10 pad_b10">
+                <div class="tableblock">
+                  <div style="width: 60px">
+                    <img v-if="el.status==1" :src="el.p_img" width="50" height="50" class="border_radius50" alt="">
+                    <img v-if="el.status==2" src="img/tx.png" width="50" height="50" class="border_radius50" alt="">
+                  </div>
+                  <div>
+                    <div class="tableblock">
+                      <div>
+                        <img src="img/sex1.png" v-if="el.child_sex==1" class="inblock" height="14" alt="">
+                        <img src="img/sex2.png" v-if="el.child_sex==2" class="inblock" height="14" alt="">
+                        <span class="font14 color333 inblock">{{el.child_name}}</span>
+                      </div>
+                      <div class="txt_right">
+                        <div class="pad_l5 font0 mar_b5 colorzt">
+                          <span class="star" :class="{all:el.star>=1,half:el.star>=0.5 && el.star<1}"></span>
+                          <span class="star" :class="{all:el.star>=2,half:el.star>=1.5 && el.star<2}"></span>
+                          <span class="star" :class="{all:el.star>=3,half:el.star>=2.5 && el.star<3}"></span>
+                          <span class="star" :class="{all:el.star>=4,half:el.star>=3.5 && el.star<4}"></span>
+                          <span class="star" :class="{all:el.star==5,half:el.star>=4.5 && el.star<5}"></span>
+                          <span class="inblock lineh_normal font12 mar_l5">{{el.star|number1}}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- 去掉了 年级和科目-->
+                    <!--<div class="font10 color666">-->
+                    <!--年级：<span class="color333">小学</span>-->
+                    <!--科目：<span class="color333">语文</span>-->
+                    <!--</div>-->
+                  </div>
+                </div>
+              </div>
+              <div class="pad_t10 pad_b10">
+                <div class="font12 color666" v-html="el.content"></div>
+                <div class="mar_t10">
+                  <img :src="el.img1" v-if="el.img1" @click="showbigtu(el,this)" width="50" height="50" class="mar_r5" alt="">
+                  <img :src="el.img2" v-if="el.img2" @click="showbigtu(el,this)" width="50" height="50" class="mar_r5" alt="">
+                  <img :src="el.img3" v-if="el.img3" @click="showbigtu(el,this)" width="50" height="50" class="mar_r5" alt="">
+                </div>
+                <div class="txt_right mar_t10 font12 color999">{{el.a_time}}</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部固定 start-->
+  <div class="footer">
+    <div class="tableblock h100">
+      <div class="col-xs-8">
+        <div class="pad_l10 pad_r10">
+          <div class="tableblock">
+            <div>
+              <div class="wrem4 inblock border_r" onclick="zixun()">
+                <img src="img/twoqi/contact.png" alt="" height="20" class="inblock">
+                <span class="font14 colorzt inblock">咨询</span>
+              </div>
+            </div>
+            <div class="txt_right">
+              <b class="font18 colorzt">￥{{shuju.month_price|number2}}</b>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-4 font16 colorfff bgcolorzt txt_center" onclick="lijibuy()">立即购买</div>
+    </div>
+  </div>
+  <!-- 底部固定 end-->
+
+  <!-- 底部弹出的选择框 start-->
+  <div class="box_shadow_one" :class="{Hide:box_shadow_hide}"></div>
+  <div class="findteaDetKuang bgcolorfff" style="height: 464px;">
+    <div class="bgcolorzt pad_t5 pad_b5 pad_l10 pad_r10">
+      <img src="img/icon3.png" width="18" class="mar_r5" alt=""/>
+      <span class="inblock colorfff font14">{{currDate}}</span>
+      <div class="R">
+        <img src="img/x2.png" id="kclose" width="15" alt=""/>
+      </div>
+    </div>
+    <div class="neirong" style="height: 385px">
+      <div class="pad_l10 pad_r10 bgcolorfff">
+        <div class="pad_t10 pad_b10 border_b">
+          <img src="img/icon4.png" height="14" class="inblock mar_r5" alt=""/>
+          <span class="colorzt font14 inblock">选择计费方式</span>
+        </div>
+      </div>
+      <div class="pad10 border_b">
+        <div class="pad_l10 pad_r10">
+          <label class="font12 color666 mar_r10">
+            <input type="radio" name="typez" v-model="typez" value="1" checked class="L_radio2 inblock">
+            <span class="inblock">按月</span>
+          </label>
+          <label class="font12 color666 mar_l10">
+            <input type="radio" name="typez" v-model="typez" value="2" class="L_radio2 inblock">
+            <span class="inblock">按天</span>
+          </label>
+        </div>
+      </div>
+      <div class="pad_l10 pad_r10 bgcolorfff">
+        <div class="pad_t10 pad_b10 border_b">
+          <img src="img/twoqi/rili.png" height="14" class="inblock mar_r5" alt=""/>
+          <span class="colorzt font14 inblock" v-if="typez==1">选择购买月份</span>
+          <span class="colorzt font14 inblock" v-else-if="typez==2">选择购买日期</span>
+        </div>
+      </div>
+      <div class="pad_l10 pad_r10 pad_t10 pad_b5 border_b" v-show="typez==1">
+        <div class="pad_l10 pad_r10 font0">
+          <span v-for="(el,i) in montharr" :class="{monthon:el.selected}" @click="monthclick(i)" v-if="i>=currmonth" class="inblock border_all border_radiu4 font12 color666 mar_r5 mar_b5" style="padding: 4px 10px;">{{el.text}}</span>
+        </div>
+      </div>
+      <div class="pad_l10 pad_r10 pad_t10 pad_b5 border_b" v-show="typez==2">
+        <div class="pad_l10 pad_r10">
+          <div class="tableblock">
+            <div class="font12 color666">
+              <span class="colorzt">{{selectedDay}}</span> 天
+            </div>
+            <div class="txt_right font12 color666" style="width: 240px">
+              <div class="tableblock">
+                <div style="width: 100px">
+                  <input type="text" class="w100 txt_right" v-model="date1zhi" id="date1" placeholder="请选择起始日期">
+                </div>
+                <div class="txt_center">至</div>
+                <div style="width: 100px">
+                  <input type="text" class="w100" v-model="date2zhi" id="date2" placeholder="请选择结束日期">
+                </div>
+                <div style="width: 20px">
+                  <img src="img/arrowr.png" height="10" alt="">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pad_l10 pad_r10 bgcolorfff">
+        <div class="pad_t10 pad_b10 border_b">
+          <img src="img/twoqi/dot3.png" width="12" class="inblock mar_r5" alt=""/>
+          <span class="colorzt font14 inblock">单价</span>
+        </div>
+      </div>
+      <div class="pad10 border_b">
+        <div class="pad_l10 pad_r10 font12 color666">
+          <span v-if="typez==1">￥{{shuju.month_price|number2}}/月</span>
+          <span v-else-if="typez==2">￥{{shuju.day_price|number2}}/天</span>
+        </div>
+      </div>
+      <div class="pad_l10 pad_r10 bgcolorfff">
+        <div class="pad_t10 pad_b10 border_b">
+          <img src="img/twoqi/dot3.png" width="12" class="inblock mar_r5" alt=""/>
+          <span class="colorzt font14 inblock">优惠券</span>
+        </div>
+      </div>
+      <div class="pad10 border_b font12" @click="xuanquan">
+        <div class="pad_l10 pad_r10">
+          <span class="color999" v-if="yhqselectedobj.money==''">未选择优惠券</span>
+          <span class="color666" v-if="yhqselectedobj.money!=''">￥{{yhqselectedobj.money}}</span>
+        </div>
+      </div>
+      <div class="pad10 font12 color666">
+        <div class="pad_l10 pad_r10">
+          课程提示：单节退款费￥{{shuju.tui_price}}，上够{{shuju.no_days}}天不予退款
+        </div>
+      </div>
+    </div>
+    <div class="tableblock" style="height: 46px">
+      <div class="col-xs-8 color666 border_t txt_right">
+        <div class="pad_r10">
+          <b class="font18 colorzt">￥{{summoney|number2}}</b>
+        </div>
+      </div>
+      <a class="col-xs-4 bgcolorzt colorfff font16 txt_center" href="javascript:lijibuy2();">立即购买</a>
+    </div>
+  </div>
+  <!-- 底部弹出的选择框 end-->
+</div>
+
+<script>
+  ioshistorygoback();
+
+  //初始加载
+  pre_loading(0);
+
+  var token=localStorage.getItem("user_token");
+
+  if(Getvariable('token')){
+    token=Getvariable('token');
+  }
+
+  if (!Getvariable("pid")) {
+    pre_loading(404, "此课程不存在");
+  }else {
+    var vm = new Vue({
+      el: '#app',
+      data: {
+        yhqselectedobj:{money:0},
+
+        shuju:{
+          content:[],
+          educational:{}
+        },
+        tabIndex:0,
+
+        box_shadow_hide:true,
+        typez:'1',//1月  2天
+        currDate:'',//2018-04-09 星期一 09:18:33
+        montharr:[
+          {text:'1月',selected:false},
+          {text:'2月',selected:false},
+          {text:'3月',selected:false},
+          {text:'4月',selected:false},
+          {text:'5月',selected:false},
+          {text:'6月',selected:false},
+          {text:'7月',selected:false},
+          {text:'8月',selected:false},
+          {text:'9月',selected:false},
+          {text:'10月',selected:false},
+          {text:'11月',selected:false},
+          {text:'12月',selected:false}
+        ],
+        currmonth:0,//0是1月
+
+        date1zhi:'',
+        date2zhi:'',
+
+        oprate:true
+      },
+      watch: {
+        typez: function (newzhi, oldzhi) {
+          if(localStorage.getItem('tgcoursedet_tankcan')){
+            var getzhi=JSON.parse(localStorage.getItem('tgcoursedet_tankcan'));
+            if(getzhi.typez!=newzhi){
+              sessionStorage.removeItem('yhqselected1');
+              this.yhqselectedobj={money:''};
+            }
+          }
+        }
+      },
+      computed:{
+        selectedDay:function(){
+          if(this.date2zhi!='' && this.date1zhi!=''){
+            var date2=this.date2zhi;
+            var date1=this.date1zhi;
+            date2=date2.replace(/-/g,'/');
+            date2=new Date(date2);
+            date1=date1.replace(/-/g,'/');
+            date1=new Date(date1);
+
+            var shijiancha=date2-date1;
+
+            if(shijiancha>0){
+              var days = Math.floor(shijiancha / 1000 / 60 / 60 / 24);
+              return days;
+            }else{
+              vm.date2zhi='';
+              $.toast('结束日期应大于起始日期','text');
+            }
+          }else{
+            return 0;
+          }
+        },
+        summoney:function(){
+          //弹窗的 总money
+          if(this.typez=='1'){
+            //月
+            var selectednum=0;
+            for(var i=0;i<this.montharr.length;i++){
+              if(this.montharr[i].selected){
+                selectednum++;
+              }
+            }
+            return this.shuju.month_price*selectednum==0?'0.00':this.shuju.month_price*selectednum-this.yhqselectedobj.money;
+          }else if(this.typez=='2'){
+            //天
+            if(isNaN(this.shuju.day_price*this.selectedDay)){
+              return '0.00';
+            }else{
+              return this.shuju.day_price*this.selectedDay==0?'0.00':this.shuju.day_price*this.selectedDay-this.yhqselectedobj.money;
+            }
+          }
+        }
+      },
+      methods:{
+        tuoguandet:function(){
+          appTuoguanDet(vm.shuju.educational.st_id);
+        },
+        showbigtu:function(el,that){
+          //查看评价大图
+          var arr=[];
+          var index=$(that).index();
+          if(el.img1){
+            arr.push(el.img1);
+          }
+          if(el.img2){
+            arr.push(el.img2);
+          }
+          if(el.img3){
+            arr.push(el.img3);
+          }
+          var pb1 = $.photoBrowser({
+            items: arr,
+            initIndex:index
+          });
+          pb1.open();  //打开
+        },
+        monthclick:function(i){
+          if(!vm.oprate){
+            return false;
+          }
+
+          this.montharr[i].selected=!this.montharr[i].selected;
+
+          if(vm.yhqselectedobj.money>0){
+            var monthselectednum=0;
+            for(var a=0;a<this.montharr.length;a++){
+              if(this.montharr[a].selected){
+                monthselectednum++;
+              }
+            }
+            var money=monthselectednum*vm.shuju.month_price;
+
+            vm.oprate=false;
+            //web-优惠券列表
+            $.ajax({
+              url:path_inter+"parents/coupon/findCoupon",
+              dataType:'json',
+              type:'post',
+              data:{
+                token: token,
+                type:2,
+                money:money
+              },
+              success:function(res){
+                vm.oprate=true;
+                if(user_overdue(res.code,res.msg)){
+                  if(res.data.length==0){
+                    //没有可用的优惠券了，需要重新选择优惠券
+                    $.toast('请重新选择优惠券','text');
+                    vm.yhqselectedobj={money:0};
+                  }else{
+                    var canselectedquan=false;
+                    for(var b=0;b<res.data.length;b++){
+                      if(res.data[b].can==1 && vm.yhqselectedobj.crid==res.data[b].crid){
+                        //说明之前选的优惠券还可以用
+                        canselectedquan=true;
+                        break;
+                      }
+                    }
+                    if(!canselectedquan){
+                      //需要重新选择优惠券
+                      $.toast('请重新选择优惠券','text');
+                      vm.yhqselectedobj={money:0};
+                    }
+                  }
+                }
+              },
+              error:function(){
+                vm.oprate=true;
+                pre_loading(1);
+              }
+            });
+          }
+        },
+        xuanquan:function(){
+          if(parseFloat(vm.summoney)<=0){
+            $.toast('当前价格为0','text');
+            return false;
+          }
+
+          //存住弹框的参数
+          if(vm.typez==1){
+            var tankcan=JSON.stringify({montharr:vm.montharr,typez:vm.typez});
+          }else if(vm.typez==2){
+            var tankcan=JSON.stringify({date1zhi:vm.date1zhi,date2zhi:vm.date2zhi,typez:vm.typez});
+          }
+          localStorage.setItem('tgcoursedet_tankcan',tankcan);
+
+          location.href='yhq_select.html?type=2&money='+vm.summoney;
+        }
+      },
+      created:function(){
+        var that=this;
+
+        hui.post(
+          path_inter+'/parents/Hosting/detail',
+          {
+            token: token,hc_id: Getvariable("pid")
+          },
+          function(res){
+            res = JSON.parse(res);
+            pre_loading(100);
+            if (user_overdue(res.code,res.msg)){
+              res.data.img=path_img+res.data.img;
+              for(var i=0;i<res.data.assess.length;i++){
+                res.data.assess[i].p_img=path_img+res.data.assess[i].p_img;
+                if(res.data.assess[i].img1){
+                  res.data.assess[i].img1=path_img+res.data.assess[i].img1;
+                }
+                if(res.data.assess[i].img2){
+                  res.data.assess[i].img2=path_img+res.data.assess[i].img2;
+                }
+                if(res.data.assess[i].img3){
+                  res.data.assess[i].img3=path_img+res.data.assess[i].img3;
+                }
+              }
+              vm.shuju=res.data;
+
+              that.$nextTick(function () {
+                //优惠券
+                if(sessionStorage.getItem('yhqselected1')){
+                  // 得到优惠券信息
+                  that.yhqselectedobj=JSON.parse(sessionStorage.getItem('yhqselected1'));
+
+                  //得到弹框信息
+                  var getzhi=JSON.parse(localStorage.getItem('tgcoursedet_tankcan'));
+                  that.typez=getzhi.typez;
+                  if(that.typez==1){
+                    that.montharr=getzhi.montharr;
+                  }else if(that.typez==2){
+                    that.date1zhi=getzhi.date1zhi;
+                    that.date2zhi=getzhi.date2zhi;
+                  }
+
+                  lijibuy();//弹出弹框
+                }
+              });
+
+            }
+          },
+          function(){
+            //error
+            pre_loading(1);
+          }
+        );
+      },
+      mounted:function(){
+        pagedo();
+      }
+    });
+  }
+
+
+
+
+
+
+
+
+  function zixun(){
+    app_contact(vm.shuju.accid);
+  }
+  function tabClick(zhi){
+    vm.tabIndex = zhi;
+  }
+  function toTwo(num){
+    return num<10?'0'+num:num;
+  }
+  //立即购买
+  function lijibuy(){
+    //2018-04-09 星期一 09:18:33
+    var currtime=new Date();
+    var xingqiArr=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+    var datestr=currtime.getFullYear()+'-'+toTwo(currtime.getMonth()+1)+'-'+toTwo(currtime.getDate())+' '+xingqiArr[currtime.getDay()]+' '+toTwo(currtime.getHours())+':'+toTwo(currtime.getMinutes())+':'+toTwo(currtime.getSeconds());
+    vm.currDate=datestr;
+
+    vm.currmonth=currtime.getMonth();
+    vm.box_shadow_hide=false;
+    $('.findteaDetKuang').css('bottom','464px');
+  }
+  //获取月的 最后一天
+  function getLastDay(year,month)
+  {
+    var new_year = year;  //取当前的年份
+    var new_month = month++;//取下一个月的第一天，方便计算（最后一天不固定）
+    if(month>12)      //如果当前大于12月，则年份转到下一年
+    {
+      new_month -=12;    //月份减
+      new_year++;      //年份增
+    }
+    var new_date = new Date(new_year,new_month,1);        //取当年当月中的第一天
+    return (new Date(new_date.getTime()-1000*60*60*24)).getDate();//获取当月最后一天日期
+  }
+  function lijibuy2(){
+    //下单
+
+    if(parseFloat(vm.summoney)<=0){
+      $.toast('当前价格为0','text');
+      return false;
+    }
+
+    //type	是	int	1.按天 2.按月
+    //date_period	是	string	type=1,eg.(2018-5-1,2018-5-15);     type=2,eg.(2018-5-1,2018-6-30;2018-8-1,2018-8-31)
+    var chuan={token:token,hc_id: Getvariable("pid")};
+    if(vm.typez==1){
+      //按月  目前是只列今年这样做
+      chuan.type=2;
+
+      //把选中的月  转成 后台需要的数据 start
+      var selectedarr=[];//选中的 月 数组
+      for(var i=0;i<vm.montharr.length;i++){
+        if(vm.montharr[i].selected){
+          var text=vm.montharr[i].text;
+          text=text.substring(0,text.lastIndexOf('月'));
+          selectedarr.push(text);
+        }
+      }
+      var datearr=[];//2018-6-1 2018-6-30 这样的数组
+      var year=new Date().getFullYear();
+      for(var j=0;j<selectedarr.length;j++){
+        datearr.push(year+'-'+selectedarr[j]+'-1');
+        datearr.push(year+'-'+selectedarr[j]+'-'+getLastDay(year,selectedarr[j]));
+      }
+      //去除连续的  2018-6-1 2018-6-30 2018-7-1 2018-7-31   转成  2018-6-1 2018-7-31
+      var delindex=[];//得到要删除的index
+      for(var k=0;k<datearr.length-1;k++){
+        var date1=datearr[k];
+        var date2=datearr[k+1];
+        date1=date1.replace(/-/g,'/');
+        date2=date2.replace(/-/g,'/');
+        if(new Date(date2)-new Date(date1)==86400000){
+          //整好差1天,说明是连续的
+          delindex.push(k);
+          delindex.push(k+1);
+        }
+      }
+      for(var a=0;a<delindex.length;a++){
+        datearr[delindex[a]]='';
+      }
+      //去除数据里面是''的
+      var zuizhongarr=[];
+      for(var b=0;b<datearr.length;b++){
+        if(datearr[b]!=''){
+          zuizhongarr.push(datearr[b])
+        }
+      }
+      var zuizhongstr='';
+      for(var c=0;c<zuizhongarr.length;c+=2){
+        zuizhongstr+=zuizhongarr[c]+','+zuizhongarr[c+1]+';';
+      }
+      console.log(zuizhongstr)
+      //把选中的月  转成 后台需要的数据 end
+      chuan.date_period=zuizhongstr;
+    }else if(vm.typez==2){
+      //按天
+      chuan.type=1;
+      if(vm.date1zhi!='' && vm.date2zhi!=''){
+        chuan.date_period=vm.date1zhi+','+vm.date2zhi;
+      }else{
+        $.toast('请选择购买日期','text');
+        return false;
+      }
+    }
+    if(vm.yhqselectedobj.crid){
+      chuan.cr_id=vm.yhqselectedobj.crid;
+    }
+
+    //下单
+    hui.post(
+      path_inter+'/parents/hosting/addOrder',
+      chuan,
+      function(res){
+        res = JSON.parse(res);
+        if (user_overdue(res.code,res.msg)){
+          var sn=res.data.sn;
+          var title=res.data.title;
+          var o_time=res.data.o_time;
+          var money=res.data.money;
+
+          sessionStorage.removeItem('yhqselected1');
+          localStorage.removeItem('tgcoursedet_tankcan');
+
+          appPayTuoguan(sn,o_time,'',money,title,3);
+        }
+      },
+      function(){
+        //error
+        pre_loading(1);
+      }
+    );
+  }
+  //点击x 点击遮罩
+  $('#kclose,.box_shadow_one').click(function () {
+    $('.findteaDetKuang').css('bottom','0');
+    vm.box_shadow_hide=true;
+  });
+  function pagedo(){
+    var currdate=new Date();
+    var currdatestr=currdate.getFullYear()+'-'+toTwo(currdate.getMonth()+1)+'-'+toTwo(currdate.getDate());
+
+    $("#date1").datetimePicker({
+      times: function () {
+        //自定义时间
+        return [];
+      },
+      min:currdatestr,
+      yearSplit:'-',
+      monthSplit:'-',
+      onClose: function (picker) {
+        console.log(picker);
+        var str=picker.displayValue[0]+'-'+picker.displayValue[1]+'-'+picker.displayValue[2];
+        console.log('str:'+str)
+        vm.date1zhi=str;
+
+        if(vm.yhqselectedobj.money>0){
+          //直接让重选，否则ajax会过于频繁
+          $.toast('请重新选择优惠券','text');
+          vm.yhqselectedobj={money:0};
+        }
+      }
+    });
+    $("#date2").datetimePicker({
+      times: function () {
+        //自定义时间
+        return [];
+      },
+      yearSplit:'-',
+      monthSplit:'-',
+      onClose: function (picker) {
+        console.log(picker);
+        var str=picker.displayValue[0]+'-'+picker.displayValue[1]+'-'+picker.displayValue[2];
+        console.log('str:'+str)
+        vm.date2zhi=str;
+
+        if(vm.yhqselectedobj.money>0){
+          //直接让重选，否则ajax会过于频繁
+          $.toast('请重新选择优惠券','text');
+          vm.yhqselectedobj={money:0};
+        }
+      }
+    });
+
+
+  }
+
+
+
+  function daohang(){
+    app_daohang(vm.shuju.educational.address,vm.shuju.educational.s_xy);
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title>我的提现</title>
+		<script type="text/javascript" src="js/com.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/stylea.css">
+		<link rel="stylesheet" type="text/css" href="css/weui.min.css">
+		<link rel="stylesheet" type="text/css" href="css/jquery-weui.css">
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery-weui.js"></script>
+		<script type="text/javascript" src="js/template-native.js"></script>
+		<style type="text/css">
+			.weui-pull-to-refresh{margin-top:58%!important;}
+			.tabon{border-bottom: 2px solid #ff6000;}
+		</style>
+	</head>
+	<body style="background: #fff;">
+		<div id="box" style="position:fixed;top:0;left:0;z-index: 99;width:100%;"></div>
+
+		<div ontouchstart class="content_box">
+			<div class="content_scroll">
+				<div id="box1"></div>
+			</div>
+		</div>
+
+		<script type="text/html" id="tpl">
+			<!-- 头部 -->
+			<div style="position:relative;z-index: 2">
+				<img style="background:#fff;" src="img/bk6.png">
+				<div style=";position:absolute;top:6%;left:0;">
+					<img src="img/yue.png">
+					<p class="font28 colorfff txt_center" style="font-family: 微软雅黑;"><span class="font14" style="display: inline-block;">￥</span><%=totalMoney%></p>
+					<div class="txt_center mar_t10 font12 colorfff">
+						<span onclick="tixian()">提现到银行卡</span>
+						<span class="mar_l10 mar_r10">|</span>
+						<span onclick="tixianzfb()">提现到支付宝</span>
+					</div>
+				</div>
+			</div>
+			<div class="tableblock txt_center font14 color333 bgcolorfff" style="height: 46px;margin-top: -14px;z-index: 1">
+				<div class="<%=tabindex==0?'tabon':''%>" onclick="tabclick(0)">提现到银行卡</div>
+				<div class="<%=tabindex==1?'tabon':''%>" onclick="tabclick(1)">提现到支付宝</div>
+			</div>
+		</script>
+
+		<script type="text/html" id="tpl1">
+			<%if(dinglist.length==0){%>
+			<div class="empty">暂无数据</div>
+			<%}%>
+			<%for(var i = 0; i < dinglist.length;i++){%>
+			<%var el = dinglist[i];%>
+				<div class="bgcolorfff" style="padding:0 14px;">
+					<div class="pad_t10 pad_b10" style="border-bottom:1px solid #f5f5f5;">
+						<div class="tableblock">
+							<div class="font12 col-xs-8">
+								<%if(tabindex==0){%>
+									银行卡号：
+								<%}else if(tabindex==1){%>
+									支付宝账号：
+								<%}%>
+								<%=el.number%>
+							</div>
+							<div class="txt_right font13 col-xs-4" style="color:#fa6021;">
+								<%if(el.status==1 || el.status==2){%>
+								+￥<span><%=el.money%></span>
+								<%}else if(el.status==3){%>
+								<del style="color:#ff0000">￥<%=el.money%></del>
+								<%}%>
+							</div>
+						</div>
+						<div class="tableblock mar_t5">
+							<div class="col-xs-5 font12 colora8"><%=el.a_time%></div>
+							<div class="col-xs-7 txt_right font12 colora8">
+								<%if(el.status==1){%>
+								<span style="color:#fa6021">申请中</span>
+								<%}else if(el.status==3){%>
+								<span style="color:#ff0000"><%=el.reason%></span>
+								<%}%>
+							</div>
+						</div>
+					</div>
+				</div>
+			<%}%>
+		</script>
+		<script type="text/javascript">
+			pre_loading(0);
+
+			var token=localStorage.getItem('user_token');
+
+			if(Getvariable('token')){
+				token=Getvariable('token');
+			}
+
+			var data = {
+				tabindex:0,
+				dinglist: '',
+				totalMoney: '',
+
+				loading:false,
+				page:2,
+				oprate:true
+			};
+			function renderhtml() {
+				document.getElementById('box').innerHTML = template('tpl',data);
+				document.getElementById('box1').innerHTML = template('tpl1',data);
+			}
+
+			var phone;
+			if(!Getvariable('phone')){
+				$.toast('少参数phone','text');
+				pre_loading(3);
+			}else{
+				phone=Getvariable('phone');
+				init();
+			}
+
+			function init(){
+				pre_loading(100);
+				renderhtml();
+				// 初始化加载
+				$.ajax({
+					url:path_inter+"ManagedClient/SecurityCenter/application",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						type:1
+					},
+					success:function(res){
+						if(user_overdue(res)){
+							pre_loading(100);
+							data.dinglist=res.data.info;
+							data.totalMoney=res.data.balance?res.data.balance:0;
+							renderhtml();
+
+							pagedo();
+						}
+					},
+					error:function(){
+						$.toast('请求数据失败！');
+					}
+				});
+			}
+			function tabclick(index){
+				if(!data.oprate){
+					return false;
+				}
+				data.tabindex=index;
+				var type;
+				if(index==0){
+					type=1;
+				}else if(index==1){
+					type=2;
+				}
+
+				data.oprate=false;
+				$.ajax({
+					url:path_inter+"ManagedClient/SecurityCenter/application",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						type:type
+					},
+					success:function(res){
+						data.oprate=true;
+						if(user_overdue(res)){
+							pre_loading(100);
+							data.dinglist=res.data.info;
+							data.totalMoney=res.data.balance?res.data.balance:0;
+
+							data.page=2;
+							data.loading=false;
+							load_closeanimation("load_animation",1);
+
+							renderhtml();
+						}
+					},
+					error:function(){
+						data.oprate=true;
+						$.toast('请求数据失败！');
+					}
+				});
+			}
+
+
+			// 提现到银行卡
+			function tixian(){
+				if(!data.oprate){
+					return false;
+				}
+				data.oprate=false;
+				$.ajax({
+					url:path_inter+"ManagedClient/SecurityCenter/checkApply",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token
+					},
+					success:function(res){
+						data.oprate=true;
+						if(user_overdue(res)){
+							if( res.data.type== 2){ //2可以提现  1不可以提现
+								self.location='myTixian_card.html?phone='+phone;
+							}
+							if( res.data.type== 1){ //2可以提现  1不可以提现
+								$.toast('已有一笔申请在审核中!','text');
+							}
+							renderhtml();
+						}
+					},
+					error:function(){
+						data.oprate=true;
+						$.toast('请求数据失败！');
+					}
+				}); 
+			}
+			//提现到支付宝
+			function tixianzfb(){
+				if(!data.oprate){
+					return false;
+				}
+				data.oprate=false;
+				$.ajax({
+					url:path_inter+"ManagedClient/SecurityCenter/checkApply",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token
+					},
+					success:function(res){
+						data.oprate=true;
+						if(user_overdue(res)){
+							pre_loading(100);
+							if( res.data.type== 2){ //2可以提现  1不可以提现
+								self.location='myTixian_zfb.html?phone='+phone;
+							}
+							if( res.data.type== 1){ //2可以提现  1不可以提现
+								$.toast('已有一笔申请在审核中!','text');
+							}
+							renderhtml();
+						}
+					},
+					error:function(){
+						data.oprate=true;
+						$.toast('请求数据失败！');
+					}
+				});
+			}
+
+			function pagedo(){
+				// 下拉刷新
+				xiala_reload($(".content_box"));
+				$(".content_box").pullToRefresh().on("pull-to-refresh", function() {
+					if(!data.oprate){
+						return false;
+					}
+					var type;
+					if(data.tabindex==0){
+						type=1;
+					}else if(data.tabindex==1){
+						type=2;
+					}
+
+					data.oprate=false;
+					$.ajax({
+						url:path_inter+"ManagedClient/SecurityCenter/application",
+						dataType:'json',
+						type:'post',
+						data:{
+							token:token,
+							type:type
+						},
+						success:function(res){
+							data.oprate=true;
+							$(".content_box").pullToRefreshDone();
+
+							if(user_overdue(res)){
+								data.dinglist=res.data.info;
+								data.totalMoney=res.data.balance?res.data.balance:0;
+								renderhtml();
+							}
+						},
+						error:function(){
+							data.oprate=true;
+							pre_loading(1);
+							$.toast('刷新失败','text');
+							$(".content_box").pullToRefreshDone();
+						}
+					});
+				});
+
+				// 上拉加载
+				$(".content_box").infinite().on("infinite", function() {
+					if(data.dinglist.length==0 || data.loading || !data.oprate)
+					{
+						return false;
+					}
+
+					var obj=$(this);
+					load_addanimation("load_animation",obj);
+					data.loading = true;//关闭下拉加载
+
+					data.oprate=false;
+					var type;
+					if(data.tabindex==0){
+						type=1;
+					}else if(data.tabindex==1){
+						type=2;
+					}
+					$.ajax({
+						url:path_inter+"ManagedClient/SecurityCenter/application",
+						dataType:'json',
+						type:'post',
+						data:{
+							token:token,
+							type:type,
+							page:data.page
+						},
+						success:function(res){
+							data.oprate=true;
+							if(user_overdue(res)){
+								data.dinglist=data.dinglist.concat(res.data.info);
+								renderhtml();
+
+								if(res.data.info.length==0){
+									load_closeanimation("load_animation",0);
+								}else{
+									load_closeanimation("load_animation",1);
+									data.loading=false;
+									data.page++;
+								}
+							}
+						},
+						error:function(){
+							data.oprate=true;
+						}
+					});
+				});
+			}
+
+
+
+		</script>
+	</body>
+</html>

@@ -1,0 +1,77 @@
+<admintpl file="header"/>
+<link href="http://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="__PUBLIC__/jquerymania/css/select-mania.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jquerymania/css/themes/select-mania-theme-darkblue.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jquerymania/css/themes/select-mania-theme-green.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jquerymania/css/themes/select-mania-theme-orange.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jquerymania/css/themes/select-mania-theme-red.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jquerymania/css/themes/select-mania-theme-square.css" rel="stylesheet" type="text/css">
+<style>
+    .input-medium {
+        width: 200px;
+    }
+
+    .input-large {
+        width: 400px;
+    }
+</style>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('Smalltable/ratiolist')}">代理商分佣设置</a></li>
+        <li class="active"><a href="{:U('Smalltable/ratioedit')}">添加分佣设置</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form" action="{:U('Smalltable/ratioedit')}">
+        <div class="control-group">
+            <label class="control-label">选择代理商<span style="color: red;">*</span></label>
+            <div class="controls" style="width: 215px;">
+                <select name="agent_id" id="telUserName" class="input-medium">
+                    <option value="0">请选择代理商</option>
+                    <foreach name="agent_list" key="k" item="vo">
+                        <option value="{$vo.id}"
+                        <if condition="$info['agent_id'] eq $vo['id']">selected</if>
+                        >{$vo.s_name}</option>
+                    </foreach>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">课程分佣比例<span style="color: red;">*</span></label>
+            <div class="controls">
+                <input type="number" min="0" max="100" name="kecheng_ratio" class="input-medium" value="{$info.kecheng_ratio}" required> %（平台在此模块的分佣占比）
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">托管分佣比例<span style="color: red;">*</span></label>
+            <div class="controls">
+                <input type="number" min="0" max="100" name="tuoguan_ratio" class="input-medium" value="{$info.tuoguan_ratio}" required> %（平台在此模块的分佣占比）
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">活动分佣比例<span style="color: red;">*</span></label>
+            <div class="controls">
+                <input type="number" min="0" max="100" name="huodong_ratio" class="input-medium" value="{$info.huodong_ratio}" required> %（平台在此模块的分佣占比）
+            </div>
+        </div>
+        <div class="form-actions">
+            <input type="hidden" name="$agent_id" value="{$info.$agent_id}"/>
+            <button type="submit" class="btn btn-primary js-ajax-submit">{:L('SAVE')}</button>
+            <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="http://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+<script src="__PUBLIC__/jquerymania/js/select-mania.js"></script>
+<script type="text/javascript">
+    $('#telUserName').selectMania({
+        size: 'small',
+        themes: ['square','red'],
+        placeholder: 'Please select me!',
+        removable: true,
+        search: true,
+    });
+</script>
+</body>
+</html>

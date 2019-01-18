@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title>授课评价</title>
+		<script type="text/javascript" src="../js/com.js" ></script>
+		<link rel="stylesheet" type="text/css" href="../css/stylea.css">
+		<link rel="stylesheet" type="text/css" href="../css/weui.min.css">
+		<link rel="stylesheet" type="text/css" href="../css/jquery-weui.css">
+		<script type="text/javascript" src="../js/hui.js" ></script>
+		<script type="text/javascript" src="../js/jquery.min.js" ></script>
+		<script type="text/javascript" src="../js/jquery-weui.js" ></script>
+		<script type="text/javascript" src="../js/template-native.js" ></script>
+	</head>
+	<body>
+		<div ontouchstart class="content_box" >
+			<div class="content_scroll" >
+				<div id="box"></div>
+			</div>
+		</div>
+		<script type="text/html" id="tpl">
+			<!--内容开始-->
+			<div class="pad_l10 pad_r10 bgcolorfff mar_b5">
+				<div class="pad10 border_b">
+					<img src="../img/icon3.png" height="14" alt=""/>
+					<span class="inblock colorzt font14 mar_l10">授课教案</span>
+				</div>
+				<div class="pad10 color666 font12">
+					<textarea id="jiaoan" style="width: 100%; height: 16em;" placeholder="填写授课教案"></textarea>
+				</div>
+			</div>
+
+			<div class="pad_l10 pad_r10 bgcolorfff mar_b5">
+				<div class="pad10 border_b">
+					<img src="../img/icon4.png" height="14" alt=""/>
+					<span class="inblock colorzt font14 mar_l10">学生评语</span>
+				</div>
+				<div class="pad10 color666 font12">
+					
+					<textarea id="pingyu" style="width: 100%; height: 16em;" placeholder="填写学生评语"></textarea>
+				</div>
+			</div>
+			<div class="pad10 mar_t10 mar_b10">
+				<a href="javascript:;" onclick="tj_pingjia()" class="block pad10 txt_center bgcolorzt border_radiu20 colorfff font14">
+					提交评价
+				</a>
+			</div>
+			<!--内容end-->
+		</script>
+		<script type="text/javascript">
+			var token=localStorage.getItem('user_token');
+
+			if(Getvariable('token')){
+				token=Getvariable('token');
+			}
+
+			var data = {
+				loading:false,
+				page:1,
+				oprate:true
+			};
+			function renderhtml(){
+				document.getElementById('box').innerHTML = template('tpl',data)
+			};
+			
+			pre_loading(0);
+			if(Getvariable('pid'))
+			{
+				var id=Getvariable('pid');
+			}
+			if(Getvariable('num'))
+			{
+				var num=Getvariable('num');
+				pre_loading(100);
+			}
+			else{
+				pre_loading(3);
+				// return false;
+			}
+			renderhtml();
+			
+			
+			function tj_pingjia(){
+				var jiaoan = $("#jiaoan").val();
+				var pingyu = $("#pingyu").val();
+				if(!data.oprate)
+				{
+					return false;
+				}
+				if(jiaoan=='')
+				{
+					$.toast("请填写授课教案","text");
+					return false;
+				}
+				if(pingyu==='')
+				{
+					$.toast("请填写学生评语","text");
+					return false;
+				}
+				
+				data.oprate=false;
+				$.ajax({
+					url:path_inter+"Teacher/course/reder",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						id:Getvariable('pid'),
+						num:Getvariable('num'),
+						plan:jiaoan,
+						comment:pingyu
+					},
+					success:function(res){
+						console.log(res)
+						data.oprate=true;
+						if(user_overdue(res.code,res.msg)){
+		//					pre_loading(100);
+							$.toast("提交成功","text");
+							setTimeout(function(){
+		//						location.href="javascript:history.go(-1);";
+								goback();
+							},800)
+						}
+						renderhtml();
+					},
+					error:function(){
+						$.toast("提交失败","text");
+						data.oprate=true
+					}
+				});
+			}
+			
+		
+
+
+		</script>
+	</body>
+</html>

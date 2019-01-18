@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title>视频介绍</title>
+		<script type="text/javascript" src="../js/com.js"></script>
+		<!-- wangEditor-mobile.min.css用到了fonts文件夹-->
+		<link rel="stylesheet" type="text/css" href="../css/wangEditor-mobile.min.css">
+		<link rel="stylesheet" type="text/css" href="../css/stylea.css">
+		<!--wangEditor-mobile.min.js依赖于zepto -->
+		<script type="text/javascript" src="../js/zepto.js"></script>
+		<script type="text/javascript" src="../js/zepto.touch.js"></script>
+		<script type="text/javascript" src="../js/wangEditor-mobile.min.js"></script>
+		<style>
+			.wangEditor-mobile-txt{min-height: 400px;border:1px solid #ddd;border-radius: 4px;}
+			li{list-style-type:disc}
+		</style>
+	</head>
+	<body>
+		<div class="content_box" >
+			<div class="content_scroll">
+				<div class="pad10 color666" style="line-height: 30px">编辑介绍</div>
+				<div class="pad_l10 pad_r10">
+					<textarea id="textarea1"></textarea>
+				</div>
+				<div class="pad_l10 pad_r10 pad_t10">
+					<div class="bgcolorzt colorfff txt_center pad_t10 pad_b10 border_radiu4" id="fabu">发布</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			$(function () {
+				// 全局配置
+				// ___E.config.menus = ['bold', 'color', 'quote'];
+				// 生成编辑器
+				var editor = new ___E('textarea1');
+				// 自定义配置
+				editor.config.uploadImgUrl = '/upload';
+				// editor.config.menus = ['bold', 'quote', 'list','img'];
+				// 初始化
+				editor.init();
+			});
+
+			$('#fabu').click(function(){
+				var htmlstr=$('.wangEditor-mobile-txt').html();
+				console.log(htmlstr)
+			});
+		</script>
+	</body>
+</html>

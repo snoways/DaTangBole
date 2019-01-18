@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>圈子添加</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- bootstrap -->
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap.css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+
+  <!-- libraries -->
+  <link href="__PUBLIC__/Shopadmin/css/lib/uniform.default.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/select2.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/font-awesome.css" type="text/css" rel="stylesheet"/>
+
+  <!-- global styles -->
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/layout.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/elements.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/icons.css">
+
+  <!-- this page specific styles -->
+  <link rel="stylesheet" href="__PUBLIC__/Shopadmin/css/compiled/form-showcase.css" type="text/css" media="screen"/>
+
+  <!-- open sans font -->
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <script type="text/html" id="photos-item-wrapper">
+    <li id="savedimage{id}" style=" margin-bottom:10px;">
+      <input id="photo-{id}" type="hidden" name="photos_url[]" value="{filepath}">
+      <input id="photo-{id}-name" type="text" name="photos_alt[]" value="{name}" style="width: 160px;" title="图片名称">
+      <img id="photo-{id}-preview" src="{url}" style="max-height:40px;max-width: 50px;border:1px solid #DDDDDD; border-radius: 4px;" onclick="parent.image_preview_dialog(this.src);">
+      <a href="javascript:upload_one_image('图片上传','#photo-{id}');" style="background:#1BA491; padding:8px 16px; font-size:14px; color:#FFF; border-radius: 4px;margin-left:10px;white-space: nowrap;">替换</a>
+      <a href="javascript:(function(){$('#savedimage{id}').remove();})();" style="background:#FF6C60; padding:8px 16px; font-size:14px; color:#FFF; border-radius: 4px;margin-left:5px;white-space: nowrap;">移除</a>
+    </li>
+  </script>
+  <link href="__PUBLIC__/js/artDialog/skins/default.css" rel="stylesheet" />
+
+  <script type="text/javascript">
+      //全局变量
+      var GV = {
+          ROOT: "__ROOT__/",
+          WEB_ROOT: "__WEB_ROOT__/",
+          JS_ROOT: "public/js/",
+          APP:'{$Think.MODULE_NAME}'/*当前应用名*/
+      };
+  </script>
+  <script src="__PUBLIC__/js/wind.js"></script>
+
+  <style>
+    #content{
+      width: 640px;
+      height: 90px;
+      resize: none;
+    }
+    .col-md-8 span{
+      margin-right: 20px;
+    }
+    .none{
+      display: none;
+    }
+
+    #photos{
+      padding: 0px;
+    }
+    #photos li{
+      margin: 0px;
+      list-style: none;
+      padding: 0px;
+    }
+    li input{
+      height: 32px;
+      border-radius: 5px;
+      padding-left: 5px;
+      min-width: 375px;
+      border: solid 1px #cdcdcd;
+    }
+
+
+    .options{
+      overflow: hidden;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+    .options ul{
+      padding: 0px;
+      margin: 0px;
+      overflow: hidden;
+    }
+    .options ul li{
+      float: left;
+      list-style: none;
+      padding: 5px 12px;
+      border: solid 1px #ededed;
+      margin-left: 2px;
+    }
+    .options ul .active {
+      background: #ededed;
+    }
+
+  </style>
+
+</head>
+<body>
+
+<include file="common/menu" />
+
+<!-- main container -->
+<div class="content">
+
+  <div id="pad-wrapper" class="form-page">
+    <div class="row header" style="margin-bottom: 20px">
+      <div class="col-md-12">
+        <h3>圈子编辑</h3>
+      </div>
+    </div>
+    <div class="options">
+      <ul>
+        <li >
+          <a  href="{:U('Circle/index')}">圈子列表</a>
+        </li>
+        <li class="active" >
+          <a href="{:U('Circle/edit',array('id'=>$_GET['id']))}">编辑圈子</a>
+        </li>
+      </ul>
+    </div>
+    <div class="row form-wrapper">
+      <div class="col-md-8 column">
+        <form method="post" class="form-horizontal js-ajax-form" action="{:U('Circle/edit')}" enctype="multipart/form-data">
+          <fieldset>
+            <input type="hidden" name="id" value="{$_GET['id']}">
+
+            <div class="field-box" id="type">
+              <label class="inputlh">类型</label>
+              <div class="col-md-8">
+                <input type="radio" name="c_type" value="1" <if condition="$data['c_type'] == 1">checked</if>>
+                <span> 文字 </span>
+                <input type="radio" name="c_type" value="2" <if condition="$data['c_type'] == 2">checked</if> >
+                <span> 文字+图片 </span>
+                <input type="radio" name="c_type" value="3" <if condition="$data['c_type'] == 3">checked</if>>
+                <span> 文字+视频 </span>
+              </div>
+            </div>
+
+            <div class="field-box" id="text">
+              <label class="inputlh">填写文字</label>
+              <div class="col-md-8">
+                <textarea name="content" id="content" >{$data['content']}</textarea>
+              </div>
+            </div>
+
+            <div class="field-box <if condition='$data[c_type] neq 2' >none</if>" id="image"  >
+              <label class="inputlh">上传图集</label>
+              <div class="col-md-8">
+
+                <ul id="photos" class="pic-list unstyled">
+                  <notempty name="img_list">
+                    <foreach name="img_list" item="vo">
+                      <php>$img_url=sp_get_image_preview_url($vo['url']);</php>
+                      <li id="savedimage{$key}">
+                        <input id="photo-{$key}" type="hidden" name="photos_url[]" value="{$img_url}">
+                        <input id="photo-{$key}-name" type="text" name="photos_alt[]" value="{$vo.alt}" style="width: 200px;" title="图片名称">
+                        <img id="photo-{$key}-preview" src="{:sp_get_image_preview_url($vo['url'])}" style="height:36px;width: 36px;" onclick="parent.image_preview_dialog(this.src);">
+                        <a href="javascript:upload_one_image('图片上传','#photo-{$key}');">替换</a>
+                        <a href="javascript:(function(){ $('#savedimage{$key}').remove();})();">移除</a>
+                      </li>
+                    </foreach>
+                  </notempty>
+                </ul>
+                <a href="javascript:upload_multi_image('图片上传','#photos','photos-item-wrapper');" class="btn btn-small">选择图片</a>
+              </div>
+            </div>
+
+            <div id="video" <if condition="$data['c_type'] neq 3">class="none"</if> >
+              <div class="field-box" >
+                <label class="inputlh">选择图片</label>
+                <div class="col-md-8">
+                  <input type="text" value="{$data['video_cover']}" name="video_cover" id="video-cover" style="max-width: 375px;display: inline" class="form-control">
+                  <a href="javascript:upload_one_image('视频上传','#video-cover');" class="btn btn-small">选择图片</a>
+                </div>
+              </div>
+              <div class="field-box" >
+                <label class="inputlh">上传视频</label>
+                <div class="col-md-8">
+                  <input type="text" value="{$data['video_url']}" name="video" id="video-uploader" style="max-width: 375px;display: inline" class="form-control">
+                  <a href="javascript:upload_one('视频上传','#video-uploader','video');" class="btn btn-small">选择视频</a>
+                </div>
+              </div>
+            </div>
+
+          </fieldset>
+          <div class="field-box">
+            <label class="inputlh"></label>
+            <div class="col-md-8">
+              <button type="submit" class="btn btn-primary mar_r5 js-ajax-submit">保存</button>
+              <a class="btn btn-default" href="{:U('Circle/index')}">返回</a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end main container -->
+
+<!-- scripts for this page -->
+<script src="__PUBLIC__/Shopadmin/js/wysihtml5-0.3.0.js"></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/jquery.uniform.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/theme.js"></script>
+<!--laydate-->
+<script src="__PUBLIC__/Shopadmin/laydate/laydate.js"></script>
+<!--laryer-->
+<script src="__PUBLIC__/Shopadmin/layer/layer.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/common.js"></script>
+<script type="text/javascript">
+    var index = 1;
+    $("input[type='radio']").click(function () {
+        index = $(this).val();
+        if(index == 3){
+            $("#image").slideUp()
+            $("#video").slideDown();
+        }else if(index == 2){
+            $("#image").slideDown();
+            $("#video").slideUp();
+        }else{
+            $("#image").slideUp();
+            $("#video").slideUp();
+        }
+    })
+
+    $('form').submit(function () {
+
+        var text = $("#content").val();
+        var photos = $('#photos').children().length;
+        /*  cover */
+        var img = $("#video-cover").val();
+        var video = $("#video-uploader").val();
+
+        if(index == 3 && (!text || !img || !video)){
+            layer.msg('您好，请上传视频和封面图并填写文字内容！');
+            return false;
+        }else if(index == 2 && (!text || parseInt(photos) == 0)){
+            layer.msg('您好，请上传图片并填写文字内容！');
+            return false;
+        }else if(index == 1 && !text){
+            layer.msg('您好，请填写文字内容！');
+            return false;
+        }
+        return true;
+    })
+
+</script>
+
+</body>
+</html>

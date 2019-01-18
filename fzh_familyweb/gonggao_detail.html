@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>公告详情</title>
+  <script src="js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="css/ku/hui.css">
+  <link rel="stylesheet" href="css/ku/style.css">
+  <script src="js/ku/hui.js"></script>
+  <script src="js/ku/template-web.js"></script>
+</head>
+<body>
+<!--新闻详情和公告详情是完全一样的，只是title和 此公告不存在 提示文字不同-->
+<div class="content_box bgcolorfff">
+  <div class="content_scroll">
+    <div id="contain"></div>
+  </div>
+</div>
+
+<script type="text/html" id="tpl">
+  <div class="pad10 pad_t0 pad_b0">
+    <div class="pad10 border_b txt_center rela">
+      <span class="newsztblock abso bgcolorzt" style="bottom: -2px;right: 10px"></span>
+      <div class="font16 colorzt mar_b5"><%=detail.news_title%></div>
+      <div class="font12 color999">
+        <i><%=detail.news_time%></i>
+      </div>
+    </div>
+  </div>
+  <div class="pad10 font14 border_b rela">
+    <span class="newsztblock abso bgcolorzt" style="bottom: -2px;left: 10px"></span>
+    <div><%-detail.news_detail%></div>
+  </div>
+  <div class="pad10 color666 font14">
+    <%if(detail.last){%>
+    <div class="txt_oneline mar_b5">
+      <span class="color333">上一篇：</span>
+      <a href="gonggao_detail.html?pid=<%=detail.last.news_id%>"><%=detail.last.news_title%></a>
+    </div>
+    <%}%>
+    <%if(detail.next){%>
+    <div class="txt_oneline">
+      <span class="color333">下一篇：</span>
+      <a href="gonggao_detail.html?pid=<%=detail.next.news_id%>"><%=detail.next.news_title%></a>
+    </div>
+    <%}%>
+  </div>
+</script>
+
+<script>
+  var token=localStorage.getItem("user_token");
+
+  if(Getvariable('token')){
+    token=Getvariable('token');
+  }
+
+  //初始加载
+  pre_loading(0);
+
+  if (Getvariable("pid")){
+    var data={
+      pid: "",
+      detail: {},
+      ceshi: ""
+    };
+    function renderhtml(){
+      document.getElementById('contain').innerHTML=template('tpl', data);
+    }
+
+    hui.post(
+      path_inter+'/parents/home/newsDetail',
+      {
+        token: token, news_id: Getvariable("pid")
+      },
+      function(res){
+        res = JSON.parse(res);
+        pre_loading(100);
+        if (user_overdue(res.code,res.msg)) {
+          data.detail = res.data;
+          renderhtml();
+        }
+      },
+      function(){
+        //error
+        pre_loading(1);
+      }
+    );
+  }
+  else {
+    pre_loading(404, "此公告不存在")
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <!-- 改为在线课堂了-->
+  <title>在线课堂</title>
+  <script src="../js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="../css/ku/hui.css">
+  <link rel="stylesheet" href="../css/ku/weui.min.css">
+  <link rel="stylesheet" href="../css/ku/jquery-weui.min.css">
+  <link rel="stylesheet" href="../css/ku/style.css">
+  <script src="../js/ku/hui.js"></script>
+  <script src="../js/ku/vue.min.js"></script>
+  <script src="../js/ku/jquery-1.12.4.min.js"></script>
+  <script src="../js/ku/jquery-weui.js"></script>
+</head>
+<body>
+
+<div id="app" v-cloak>
+  <!-- tab-->
+  <div class="header txt_center font14 bgcolorfff color666 border_b">
+    <div class="tableblock">
+      <div v-for="(el,i) in order_tab">
+        <a href="javascript:;" @click="tab_click(i)" style="padding: 3px 10px" :class="{'colorfff bgcolorzt':tab_index==i}" class="border_radiu20 inblock">{{el}}</a>
+      </div>
+    </div>
+  </div>
+
+  <!--免费-->
+  <div class="content_box bgcolorf3f3" v-if="tab_index==0" :class="{no_scroll:list[0].length==0,pad_wei:edit,pad_tou:list[0].length==0 && !edit}">
+    <div class="content_scroll">
+      <div class="L_notice" v-if="list[0].length==0">暂无相关视频~</div>
+      <ul>
+        <li class="mar_t5 bgcolorfff" v-for="(el,i) in list[0]">
+          <div class="pad10 border_b">
+            <div class="tableblock">
+              <div style="width: 28px" v-if="edit">
+                <input type="checkbox" class="mycheckbox inblock checkxiao" :id="el.ch_id" :i="i">
+              </div>
+              <div style="width: 132px" @click="godet(el)">
+                <img :src="el.img_url" width="122" height="78" alt="">
+              </div>
+              <div class="vertop" @click="godet(el)">
+                <div class="font14 color333 txt_oneline">{{el.title}}</div>
+                <div>
+                  <img :src="el.t_img" width="16" height="16" class="border_radius50 inblock" alt="">
+                  <span class="font12 color666 inblock">{{el.t_name}}</span>
+                  <img src="../img/twoqi/huo.png" height="10" class="inblock mar_l10" alt="">
+                  <span class="inblock colorzt font12">{{el.view}}</span>
+                </div>
+                <div class="font12 color888 mar_t5">观看时间：{{el.cw_time}}</div>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!--付费-->
+  <div class="content_box bgcolorf3f3" v-if="tab_index==1" :class="{no_scroll:list[1].length==0,pad_wei:edit,pad_tou:list[1].length==0 && !edit}">
+    <div class="content_scroll">
+      <div class="L_notice" v-if="list[1].length==0">暂无相关视频~</div>
+      <ul>
+        <li class="mar_t5 bgcolorfff" v-for="(el,i) in list[1]">
+          <div class="pad10 border_b">
+            <div class="tableblock">
+              <div style="width: 28px" v-if="edit">
+                <input type="checkbox" class="mycheckbox inblock checkxiao" :id="el.ch_id" :i="i">
+              </div>
+              <div style="width: 132px" @click="godet(el)">
+                <img :src="el.img_url" width="122" height="78" alt="">
+              </div>
+              <div class="vertop" @click="godet(el)">
+                <div class="font14 color333 txt_oneline">{{el.title}}</div>
+                <div>
+                  <img :src="el.t_img" width="16" height="16" class="border_radius50 inblock" alt="">
+                  <span class="font12 color666 inblock">{{el.name}}</span>
+                  <img src="../img/twoqi/huo.png" height="10" class="inblock mar_l10" alt="">
+                  <span class="inblock colorzt font12 mar_r10">{{el.view}}</span>
+                  <b class="inblock colorzt font12">￥{{el.price}}</b>
+                </div>
+                <div class="font12 color888 mar_t5">观看时间：{{el.cw_time}}</div>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 底部-->
+  <div class="footer" v-show="edit">
+    <div class="tableblock h100">
+      <div class="col-xs-8">
+        <div class="pad_l10">
+          <input type="checkbox" id="quanxuan" class="mycheckbox inblock mar_r5">
+          <span class="font14 color666 inblock">全选</span>
+        </div>
+      </div>
+      <div class="font16 colorfff txt_center bgcolorzt col-xs-4" onclick="delfun()">删除</div>
+    </div>
+  </div>
+
+</div>
+
+
+
+<script>
+  var token= localStorage.getItem('user_token');
+  if(Getvariable('token')){
+    token=Getvariable('token');
+  }
+
+  var vm = new Vue({
+    el: '#app',
+    data: {
+      order_tab: ["免费视频", "付费视频"],
+      tab_index: 0,
+      score: [1, 2, 3, 4, 5],
+      list: [
+        [],[]
+      ],
+      edit:false,
+
+      oprate: true,
+      loading:[false,false],
+      page: [2, 2]
+    },
+    methods:{
+      tab_click:function(index){
+        if (index != vm.tab_index){
+          vm.tab_index = index;
+          if(vm.tab_index==0){
+            gettab1();
+          }else if(vm.tab_index==1){
+            gettab2();
+          }
+          vm.page=[2,2];
+
+          $('#quanxuan')[0].checked=false;//清除全选勾中状态
+        }
+      },
+      godet:function(el){
+        goOnlineCourseDet(el.oc_id);
+      }
+    },
+    mounted:function(){
+      pagedo();
+    }
+  });
+
+
+
+
+
+
+
+  //初始加载
+  pre_loading(0);
+
+  //页面参数    不携带tab参数，默认是老师
+  if (Getvariable("pid")) {
+    vm.tab_index = Getvariable("pid");
+  }
+  if(Getvariable('edit')=='true'){
+    vm.edit=true;
+  }
+
+
+
+
+
+
+
+
+  function gettab1(){
+    //观看记录-免费
+    hui.post(
+      path_inter+'/parents/OnlineClass/watchHistory',
+      {
+        token:token,
+        page:1,
+        type:1
+      },
+      function(res){
+        res = JSON.parse(res);
+        if(vm.tab_index==0){
+          pre_loading(100);
+        }
+        if (user_overdue(res.code,res.msg)) {
+          for(var i=0;i<res.data.length;i++){
+            res.data[i].img_url = path_img + res.data[i].img_url;
+            res.data[i].t_img = path_img + res.data[i].t_img;
+          }
+          vm.list.splice(0, 1, res.data);
+        }
+      },
+      function(){
+        //error
+        pre_loading(1);
+      }
+    );
+  }
+  function gettab2(){
+    //观看记录-收费
+    hui.post(
+      path_inter+'/parents/OnlineClass/watchHistory',
+      {
+        token: token,
+        page:1,
+        type:2
+      },
+      function(res){
+        res = JSON.parse(res);
+        if(vm.tab_index==1){
+          pre_loading(100);
+        }
+        if (user_overdue(res.code,res.msg)) {
+          for(var i=0;i<res.data.length;i++){
+            res.data[i].img_url = path_img + res.data[i].img_url;
+            res.data[i].t_img = path_img + res.data[i].t_img;
+          }
+          vm.list.splice(1, 1, res.data);
+        }
+      },
+      function(){
+        //error
+        pre_loading(1);
+      }
+    );
+  }
+  function delfun(){
+    if(!vm.oprate){
+      return false;
+    }
+
+    if(!checkselectone()){
+      $.toast('请选择要删除的项目','text');
+      return false;
+    }
+
+    vm.oprate=false;
+
+    var ids='',indexs=[];//删除的 历史id(1,2,3) 和 索引值
+    var all=$('.content_box .mycheckbox:visible');
+    for(var i=0;i<all.length;i++){
+      if(all[i].checked){
+        var id=$(all[i]).attr('id');
+        ids+=','+id;
+
+        var index=$(all[i]).attr('i');
+        indexs.push(index);
+      }
+    }
+    ids=ids.substring(1);
+
+    //删除
+    $.confirm("", "确认删除?", function () {
+      $.ajax({
+        url: path_inter + "/parents/OnlineClass/delHistory",
+        dataType: 'json',
+        type: 'post',
+        data: {
+          token:token,
+          ch_ids: ids
+        },
+        success: function (data) {
+          vm.oprate=true;
+          if (user_overdue(data.code,data.msg)) {
+            if (data.code == 1) {
+              for(var i=indexs.length-1;i>=0;i--){
+                vm.list[vm.tab_index].splice(indexs[i], 1);//删除对应索引的项
+              }
+              $.toast("删除成功", "text");
+
+              $('#quanxuan')[0].checked=false;//清除全选勾中状态
+              //checkbox清除之前的选中状态
+              var all=$('.content_box .mycheckbox:visible');
+              for(var i=0;i<all.length;i++){
+                all[i].checked=false;
+              }
+            }
+          }
+        },
+        error: function () {
+          vm.oprate=true;
+          $.toast("删除失败", "text");
+        }
+      });
+    }, function () {
+      vm.oprate=true;
+    });
+  }
+
+
+
+
+
+
+
+  //初始化数据
+  if(vm.tab_index==0){
+    gettab1();
+  }else if(vm.tab_index==1){
+    gettab2();
+  }
+
+
+
+
+
+
+  //checkbox
+  $('#quanxuan').click(function(){
+    var zhi=$(this)[0].checked;
+    console.log(zhi);
+
+    var all=$('.content_box .mycheckbox:visible');
+    for(var i=0;i<all.length;i++){
+      all[i].checked=zhi;
+    }
+  });
+  $('.content_box').on('click','.checkxiao',function(){
+    var allxiaoselect=true;
+    var all=$(this).closest('li').find('.checkxiao');
+    for(var i=0;i<all.length;i++){
+      if(!all[i].checked){
+        allxiaoselect=false;
+      }
+    }
+    $('#quanxuan')[0].checked=checkallselect();
+  });
+  function checkallselect(){
+    var allselect=true;
+    var all=$('.content_box .mycheckbox:visible');
+    for(var i=0;i<all.length;i++){
+      if(!all[i].checked){
+        allselect=false;
+      }
+    }
+    return allselect;
+  }
+  //是否勾选了至少一个
+  function checkselectone(){
+    var oneselect=false;
+    var all=$('.content_box .mycheckbox:visible');
+    for(var i=0;i<all.length;i++){
+      if(all[i].checked){
+        oneselect=true;
+      }
+    }
+    return oneselect;
+  }
+
+
+
+
+
+
+
+
+  function pagedo(){
+    //下拉刷新
+    xiala_reload($(".content_box"));
+    $(".content_box").pullToRefresh().on("pull-to-refresh", function () {
+      if (!vm.oprate) {
+        $(".content_box").pullToRefreshDone();
+        return false;
+      }
+      vm.oprate = false;
+
+      vm.list.splice(vm.tab_index, 1, []);
+      vm.page[vm.tab_index] = 1;
+      vm.loading[vm.tab_index] = false;
+      load_closeanimation("load_animation" + vm.tab_index, 1);
+
+      var typezhi=vm.tab_index==0?1:2;
+      $.ajax({
+        url: path_inter + "/parents/OnlineClass/watchHistory",
+        dataType: 'json',
+        type: 'post',
+        data: {
+          token: token,
+          page:vm.page[vm.tab_index],
+          type:typezhi
+        },
+        success: function (data) {
+          vm.oprate = true;
+          $(".content_box").pullToRefreshDone();
+
+          if (user_overdue(data.code,data.msg)) {
+            for(var i=0;i<data.data.length;i++){
+              data.data[i].img_url = path_img + data.data[i].img_url;
+              data.data[i].t_img = path_img + data.data[i].t_img;
+            }
+            vm.list.splice(vm.tab_index, 1, data.data);
+            vm.page[vm.tab_index]++;
+
+            $('#quanxuan')[0].checked=false;//清除全选勾中状态
+          }
+        },
+        error: function () {
+          vm.oprate = true;
+          $.toast("刷新失败", "text");
+          $(".content_box").pullToRefreshDone();
+        }
+      });
+    });
+    //上拉加载
+    $(".content_box").infinite().on("infinite", function(){
+      if(vm.list[vm.tab_index].length==0||vm.loading[vm.tab_index]||!vm.oprate)
+      {
+        return false;
+      }
+
+      vm.oprate=false;
+
+      var obj=$(this);
+      load_addanimation("load_animation"+vm.tab_index,obj);
+      vm.loading[vm.tab_index] = true;//关闭下拉加载
+
+      var typezhi=vm.tab_index==0?1:2;
+      $.ajax({
+        url:path_inter+"/parents/OnlineClass/watchHistory",
+        dataType:'json',
+        type:'post',
+        data:{
+          token:token,
+          page:vm.page[vm.tab_index],
+          type:typezhi
+        },
+        success:function(data){
+          vm.oprate=true;
+          if(user_overdue(data.code,data.msg))
+          {
+            for(var i=0;i<data.data.length;i++){
+              data.data[i].img_url = path_img + data.data[i].img_url;
+              data.data[i].t_img = path_img + data.data[i].t_img;
+            }
+            vm.list.splice(vm.tab_index, 1, vm.list[vm.tab_index].concat(data.data));
+
+            if(data.data.length>0)
+            {
+              vm.page[vm.tab_index]++;
+              vm.loading[vm.tab_index] = false;
+              load_closeanimation("load_animation"+vm.tab_index,1);
+            }
+            else
+            {
+              load_closeanimation("load_animation"+vm.tab_index,0);
+            }
+          }
+        },
+        error:function(){
+          vm.oprate=true;
+        }
+      });
+    });
+  }
+</script>
+</body>
+</html>

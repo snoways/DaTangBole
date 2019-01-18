@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <!-- 机构师资 托管师资都走这个页-->
+  <title></title>
+  <script src="js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="css/ku/hui.css">
+  <link rel="stylesheet" href="css/ku/weui.min.css">
+  <link rel="stylesheet" href="css/ku/jquery-weui.min.css">
+  <link rel="stylesheet" href="css/ku/style.css">
+  <script src="js/ku/hui.js"></script>
+  <script src="js/ku/template-web.js"></script>
+  <script src="js/ku/jquery-1.12.4.min.js"></script>
+  <script src="js/ku/jquery-weui.js"></script>
+  <script src="js/ku/swiper_jqueryweui.js"></script>
+</head>
+<body ontouchstart>
+
+<div class="content_box pad_wei">
+  <div class="content_scroll">
+    <!--内容开始-->
+    <div id="contain"></div>
+    <!--内容end-->
+  </div>
+</div>
+
+<!--shuju.icon需要判断下，有的有，有的没有（不是会员的就是空字符串）-->
+<script type="text/html" id="tpl">
+  <div class="pad_l10 pad_r10 pad_t10 bgcolorfff mar_b5">
+    <div class="tableblock">
+      <div style="width: 23%;" class="vertop">
+        <div class="img_box img100 rela">
+          <%if(shuju.icon!=''){%>
+          <img src="<%=path_img+shuju.icon%>" width="18" class="abso" style="top: 1px;left: 1px;z-index: 1" alt="">
+          <%}%>
+          <div class="img_content">
+            <img class="border_radiu4 border_all imgone" src="<%=path_img+shuju.s_img%>" alt=""/>
+          </div>
+        </div>
+      </div>
+      <div class="pad_l10">
+        <div class="tableblock pad_l5 border_b">
+          <div>
+            <p class="font16"><%=shuju.s_name%></p>
+            <p class="font13 color999 mar_b5"><%=shuju.s_content%></p>
+            <div class="tableblock pad_b5">
+              <div class="col-xs-8">
+                <div class="pad_l5 font0 mar_b5 colorzt">
+                  <span class="inblock star <%=shuju.star>=1?'all':''%> <%=shuju.star>=0.5 && shuju.star<1?'half':''%>"></span>
+                  <span class="inblock star <%=shuju.star>=2?'all':''%> <%=shuju.star>=1.5 && shuju.star<2?'half':''%>"></span>
+                  <span class="inblock star <%=shuju.star>=3?'all':''%> <%=shuju.star>=2.5 && shuju.star<3?'half':''%>"></span>
+                  <span class="inblock star <%=shuju.star>=4?'all':''%> <%=shuju.star>=3.5 && shuju.star<4?'half':''%>"></span>
+                  <span class="inblock star <%=shuju.star>=5?'all':''%> <%=shuju.star>=4.5 && shuju.star<5?'half':''%>"></span>
+                  <span class="inblock lineh_normal font12 mar_l5"><%=$imports.num1(shuju.star)%></span>
+                </div>
+              </div>
+              <div class="txt_right col-xs-4">
+                <img src="img/twoqi/huo.png" class="inblock" height="12" alt="">
+                <span class="colorzt inblock font12"><%=shuju.view_num%></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="font12 color999 pad_t10 pad_b10">
+          <!-- 下面这个是固定的 点击这个并不需要跳转到认证信息页面，下面的图片都在形象展示里面-->
+          <span class="zz_icon mar_r5 inblock">身份认证</span>
+          <span class="zz_icon mar_r5 inblock">资质荣誉</span>
+          <span class="zz_icon mar_r5 inblock">健康证</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bgcolorfff">
+    <a class="block pad10 mar_b5 font14" href="javascript:;" onclick="daohang()">
+      <div class="tableblock">
+        <div>
+          <%=shuju.address%>
+        </div>
+        <div class="txt_right" style="width: 50px;">
+          <div class="border_l">
+            <img src="img/daohang.png" width="40">
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <!-- 师资列表-->
+  <div class="pad_t10 bgcolorfff mar_t5">
+    <%if(shuju.small_teacher_list.length==0){%>
+    <div class="empty">暂无师资数据</div>
+    <%}%>
+    <ul class="pad_l5 pad_r5 clear shizilist">
+      <%for(var i=0;i<shuju.small_teacher_list.length;i++){%>
+      <%var el=shuju.small_teacher_list[i];%>
+      <li class="L col-xs-6 mar_b10">
+        <div class="pad_l5 pad_r5" onclick="shizidet(<%=el%>)">
+          <div class="border_radiu4 border_all tableblock" style="padding:6px;">
+            <div style="width: 60px">
+              <%if(el.img.indexOf('http')==-1){%>
+              <img src="<%=path_img+el.img%>" alt="" style="width: 50px;height: 50px;" class="border_radius50">
+              <%}else{%>
+              <img src="<%=el.img%>" alt="" style="width: 50px;height: 50px;" class="border_radius50">
+              <%}%>
+            </div>
+            <div class="cont">
+              <div class="color333 font14 txt_oneline"><%=el.name%></div>
+              <div class="color999 font12 txt_oneline"><%=el.desc%></div>
+            </div>
+          </div>
+        </div>
+      </li>
+      <%}%>
+    </ul>
+  </div>
+
+  <!-- 底部固定 start-->
+  <div class="footer">
+    <div class="tableblock h100">
+      <div class="col-xs-8">
+        <div class="pad_l10">
+          <div class="inblock" onclick="zixun()">
+            <img src="img/twoqi/contact.png" alt="" height="20" class="inblock">
+            <span class="font14 colorzt inblock">咨询</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-4 font16 colorfff bgcolorzt txt_center" onclick="botelfun()">
+        <img src="img/twoqi/jigou_tel.png" class="inblock" height="15" alt="">
+        <span class="inblock">联系机构</span>
+      </div>
+    </div>
+  </div>
+  <!-- 底部固定 end-->
+</script>
+
+
+
+
+
+
+
+
+<script>
+  var token=localStorage.getItem('user_token');
+
+  if(Getvariable('token')){
+    token=Getvariable('token');
+  }
+
+  var flag;
+  if(Getvariable('flag')==1){
+    flag=1;
+    document.title='机构师资';
+  }else if(Getvariable('flag')==2){
+    flag=2;
+    document.title='托管师资';
+  }
+
+  var data={
+    path_img: path_img,
+    shuju: {},
+    oprate:true
+  };
+  function renderhtml(){
+    document.getElementById('contain').innerHTML=template('tpl', data);
+  }
+
+
+
+
+  //初始加载
+  pre_loading(0);
+  var pid;
+
+  //页面参数
+  if (!Getvariable('pid')) {
+    pre_loading(3);
+  }else{
+    pid = Getvariable('pid');//机构/托管id
+
+    if(flag==1){
+      //机构
+      $.ajax({
+        url:path_inter+"parents/Educational/smallTeacherList",
+        dataType:'json',
+        type:'post',
+        data:{token: token, st_id: pid},
+        success:function(res){
+          pre_loading(100);
+          if (user_overdue(res.code,res.msg)) {
+            res.data.st_id=parseInt(res.data.st_id);//0000000048  去掉前面的0
+            data.shuju = res.data;
+            renderhtml();
+            iscollect(pid, res.data.collection);
+          }
+        },
+        error:function(){
+          pre_loading(1);
+        }
+      });
+    }else if(flag==2){
+      //托管
+      $.ajax({
+        url:path_inter+"parents/managed/smallTeacherList",
+        dataType:'json',
+        type:'post',
+        data:{token: token, st_id: pid},
+        success:function(res){
+          pre_loading(100);
+          if (user_overdue(res.code,res.msg)) {
+            data.shuju = res.data;
+            renderhtml();
+            iscollect(pid, res.data.collection);
+          }
+        },
+        error:function(){
+          pre_loading(1);
+        }
+      });
+    }
+  }
+
+
+
+  function zixun(){
+    app_contact(data.shuju.accid);
+  }
+  function botelfun(){
+    app_contact2(data.shuju.s_phone);
+  }
+  function daohang(){
+    app_daohang(data.shuju.address,data.shuju.s_xy);
+  }
+  function shizidet(el){
+    location.href='shizi_det.html?flag='+flag+'&pid='+pid+'&tid='+el.teacher_id;
+  }
+
+
+
+
+</script>
+</body>
+</html>

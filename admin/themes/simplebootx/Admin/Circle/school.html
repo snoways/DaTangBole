@@ -1,0 +1,116 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('Circle/school')}">教学圈列表</a></li>
+        <li><a href="{:U('Circle/addLog')}">发布教学圈</a></li>
+    </ul>
+    <form class="well form-search" id="formurl" method="post" action="{:U('Circle/school')}">
+        关键字：
+        <input type="text" name="keyword" style="width: 250px;" value="{:I('request.keyword')}" placeholder="请输入内容关键字">
+        用户名：
+        <input type="text" name="name" style="width: 250px;" value="{:I('request.name')}" placeholder="请输入用户名">
+        时间：
+        <input type="text" name="start_time" class="js-datetime" placeholder="开始时间" value="{$_REQUEST['start_time']|default=''}" style="width: 120px;" autocomplete="off">-
+        <input type="text" class="js-datetime" name="end_time" placeholder="结束时间" value="{$_REQUEST['end_time']|default=''}" style="width: 120px;" autocomplete="off"> &nbsp; &nbsp;
+        <input type="submit" class="btn btn-primary" onclick="return search();" value="搜索" />
+        <a class="btn btn-danger" href="{:U('Circle/school')}">清空</a>
+    </form>
+    <form method="post" class="js-ajax-form">
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <th align="center">ID</th>
+                <th>用户头像</th>
+                <th>用户姓名</th>
+                <th>用户类型</th>
+                <th>文字</th>
+                <th>图片</th>
+                <th>视频</th>
+                <th>发布时间</th>
+                <th>举报次数</th>
+                <th>点赞数</th>
+                <th>浏览量</th>
+                <th width="200">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach name="list" key="k" item="vo">
+                <tr>
+                    <td align="center">{$vo['circle_id']}</td>
+                    <td><img src="{$vo['img']}" width="80"></td>
+                    <td>{$vo['uname']?$vo['uname']:'无'}</td>
+                    <td>{$vo['u_type']==1?"家长":($vo['u_type']==2?"老师":($vo['u_type']==3?"商户":"平台"))}</td>
+                    <td>{$vo.content}</td>
+                    <td>
+                        <foreach name="vo['img_list']" item="item">
+                            <img src="{$item}" width="120">
+                        </foreach>
+                    </td>
+                    <td>
+                        <if condition="$vo['video_url'] neq null">
+                            <video width="320" height="240" controls>
+                                <source src="{$vo.video_url}" type="video/mp4">
+                                您的浏览器不支持 video 标签。
+                            </video>
+                        </if>
+                    </td>
+                    <td>{$vo.c_time}</td>
+                    <td>
+                        <volist name="vo['report_num_list']" id="rnl">
+                        {$rnl['reason']}：{$rnl['num']}次<br/>
+                    </volist>
+                    </td>
+                    <td>{$vo.zan}</td>
+                    <td>{$vo.view_num}</td>
+                    <td align="center">
+
+                        <a href="{:U('Circle/comment',array('id'=>$vo['circle_id']))}">查看评论</a> |
+
+                        <if condition="$vo['u_type'] eq 4">
+                            <a href="{:U('Circle/editLog',array('id'=>$vo['circle_id']))}">编辑</a>   |
+                        </if>
+                        <a class="sc" data-id="{$vo['circle_id']}" href="javascript:;">删除</a>
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+        <div class="pagination">{$page}</div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script>
+    var url = "";
+    var id = '';
+    $('.sc').click(function () {
+        url = "{:U('Circle/delete')}";
+        id = $(this).data('id');
+        //弹出一个页面层
+        layer.open({
+            type: 1,
+            title:'禁用操作：请说明原因！',
+            area: ['573px', '370px'],
+            shadeClose: true, //点击遮罩关闭
+            content: '<div>' +
+            '<textarea style="    min-width: 545px;max-width: 545px;min-height: 260px;max-height: 260px;margin: 5px;" name="msg" id="msg" placeholder="请输入......"></textarea>' +
+            '<button type="button" style="margin: 5px;float: right;" id="qd" class="btn btn-small btn-success">确定</button>' +
+            '</div>'
+        });
+    });
+    $(document).on('click','#qd',function () {
+        var msg = $('#msg').val();
+        $.post(url,
+            {id:id,msg:msg},
+            function(json){
+                if (json.status===1 && json.state === 'success') {
+                    window.location.reload();
+                }else{
+                    layer.alert(json.info);
+                }
+            },"json");
+    });
+</script>
+</body>
+</html>

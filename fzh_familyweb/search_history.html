@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>搜索</title>
+  <script src="js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="css/ku/hui.css">
+  <link rel="stylesheet" href="css/ku/style.css">
+  <script src="js/ku/hui.js"></script>
+  <script src="js/ku/template-web.js"></script>
+</head>
+
+<!--点击首页的搜索跳到这个页-->
+<body ontouchstart class="bgcolorf5">
+
+<div class="content_box">
+  <div class="content_scroll no">
+    <!--内容开始-->
+    <div id="contain"></div>
+    <!--内容end-->
+  </div>
+</div>
+
+<script type="text/html" id="tpl">
+  <div class="pad10 color999">
+    <div class="font12">热门搜索</div>
+    <%if(list.length>0){%>
+    <div class="pad_t10 font14">
+      <%for(var i=0;i<list.length;i++){%>
+      <%var el=list[i];%>
+      <div onclick="gosoulist(this)" class="inblock mar_b10 border_all border_radiu4 bgcolorfff pad_t5 pad_b5 pad_l10 pad_r10 mar_r10"><%=el.s_name%></div>
+      <%}%>
+    </div>
+    <%}else{%>
+    <div class="empty">暂无热搜</div>
+    <%}%>
+  </div>
+</script>
+
+<script>
+  var token=localStorage.getItem('user_token');
+
+  if(Getvariable('token')){
+    token=Getvariable('token');
+  }
+
+  var data={
+    list: []
+  };
+  function renderhtml(){
+    document.getElementById('contain').innerHTML=template('tpl', data);
+  }
+
+  //初始加载
+  pre_loading(0);
+
+  hui.post(
+    path_inter+'/parents/home/home',
+    {
+      token: token
+    },
+    function(res){
+      res = JSON.parse(res);
+      pre_loading(100);
+
+      if (user_overdue(res.code,res.msg)) {
+        data.list = res.data.hot_sub;
+        renderhtml();
+      }
+    },
+    function(){
+      //error
+      pre_loading(1);
+    }
+  );
+
+  function gosoulist(that){
+    appgotoSouResult(that.innerHTML,null);
+  }
+</script>
+</body>
+</html>

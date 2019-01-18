@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>添加活动</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- bootstrap -->
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap.css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+
+  <!-- libraries -->
+  <link href="__PUBLIC__/Shopadmin/css/lib/uniform.default.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/select2.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/font-awesome.css" type="text/css" rel="stylesheet"/>
+
+  <!-- global styles -->
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/layout.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/elements.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/icons.css">
+
+  <!-- this page specific styles -->
+  <link rel="stylesheet" href="__PUBLIC__/Shopadmin/css/compiled/form-showcase.css" type="text/css" media="screen"/>
+
+  <!-- open sans font -->
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <script type="text/html" id="photos-item-wrapper">
+    <li id="savedimage{id}">
+      <input id="photo-{id}" type="hidden" name="photos_url[]" value="{filepath}">
+      <input id="photo-{id}-name" type="text" name="photos_alt[]" value="{name}" style="width: 160px;" title="图片名称">
+      <img id="photo-{id}-preview" src="{url}" onclick="parent.image_preview_dialog(this.src);">
+      <a href="javascript:upload_one_image('图片上传','#photo-{id}');">替换</a>
+      <a href="javascript:(function(){$('#savedimage{id}').remove();})();">移除</a>
+    </li>
+  </script>
+  <link href="__PUBLIC__/js/artDialog/skins/default.css" rel="stylesheet" />
+  <script type="text/javascript">
+      //全局变量
+      var GV = {
+          ROOT: "__ROOT__/",
+          WEB_ROOT: "__WEB_ROOT__/",
+          JS_ROOT: "public/js/",
+          APP:'{$Think.MODULE_NAME}'/*当前应用名*/
+      };
+  </script>
+  <script src="__PUBLIC__/js/wind.js"></script>
+
+  <style>
+    .pic-list li {
+      margin-bottom: 5px;
+    }
+    #content,#content1,#content2,#content3{
+      width: 92%;
+      min-height: 200px;
+    }
+
+    .input-large{
+      width: 90%;
+    }
+    select{
+      width: 30%;
+    }
+    .customer{
+      width: 90%;
+      height: 60px;
+      resize: none;
+    }
+
+    input{
+      width: 90%;
+      height: 32px;
+      border-radius: 5px;
+      border: solid 1px #89f;
+      float: left;
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      padding-left: 5px;
+    }
+    .half{
+      width: 42%;
+    }
+    .half:nth-child(2n){
+      float: right;
+      margin-right: 10%;
+    }
+    select,textarea{
+      float: left;
+    }
+
+    #photos{
+      padding: 0px;
+    }
+    #photos li{
+      list-style: none;
+    }
+    #photos li img{
+      width:40px;
+      height: 40px;
+      display: inline-block;
+    }
+
+  </style>
+
+</head>
+<body>
+
+<include file="common/menu" />
+
+
+<!-- main container -->
+<div class="content">
+
+  <div id="pad-wrapper" class="form-page">
+    <div class="row header">
+      <div class="col-md-12">
+        <h3>添加活动</h3>
+      </div>
+    </div>
+    <form method="post" class="form-horizontal js-ajax-form" action="{:U('Activity/add')}">
+    <div class="row form-wrapper">
+      <div class="col-md-8 column">
+        <table class="table table-bordered">
+          <tr>
+            <th>活动分类</th>
+            <td >
+              <select name="cate_id" style="width: 90%">
+                <foreach name="category" item="item">
+                  <option value="{$item.id}">{$item.name}</option>
+                </foreach>
+              </select>
+            </td>
+            <th>报名费(元)</th>
+            <td colspan="3">
+              <input type="text"  name="money" id="money" value="" placeholder="请输入报名费" required/>
+              <span class="form-required">*</span>
+            </td>
+          </tr>
+          <tr>
+            <th width="120">标题</th>
+            <td colspan="3">
+              <input type="text" name="title" class="input input-large" id="title" value="" placeholder="请输入标题" required/>
+              <span class="form-required">*</span>
+            </td>
+          </tr>
+          <tr>
+            <th width="120">副标题</th>
+            <td colspan="3" >
+              <input type="text" name="extra_title" class="input-large" id="extra_title" value="" placeholder="请输入副标题" />
+              <!--<span class="form-required">*</span>-->
+            </td>
+          </tr>
+          <tr>
+            <th width="120">适合年龄标签</th>
+            <td colspan="3" style="text-align: -webkit-auto;">
+              <volist name="ages" id="ag">
+                <input type="checkbox" name="age_id[]" style="width: auto;float: none;height: auto;"  value="{$ag['id']}"/>{$ag['title']}&nbsp;&nbsp;&nbsp;
+              </volist>
+            </td>
+          </tr>
+          <tr>
+            <th width="120">热门目的地标签</th>
+            <td colspan="3" style="text-align: -webkit-auto;">
+              <volist name="target_place" id="tp">
+                <input type="checkbox" name="target_place_id[]" style="width: auto;float: none;height: auto;" value="{$tp['id']}"/>{$tp['name']}&nbsp;&nbsp;&nbsp;
+              </volist>
+            </td>
+          </tr>
+          <tr>
+            <th>活动人数</th>
+            <td>
+              <input type="number" name="people_num" id="people_num" value="" placeholder="请输入活动人数" required/>
+              <span class="form-required">*</span>
+            </td>
+            <th width="120"> 初试已报名人数 </th>
+            <td>
+              <input type="number" name="now_num" id="now_num" value="0" placeholder="请输入已报名人数" required/>
+              <span class="form-required">*</span>
+            </td>
+
+          </tr>
+          <tr>
+            <th> 适合年龄段 </th>
+            <td colspan="3">
+              <input type="number" class="half" name="age_min" value="0">
+              - <input type="number" class="half" name="age_max" value="127">
+            </td>
+          </tr>
+
+          <tr>
+            <th>活动时间</th>
+            <td colspan="3" >
+              <input type="text" class="js-datetime date half"  name="start" value="" placeholder="请输入活动开始时间" required/>-
+              <input type="text" class="js-datetime date half" name="end" value="" placeholder="请输入活动结束时间" required/>
+              <!--<span class="form-required"  >*</span>-->
+            </td>
+          </tr>
+
+          <tr>
+            <th> 集聚地址 </th>
+            <td colspan="3">
+              <select name="together_province" id="sp" required class="province">
+                <option value="0">请选择</option>
+                <foreach name="province" item="v">
+                  <option value="{$v['areaid']}">{$v['areaname']}</option>
+                </foreach>
+              </select>
+              <select name="together_city" id="sc" class="city"  required>
+                <option value="0">请选择</option>
+                <foreach name="city" item="v">
+                  <option value="{$v['areaid']}">{$v['areaname']}</option>
+                </foreach>
+              </select>
+              <input type="text" style="margin-top: 10px" class="input-large" name="together_address" placeholder="请输入详细地址">
+            </td>
+          </tr>
+
+          <tr>
+            <th>  活动目的地 </th>
+            <td colspan="3" >
+              <input type="text" style="margin-top: 10px" class="input-large" name="target" placeholder="请输入活动目的地">
+            </td>
+          </tr>
+
+          <tr>
+            <th> 客服联系方式 </th>
+            <td colspan="3">
+              <textarea name="customer_tel" class="customer" ></textarea>
+            </td>
+          </tr>
+          <tr>
+            <th>适合年龄段说明</th>
+            <td colspan="3" >
+              <textarea  name="age_instrument" class="customer"></textarea>
+            </td>
+          </tr>
+
+          <tr>
+            <th>接送站说明</th>
+            <td colspan="3" >
+              <textarea name="taken_station_instrument" class="customer"></textarea>
+            </td>
+          </tr>
+          <tr>
+            <th>活动详情说明</th>
+            <td colspan="3" >
+              <script type="text/plain" id="content" name="content" ></script>
+            </td>
+          </tr>
+          <tr>
+            <th>活动费用说明</th>
+            <td colspan="3" >
+              <script type="text/plain" id="content1" name="fee_description" ></script>
+            </td>
+          </tr>
+          <tr>
+            <th>购买须知说明</th>
+            <td colspan="3" >
+              <script type="text/plain" id="content2" name="purchase_instructions" ></script>
+            </td>
+          </tr>
+          <tr>
+            <th>行程说明</th>
+            <td colspan="3" >
+              <script type="text/plain" id="content3" name="itinerary_description" ></script>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="col-md-4 column pull-right">
+        <table class="table table-bordered">
+          <tr>
+            <th><b>缩略图</b>(上传尺寸为16:9)</th>
+          </tr>
+          <tr>
+            <td>
+              <input type="hidden" name="img" id="thumb" value="">
+              <a href="javascript:upload_one_image('图片上传','#thumb');" class="inb">
+                <img src="/admin/themes/simplebootx/Public/assets/images/default-thumbnail.png" id="thumb-preview" style="width: 135px;height: 135px;">
+              </a>
+            </td>
+          </tr>
+          <tr> <th><b>是否开启拼团</b></th> </tr>
+          <tr>
+            <td>
+               <span class="brod" >
+              是
+              <input class="spell" class="radio" type="radio" value="1" name="spell" checked>
+               </span>
+              <span class="brod" >
+
+                 &nbsp;  否
+              <input class="spell" class="radio" type="radio" value="0" name="spell" >
+              </span>
+            </td>
+          </tr>
+          <tr class="spells">
+            <td>
+              <input type="text" name="spell_max" value="2" placeholder="请输入成团人数">
+            </td>
+          </tr>
+          <tr class="spells">
+            <td>
+              <input type="text" name="spell_refund" value="0.00" placeholder="请输入拼团返现金">
+            </td>
+          </tr>
+          <!--<tr>-->
+            <!--<th><b> 是否开启评论 </b></th>-->
+          <!--</tr>-->
+          <!--<tr>-->
+            <!--<td>-->
+              <!--<span class="brod" >-->
+                <!--是-->
+                <!--<input class="radio" type="radio" value="1" name="can_comment" checked>-->
+              <!--</span>-->
+              <!--<span class="brod">-->
+                <!--否-->
+                 <!--<input class="radio" type="radio" value="2" name="can_comment">-->
+              <!--</span>-->
+            <!--</td>-->
+          <!--</tr>-->
+          <tr> <th> <b> 组图(轮播图) </b> </th> </tr>
+          <tr>
+            <td>
+              <ul id="photos" class="pic-list unstyled"></ul>
+              <a href="javascript:upload_multi_image('图片上传','#photos','photos-item-wrapper');" class="btn btn-small">选择图片</a>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+      <div class="col-md-8">
+        <button type="submit" class="btn btn-primary mar_r5 js-ajax-submit">保存</button>
+        <a type="button" class="btn btn-default" href="{:U('Activity/index')}">返回</a>
+      </div>
+
+    </form>
+  </div>
+</div>
+<!-- end main container -->
+<style>
+  .brod{
+    display: inline-block;
+    float: left;
+    margin-right: 20px;
+  }
+  .radio{
+    width: 18px;
+    height: 18px;
+    float: left;
+  }
+  .btn-small{
+    width: 120px;
+  }
+
+</style>
+<!-- scripts for this page -->
+<script src="__PUBLIC__/Shopadmin/js/wysihtml5-0.3.0.js"></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/jquery.uniform.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/theme.js"></script>
+<!--laydate-->
+<script src="__PUBLIC__/Shopadmin/laydate/laydate.js"></script>
+<!--laryer-->
+<script src="__PUBLIC__/Shopadmin/layer/layer.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/common.js"></script>
+<script type="text/javascript">
+    //编辑器路径定义
+    var editorURL = GV.WEB_ROOT;
+
+</script>
+<script type="text/javascript" src="__PUBLIC__/js/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript">
+
+    $(".spell").change(function () {
+        var id = $(this).val()
+        if(id == 1){
+            $(".spells").show();
+        }else{
+            $(".spells").hide();
+        }
+    })
+
+
+    $(function() {
+
+        stationUEd = new baidu.editor.ui.Editor();
+        stationUEd.render('content3');
+        stationUEd = new baidu.editor.ui.Editor();
+        stationUEd.render('content2');
+        ageUEd = new baidu.editor.ui.Editor();
+        ageUEd.render('content1');
+
+        contentUEd = new baidu.editor.ui.Editor();
+        contentUEd.render('content');
+
+    });
+</script>
+<script>
+
+    function getAreas(id,callback){
+        $.get("{:U('Activity/getAreas')}",{
+            pid:id
+        },function (data) {
+            callback(data.list);
+        })
+    }
+
+    $(".province").change(function (data) {
+        var el = $(this);
+        var id  = el.val();
+        var html = '<option value="0">请选择</option>';
+        if(parseInt(id) > 0){
+            getAreas(id,function (list) {
+                $.each(list,function (k,v) {
+                    html +='<option value="'+v.areaid+'">'+v.areaname+'</option>';
+                })
+                el.siblings('.city').html(html);
+            })
+        }else{
+            el.siblings('.city').html(html);
+        }
+    })
+
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,384 @@
+<admintpl file="header"/>
+<style type="text/css">
+    .jinri_t {
+        width: 15%;
+        text-align: center;
+        line-height: 32px;
+        font-weight: bold;
+    }
+
+    .jinri_n {
+        width: 10%;
+    }
+
+    .input_date {
+        margin-bottom: 0px;
+        width: 160px;
+        height: 18px;
+        line-height: 18px;
+    }
+</style>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a>今日数据统计</a></li>
+    </ul>
+    <table class="table table-hover table-bordered">
+        <tr>
+            <td class="jinri_t">新注册家长数：</td>
+            <td class="jinri_n"><a href="javascript:;" class="jinri" data-url="{:U('User/Indexadmin/index')}">{$jinri_statistic.jiazhang_count}</a></td>
+            <td class="jinri_t">教育机构申请数：</td>
+            <td class="jinri_n"><a href="javascript:;" class="jinri" data-url="{:U('Admin/Smalltable/index',array('s_status'=>1,'s_type'=>2))}">{$jinri_statistic.jiaoyujigou_count}</a></td>
+            <td class="jinri_t">托管机构申请数：</td>
+            <td class="jinri_n"><a href="javascript:;" class="jinri" data-url="{:U('Admin/Smalltable/index',array('s_status'=>1,'s_type'=>1))}">{$jinri_statistic.tuoguanjigou_count}</a></td>
+            <td class="jinri_t">新发布课程数：</td>
+            <td class="jinri_n"><a href="javascript:layer.alert('暂未开通');">{$jinri_statistic.kecheng_count}</a></td>
+        </tr>
+        <tr>
+            <td class="jinri_t">新发布活动数：</td>
+            <td class="jinri_n"><a href="javascript:;" class="jinri" data-url="{:U('Admin/Activity/index',array('status'=>1,'add_time'=>1))}">{$jinri_statistic.huodong_count}</a></td>
+            <td class="jinri_t">代理商提现申请数：</td>
+            <td class="jinri_n"><a href="javascript:;" class="jinri" data-url="{:U('Admin/Smalltable/index',array('s_status'=>1))}">{$jinri_statistic.dailishangtixian_count}</a></td>
+            <td class="jinri_t">亲子活动交易总额（元）：</td>
+            <td class="jinri_n">{$jinri_statistic.huodong_total_amount}</td>
+            <td class="jinri_t">亲子活动分润总额（元）：</td>
+            <td class="jinri_n">{$jinri_statistic.huodong_fenrun_amount}</td>
+        </tr>
+    </table>
+
+    <ul class="nav nav-tabs">
+        <li class="active"><a>订单状态统计</a></li>
+    </ul>
+    <div style="width: 100%; text-align: left;">
+        <input type="date" id="startDate" class="input_date" value="{:date('Y-m-d', time())}">
+        -
+        <input type="date" id="endDate" class="input_date" value="{:date('Y-m-d', time())}">
+        <input type="submit" class="btn btn-primary" onclick="return statisticOrderStatus();" value="自定义查询" style="margin-bottom: 10px;"/>
+        <input type="submit" class="btn btn-primary" onclick="return statisticOrderStatus('{:date('Y-m-d',time())}','{:date('Y-m-d',time())}');" value="今天" style="margin-bottom: 10px;"/>
+        <input type="submit" class="btn btn-primary" onclick="return statisticOrderStatus('{:date('Y-m-d',strtotime('-15 day'))}','{:date('Y-m-d',time())}');" value="最近7天" style="margin-bottom: 10px;"/>
+        <input type="submit" class="btn btn-primary" onclick="return statisticOrderStatus('{:date('Y-m-d',strtotime('-30 day'))}','{:date('Y-m-d',time())}');" value="最近15天" style="margin-bottom: 10px;"/>
+    </div>
+    <div style="width: 100%; float: left;">
+        <div id="container1" style="float: left;height: 300px;width: 33%;"></div><!--亲子活动订单统计-->
+        <div id="container2" style="float: left;height: 300px;width: 33%;"></div><!--在线课程订单统计-->
+        <div id="container3" style="float: left;height: 300px;width: 33%;"></div><!--托管订单统计-->
+    </div>
+
+    <ul class="nav nav-tabs">
+        <li class="active"><a>订单金额统计</a></li>
+    </ul>
+    <div style="width: 100%; text-align: left;">
+        <input type="date" id="startDate2" class="input_date" value="{:date('Y-m-d',strtotime('-7 day'))}">
+         -
+        <input type="date" id="endDate2" class="input_date" value="{:date('Y-m-d', time())}">
+        <input type="submit" class="btn btn-primary" onclick="return statisticOrderAmount();" value="自定义查询" style="margin-bottom: 10px;"/>
+        <input type="submit" class="btn btn-primary" onclick="return statisticOrderAmount('{:date('Y-m-d',strtotime('-7 day'))}','{:date('Y-m-d',time())}');" value="最近7天" style="margin-bottom: 10px;"/>
+        <input type="submit" class="btn btn-primary" onclick="return statisticOrderAmount('{:date('Y-m-d',strtotime('-15 day'))}','{:date('Y-m-d',time())}');" value="最近15天" style="margin-bottom: 10px;"/>
+        <input type="submit" class="btn btn-primary" onclick="return statisticOrderAmount('{:date('Y-m-d',strtotime('-30 day'))}','{:date('Y-m-d',time())}');" value="最近30天" style="margin-bottom: 10px;"/>
+    </div>
+    <div style="float: left; width: 100%;">
+        <div id="container4" style="float: left; height: 400px;width: 100%;"></div><!--各个订单金额柱状图统计-->
+    </div>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__TMPL__Public/assets/js/index.js"></script>
+<script type="text/javascript" src="__TMPL__Public/assets/js/echarts/echarts.common.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        //初始加载默认时间段数据
+        statisticOrderStatus();
+        statisticOrderAmount();
+    });
+    $('.jinri').click(function () {
+        var url = $(this).data('url');
+        if ($(this).text() == 0) {
+            layer.alert('没有数据');
+        } else {
+            window.location.href = url;
+        }
+    });
+    
+    //订单状态按时间段统计
+    var statisticOrderStatus = function (startDate, endDate) {
+        if(startDate != null && endDate != null){
+            $("#startDate").val(startDate);
+            $("#endDate").val(endDate);
+        }
+        huodongOrderStatusChart();
+        kechengOrderStatusChart();
+        tuoguanOrderStatusChart();
+    };
+    //订单金额按时间段统计
+    var statisticOrderAmount = function (startDate, endDate) {
+        if(startDate != null && endDate != null){
+            $("#startDate2").val(startDate);
+            $("#endDate2").val(endDate);
+        }
+        orderAmountChart();
+    };
+
+    //饼图默认空数据格式
+    var noPieDataObj = {
+        value: 0,
+        name: "没有数据"
+    };
+
+    //亲子活动订单状态统计
+    var huodongOrderStatusChart = function () {
+        $.post("{:U('Main/getHuoDongPieData')}", {startDate: $("#startDate").val(), endDate: $("#endDate").val()},
+            function (resultData) {
+                if (resultData != null && resultData == "-1") {
+                    alert("时间范围不要超过两个月");
+                    return;
+                }
+                var data = JSON.parse(resultData);
+                var legendData = [];
+                var seriesData = [];
+                if (data.length > 0) {
+                    $.each(data, function (index) {
+                        legendData.push(data[index].name);
+                    });
+                    seriesData = data;
+                }
+                else {
+                    legendData = noPieDataObj.name;
+                    seriesData[0] = noPieDataObj;
+                }
+                loadPieChart("container1", "亲子活动订单状态统计", legendData, seriesData);
+            }
+        );
+    };
+
+    //在线课程订单状态统计
+    var kechengOrderStatusChart = function () {
+        $.post("{:U('Main/getKeChengPieData')}", {startDate: $("#startDate").val(), endDate: $("#endDate").val()},
+            function (resultData) {
+                var data = JSON.parse(resultData);
+                var legendData = [];
+                var seriesData = [];
+                if (data.length > 0) {
+                    $.each(data, function (index) {
+                        legendData.push(data[index].name);
+                    });
+                    seriesData = data;
+                }
+                else {
+                    legendData = noPieDataObj.name;
+                    seriesData[0] = noPieDataObj;
+                }
+                loadPieChart("container2", "在线课程订单状态统计", legendData, seriesData);
+            }
+        );
+    };
+
+    //托管订单状态统计
+    var tuoguanOrderStatusChart = function () {
+        $.post("{:U('Main/getTuoGuanPieData')}", {startDate: $("#startDate").val(), endDate: $("#endDate").val()},
+            function (resultData) {
+                var data = JSON.parse(resultData);
+                var legendData = [];
+                var seriesData = [];
+                if (data.length > 0) {
+                    $.each(data, function (index) {
+                        legendData.push(data[index].name);
+                    });
+                    seriesData = data;
+                }
+                else {
+                    legendData = noPieDataObj.name;
+                    seriesData[0] = noPieDataObj;
+                }
+                loadPieChart("container3", "托管订单状态统计", legendData, seriesData);
+            }
+        );
+    };
+
+    //各个订单金额柱状图统计
+    var orderAmountChart = function () {
+        $.post("{:U('Main/getOrderAmountData')}", {startDate: $("#startDate2").val(), endDate: $("#endDate2").val()},
+            function (resultData) {
+                if (resultData != null && resultData == "-1") {
+                    alert("时间范围不要超过两个月");
+                    return;
+                }
+                var data = JSON.parse(resultData);
+                var maxAmount = 0;
+                var legendData = ['活动订单金额', '课程订单金额', '托管订单金额'];
+                var xAxisData = [];
+                var seriesData = [];
+
+                var series_huodong_items = [];
+                var series_kecheng_items = [];
+                var series_tuoguan_items = [];
+                //寻找三种订单的金额最大值
+                var series_items = [];
+                $.each(data.huodong, function (index) {
+                    xAxisData.push(formatDate(data.huodong[index].date));
+                    series_huodong_items.push(data.huodong[index].amount);
+                    series_items.push(data.huodong[index].amount);
+                });
+                seriesData.push({
+                    name: legendData[0],
+                    type: 'bar',
+                    data: series_huodong_items
+                });
+
+                $.each(data.kecheng, function (index) {
+                    series_kecheng_items.push(data.kecheng[index].amount);
+                    series_items.push(data.kecheng[index].amount);
+                });
+                seriesData.push({
+                    name: legendData[1],
+                    type: 'bar',
+                    data: series_kecheng_items
+                });
+
+                $.each(data.tuoguan, function (index) {
+                    series_tuoguan_items.push(data.tuoguan[index].amount);
+                    series_items.push(data.tuoguan[index].amount);
+                });
+                seriesData.push({
+                    name: legendData[2],
+                    type: 'bar',
+                    data: series_tuoguan_items
+                });
+
+                var maxAmount = Math.max.apply(null, series_items).toFixed(2);
+                loadLineChart("container4", legendData, xAxisData, seriesData, maxAmount);
+            }
+        );
+    };
+
+    //画饼状图
+    var loadPieChart = function (containerName, title, legendData, seriesData) {
+        var dom = document.getElementById(containerName);
+        var myChart = echarts.init(dom);
+        var option = {
+            title: {
+                text: title,
+                subtext: '',
+                x: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left',
+                data: []
+            },
+            series: [
+                {
+                    name: '订单数量',
+                    type: 'pie',
+                    radius: '55%',
+                    center: ['50%', '60%'],
+                    data: [],
+                    itemStyle: {
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+        option.legend.data = legendData;
+        option.series[0].data = seriesData;
+        if (option && typeof option === "object") {
+            myChart.setOption(option, true);
+        }
+    };
+
+    //画柱状图
+    var loadLineChart = function (containerName, legendData, xAxisData, seriesData, yAxisMaxData) {
+        var dom = document.getElementById(containerName);
+        var myChart = echarts.init(dom);
+        var option = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    crossStyle: {
+                        color: '#999'
+                    }
+                }
+            },
+            toolbox: {
+                feature: {
+                    dataView: {show: false, readOnly: false},
+                    magicType: {show: false, type: ['line', 'bar']},
+                    restore: {show: false},
+                    saveAsImage: {show: false}
+                }
+            },
+            legend: {
+                data: []
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    data: [],
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    name: '金额',
+                    min: 0,
+                    max: 1,
+                    interval: 10,
+                    axisLabel: {
+                        formatter: '{value} 万元'
+                        // formatter: function (value, index) {
+                        //     return value.toFixed(2) + ' 万元';
+                        // }
+                    }
+                },
+                {
+                    type: 'value',
+                    name: '金额',
+                    min: 0,
+                    max: 1,
+                    interval: 5,
+                    axisLabel: {
+                        formatter: '{value} 万元'
+                        // formatter: function (value, index) {
+                        //     return value.toFixed(2) + ' 万元';
+                        // }
+                    }
+                }
+            ],
+            series: []
+        };
+        //console.log(option.yAxis)
+        option.yAxis[0].max = option.yAxis[1].max = (yAxisMaxData * 1.2).toFixed(1);
+        option.legend.data = legendData;
+        option.xAxis[0].data = xAxisData;
+        option.series = seriesData;
+        if (option && typeof option === "object") {
+            myChart.setOption(option, true);
+        }
+    };
+
+    function formatDate(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        //if (month.length < 2) month = '0' + month;
+        //if (day.length < 2) day = '0' + day;
+
+        return [month, day].join('-');
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title>心理测评</title>
+		<script type="text/javascript" src="../js/com.js" ></script>
+		<link rel="stylesheet" type="text/css" href="../css/weui.min.css">
+		<link rel="stylesheet" type="text/css" href="../css/swiper.min.css">
+		<link rel="stylesheet" type="text/css" href="../css/jquery-weui.css">
+		<link rel="stylesheet" type="text/css" href="../css/stylea.css">
+		<script type="text/javascript" src="../js/hui.js" ></script>
+		<script type="text/javascript" src="../js/jquery.min.js" ></script>
+		<script type="text/javascript" src="../js/jquery-weui.js" ></script>
+		<script type="text/javascript" src="../js/swiper.min.js" ></script>
+		<script type="text/javascript" src="../js/template-native.js" ></script>
+	</head>
+	<body>
+		<div class="content_box no_scroll bgcolorf3f3 L_teacher">
+			<div class="content_scroll">
+				<div id="box"></div>
+			</div>
+		</div>
+		<!--问题轮播-->
+		<div class="answe_txt">
+			<div class="swiper-container">
+						<div class="swiper-wrapper" id="box1">
+						</div>
+			 </div>
+		</div>
+		<script type="text/html" id="tpl">
+			<div class="answer_fix font14">
+				<div class="answer_jindu">
+					<div class="pad_b10 tableblock">
+						<div class="wrem4">答题进度</div>
+						<div class="txt_right font13 color666">
+							<span class="inblock pad_r10 border_r">剩余<%=answer_wd%>道题</span>
+							<span class="inblock pad_l10">共<%=answer_list.length%>道题</span>
+						</div>
+					</div>
+					<div class="answer_jindubar">
+						<div style="width:<%=jindubar%>"></div>
+					</div>
+				</div>
+			</div>
+			
+		</script>
+		<script type="text/html" id="tpl1">
+			<%for(var i = 0; i < answer_list.length; i++){%>
+        	<%var el = answer_list[i];var index = i;%>
+                <div class="swiper-slide">
+                  	<div>
+                  		<div class="mar_b10 font14 answer_question"><%=#el.question%></div>
+                  		<div class="answer_tab">
+                  			<%for(var j = 0; j< el.answer.length; j++){%>
+                  			<%var elel = el.answer[j];var indexa = j;%>
+                      			<label class="pad10 block" 
+                      			class="<%border_b?indexa<(el.answer.length-1):''%>"
+                      			>
+                      			<!--input ms-duplex="el.zt" -->
+															<div class="tableblock">
+																<div style="width: 28px" class="vertop">
+																	<input type="radio" name = "answer<%=index%>" value = "<%=indexa%>" class="L_radio one"  onchange="change(<%=i%>,<%=j%>)" />
+																</div>
+																<div><%=answe_xx[indexa]%>：<%=elel.answer%></div>
+															</div>
+                      			</label>
+                  			<%}%>
+                  		</div>
+                  		<!--提交-->
+                  		<div class="pad_t10 mar_t10"  >
+                  			<%if( index==(answer_list.length-1) ){%>
+                  				<a href="javascript:;" onclick="submit_answer()" class="block pad10 txt_center bgcolorzt border_radiu20 colorfff font14">提交</a>
+                  			<%}%>
+                  		</div>
+                  	</div>
+                </div>
+            <%}%>
+            <!--测评提示-->
+			<%if(show_true){%>
+				<div class="L_box_shadow" onclick="show_notice()">
+					<img src="../img/teacher_img/dati_tipmask.png">
+				</div>
+			<%}%>
+		</script>
+		
+		<script>
+			var token = localStorage.getItem("user_token");
+
+			if(Getvariable('token')){
+				token=Getvariable('token');
+			}
+
+			var data = {
+				show_true:true,
+				oprate:true,
+				all_score:0,
+				answer_sy:"",
+				answer_wd:"",
+				jindubar:"0%",
+				answe_xx:["A","B","C","D","E","F","G","H","I","J","K"],
+				answer_list:[
+			//		{zt:false,title:"问题一",answer_txt:"问题一大花洒接口发海底世界咖啡的数据库发送的积分换",answer:[
+			//			{title:"答案a",score:"5"},
+			//			{title:"答案f",score:"5"},
+			//			{title:"答案fg",score:"5"},
+			//			{title:"答案fg",score:"5"},
+			//			{title:"答案fdsa",score:"5"},
+			//			{title:"答案fga",score:"5"}
+			//		]},
+			//		{zt:false,title:"问题二",answer_txt:"问题一大花洒接口发海底世界咖啡的数据库发送的积分换",answer:[
+			//			{title:"答案a",score:"5"},
+			//			{title:"答案f",score:"5"},
+			//			{title:"答案fg",score:"5"},
+			//			{title:"答案fg",score:"5"},
+			//			{title:"答案fdsa",score:"5"},
+			//			{title:"答案fga",score:"5"}
+			//		]},
+			//		{zt:false,title:"问题三",answer_txt:"问题一大花洒接口发海底世界咖啡的数据库发送的积分换",answer:[
+			//			{title:"答案a",score:"5"},
+			//			{title:"答案f",score:"5"},
+			//			{title:"答案fg",score:"5"},
+			//			{title:"答案fg",score:"5"},
+			//			{title:"答案fdsa",score:"5"},
+			//			{title:"答案fga",score:"5"}
+			//		]}
+				],
+			};
+			function renderhtml() {
+				document.getElementById('box').innerHTML = template('tpl',data);
+			};
+			function renderhtml1() {
+				document.getElementById('box1').innerHTML = template('tpl1',data);
+			}
+
+			function select_answer(el,indexa){
+				el.zt=elel.indexa;
+				renderhtml();
+			};
+
+			function finish_select(){
+				data.answer_sy=0;
+				data.all_score=0;
+				data.answer_wd=0;
+				// avalon.each(vm.answer_list,function(k,v){
+				for(var i =0; i< data.answer_list.length;i++){
+					var v = data.answer_list[i];
+					if(v.zt!=100)
+					{
+						data.answer_sy=parseInt(data.answer_sy)+1;
+						data.all_score=parseInt(data.all_score)+parseInt(v.answer[v.zt].score);
+					}
+					else
+					{
+						data.answer_wd=parseInt(data.answer_wd)+1;
+					}
+				}
+				// })
+				
+				//		console.log(vm.answer_sy);
+				data.jindubar=parseFloat(parseInt(data.answer_sy)/data.answer_list.length*100).toFixed(2)+"%";
+				renderhtml();
+			};
+
+			function change(i,index){
+				data.answer_list[i].zt=index;
+				finish_select();
+				renderhtml();
+			};
+			
+			function show_notice(){
+				data.show_true=false;
+				console.log(data.show_true);
+				renderhtml();
+				renderhtml1();
+			};
+
+			//初始加载
+			pre_loading(0);
+
+			//获取题目
+			$.ajax({
+				url:path_inter+"Teacher/Approve/question",
+				dataType:'json',
+				type:'post',
+				data:{token:token},
+				success:function(res){
+					pre_loading(100);
+					console.log(res)
+					if(user_overdue(res.code,res.msg)){
+						
+						// avalon.each(res.data,function(k,v){
+						for(var i = 0; i <res.data.length;i++ ){
+						var v = res.data[i];
+							v.zt=100;
+							data.answer_list.push(v);
+						}
+						// })
+						
+						data.answer_wd=data.answer_list.length;
+						//广告区
+						
+					 	
+					 	
+					 	$(".answe_txt img").each(function(){
+						//			 		console.log(111);
+					 		var src=$(this).attr("src");
+						//			 		console.log(src)
+					 		$(this).attr("src",path_img+src);
+					 	})
+						
+					}
+					renderhtml();
+					renderhtml1();
+
+
+
+					var mySwiper = new Swiper ('.answe_txt .swiper-container', {
+						direction: 'horizontal',
+				 	});
+				},
+				error:function(){
+					pre_loading(1);
+				}
+			});
+			
+
+	
+			//	vm.answer_wd=vm.answer_list.length;
+			//	//广告区
+			//	var mySwiper = new Swiper ('.answe_txt .swiper-container', {
+			//		direction: 'horizontal',
+			// 	});
+			// })
+
+			function submit_answer(){
+				if((parseInt(data.answer_wd))>0)
+				{
+					$.toast("您还有未答题","text");
+					return false;
+				}
+				
+				if(data.oprate)
+				{
+					data.oprate=false;
+					$.ajax({
+						url:path_inter+"Teacher/approve/upshot",
+						dataType:'json',
+						type:'post',
+						data:{token:token,score:data.all_score},
+						success:function(res){
+							data.oprate=true;
+							if(user_overdue(res.code,res.msg)){
+								if(res.code==1)
+								{
+									$.toast("测评完成","text");
+									if(/android/i.test(navigator.userAgent)){
+										javaObject.submitTest();
+									}
+									if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)){
+									//	window.webkit.messageHandlers.submitTest.postMessage(null);
+									}
+									setTimeout(function(){
+										window.location.href=path_js+"/member/xintest_result.html?score="+data.all_score;
+									},800);
+								}
+								else
+								{
+									$.toast("测评失败,重试","text");
+								}
+								
+							}
+							renderhtml();
+							renderhtml1();
+						},
+						error:function(){
+							$.toast("测评失败,重试","text");
+							data.oprate=true;
+						}
+					});
+				}
+				
+			};
+					
+				
+		
+			
+		</script>
+	</body>
+</html>

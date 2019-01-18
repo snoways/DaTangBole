@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+	<title>托管</title>
+
+	<link rel="stylesheet" href="css/weui.min.css">
+	<link rel="stylesheet" href="css/jquery-weui.css">
+	<link rel="stylesheet" href="css/swiper.min.css">
+	<link rel="stylesheet" href="css/style.css">
+	<script src="js/jquery-1.12.4.min.js"></script>
+	<script src="js/jquery-weui.js"></script>
+	<script src="js/city-picker.js"></script>
+	<script src="js/swiper.min.js"></script>
+	<script src="js/avalon.js"></script>
+
+	<script src="js/ku/common_nojq.js"></script>
+</head>
+
+<body >
+	<div class="header2" style="height: 51px;">
+		<div class="pad_b5 bgcolorf5">
+			<div class="search1 pad10 bgcolorfff">
+				<div class="border_radiu4 bgcoloreee">
+					<div class="tableblock pad_t5 pad_b5">
+						<div class="font14 colorccc pad_l10">
+							<input id="keywordzhi" type="text" placeholder="输入关键词搜索" width="100%" />
+						</div>
+						<div class="font14 color666 wrem3 txt_center" style="border-left: 1px solid #dcdcdc;">
+							<div onclick="searchfun()" class="block">
+								<img src="img/search.png" width="18">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="content_box ms-controller" ontouchstart ms-controller="comcontrol">
+		<div class="content_scroll" style="padding-top:51px">
+			<!--内容开始-->
+			<ul>
+				<li class="mar_b5 pad10 bgcolorfff" ms-for="el in @list">
+					<a ms-attr="{href:'tuoguan_detail.html?pid='+el.st_id}" class="block">
+						<div class="tableblock">
+							<div style="width: 23%;" class="vertop">
+								<div class="img_box img100">
+									<div class="img_content">
+										<img class="border_radiu4 border_all imgone" ms-attr="{src:@path_img+el.s_img}" alt="" />
+									</div>
+								</div>
+							</div>
+							<div class="pad_l10">
+								<div class="tableblock border_b pad_l5 pad_b8">
+									<div>
+										<div class="R color666 font10">{{el.distance}}</div>
+										<p class="font15 txt_oneline">{{el.s_name}}</p>
+										<p class="font12 color999">{{el.s_content}}</p>
+									</div>
+									<!-- 不要星星了-->
+									<!--<div style="width: 115px;" class="font12">-->
+									<!--<span class="star" ms-class="{all:el.score>=1,half:el.score>=0.5 && el.score<1}"></span>-->
+									<!--<span class="star" ms-class="{all:el.score>=2,half:el.score>=1.5 && el.score<2}"></span>-->
+									<!--<span class="star" ms-class="{all:el.score>=3,half:el.score>=2.5 && el.score<3}"></span>-->
+									<!--<span class="star" ms-class="{all:el.score>=4,half:el.score>=3.5 && el.score<4}"></span>-->
+									<!--<span class="star" ms-class="{all:el.score==5,half:el.score>=4.5 && el.score<5}"></span>-->
+									<!--<span class="inblock lineh_normal colorzt">{{el.score}}</span>-->
+									<!--</div>-->
+								</div>
+								<div class="font12 color666 pad_t8">
+									<div class="tableblock mar_b3">
+										<div>
+											<img src="img/icon8.png" class="tuoguanicon" alt="" />
+											<span class="inblock">{{el.c_name}}</span>
+										</div>
+										<div>
+											<img src="img/icon9.png" class="tuoguanicon" />
+											<span class="inblock">{{el.s_phone}}</span>
+										</div>
+									</div>
+									<div style="background: url(img/icon10.png) left 1px no-repeat; background-size: 16px; padding-left: 21px;">{{el.address}}</div>
+								</div>
+							</div>
+						</div>
+					</a>
+				</li>
+			</ul>
+			<div class="empty" ms-if="@list.length==0">暂无数据</div>
+			<!--内容end-->
+		</div>
+	</div>
+	<script type="text/javascript" src="pagejs/tuoguan.js"></script>
+</body>
+
+</html>

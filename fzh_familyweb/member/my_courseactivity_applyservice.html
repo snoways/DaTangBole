@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>申请售后</title>
+  <script src="../js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="../css/ku/hui.css">
+  <link rel="stylesheet" href="../css/ku/style.css">
+  <script src="../js/ku/hui.js"></script>
+  <script src="../js/ku/template-web.js"></script>
+</head>
+<body>
+
+<div class="content_box bgcolorf3f3">
+  <div class="content_scroll">
+    <div class="txt_center pad10 bgcolorzt colorfff font18 rela" id="hasback">
+      <a href="javascript:history.go(-1);" class="abso" style="top: 5px;left: 10px;">
+        <img src="../img/back_white.png" style="width: 9px;height: 18px;" alt="">
+      </a>
+      <p class="pad_t10"><img src="../img/icon13.png" width="50"></p>
+      <p class="mar_t10 pad_b10">申请售后</p>
+    </div>
+    <div id="contain"></div>
+  </div>
+</div>
+
+<script type="text/html" id="tpl">
+  <div class="pad10 pad_b0 bgcolorfff font12 color666">
+    <div class="pad_b10 border_b">订单编号：<%=detail.order_sn%></div>
+  </div>
+
+  <div class="pad10 pad_b0 bgcolorfff">
+    <div class="tableblock pad_b10">
+      <div style="width: 75px">
+        <img src="<%=path_img+detail.img%>" width="65" height="40">
+      </div>
+      <div>
+        <div class="font12 color333"><%=detail.title%></div>
+        <div class="coloraaa font12">
+          <div>截止报名时间：<%=detail.end_time%></div>
+        </div>
+        <div class="tableblock">
+          <!-- 活动时间和活动地点 删除-->
+          <!--<div class="coloraaa font10">-->
+            <!--<div>活动时间：2018.03.25-2018.03.31</div>-->
+            <!--<div>活动地点：线上活动</div>-->
+          <!--</div>-->
+          <div class="txt_right wrem6 font13 colorzt"><b>￥<%=detail.pay_money%></b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bgcolorfff pad10 font14 color666 mar_t5">
+    <div class="tableblock">
+      <div class="wrem6 vertop">已报名人数</div>
+      <div class="font13 txt_right"><b class="colorzt"><%=detail.num%></b> 人</div>
+    </div>
+  </div>
+
+  <div class="pad_l5 pad_r5 clear pad_t10">
+    <%for(var i=0;i<detail.list.length;i++){%>
+    <%var el=detail.list[i];%>
+    <div class="L col-xs-6 mar_b10">
+      <div class="pad_l5 pad_r5">
+        <div class="bgcolorfff pad5 border_radiu4">
+          <div class="tableblock">
+            <div>
+              <img src="../img/twoqi/actbaoming_people.png" alt="" class="inblock" height="13">
+              <span class="inblock font12 color666"><%=el.member_name%> <%=el.member_phone%></span>
+            </div>
+            <div class="txt_right" style="width: 15px">
+              <%if(el.selected){%>
+              <img src="../img/twoqi/actbaoming_del.png" onclick="delselected(<%=i%>)" height="12" alt="">
+              <%}else{%>
+              <img src="../img/twoqi/actbaoming_add.png" onclick="addselected(<%=i%>)" height="12" alt="">
+              <%}%>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%}%>
+  </div>
+
+  <div class="bgcolorfff pad10 font14 color666">
+    <div class="tableblock">
+      <div class="wrem6 vertop">预计退款金额</div>
+      <div class="font13 colorzt txt_right"><b>￥<span id="tuimoney">0.00</span></b></div>
+    </div>
+  </div>
+
+  <div class="pad10 font12 color999">
+    请在截止报名日期前，申请售后
+  </div>
+
+  <div class="bgcolorfff pad10 font14 color666 mar_b10">
+    <div class="tableblock">
+      <div class="wrem5 vertop">退款原因</div>
+      <div>
+        <textarea placeholder="请填写退款原因" id="reason" style="height: 104px" class="w100"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="pad10" style="margin: 60px 0 0 0">
+    <a href="javascript:;" onclick="submit_txt()" class="block pad10 txt_center bgcolorzt border_radiu20 colorfff font14">提交申请</a>
+  </div>
+</script>
+
+<script>
+  var token=localStorage.getItem("user_token");
+
+  if(Getvariable('token')){
+    token=Getvariable('token');
+  }
+
+  var data={
+    path_img:path_img,
+    pid: "",
+    detail: {},
+    oprate: true
+  };
+  function renderhtml(){
+    document.getElementById('contain').innerHTML=template('tpl', data);
+  }
+
+  function delselected(index){
+    var reason=document.getElementById('reason').value;
+
+    data.detail.list[index].selected=false;
+    renderhtml();
+
+    //计算预计退款金额 总金额-（总金额/总人数）*已退的人   总金额/总人数要向下取整，保留两位小数
+    var selectednum=0;
+    data.detail.list.forEach(function(item){
+      if(item.selected){
+        selectednum++;
+      }
+    });
+    var tuimoney=data.detail.pay_money-((data.detail.pay_money/data.detail.num).toFixed(2))*(data.detail.list.length-selectednum);
+    if(tuimoney<1){
+      tuimoney=Math.round(tuimoney*100)/100;
+    }
+    document.getElementById('tuimoney').innerHTML=Number(tuimoney).toFixed(2);
+
+    document.getElementById('reason').value=reason;
+  }
+  function addselected(index){
+    var reason=document.getElementById('reason').value;
+
+    data.detail.list[index].selected=true;
+    renderhtml();
+
+
+    //计算预计退款金额 总金额-（总金额/总人数）*已退的人   总金额/总人数要向下取整，保留两位小数
+    var selectednum=0;
+    data.detail.list.forEach(function(item){
+      if(item.selected){
+        selectednum++;
+      }
+    });
+    var tuimoney=data.detail.pay_money-((data.detail.pay_money/data.detail.num).toFixed(2))*(data.detail.list.length-selectednum);
+    if(tuimoney<1){
+      tuimoney=Math.round(tuimoney*100)/100;
+    }
+    document.getElementById('tuimoney').innerHTML=Number(tuimoney).toFixed(2);
+
+    document.getElementById('reason').value=reason;
+  }
+
+  //初始加载
+  pre_loading(0);
+  if(!Getvariable("pid") || !Getvariable('hasback')){
+    pre_loading(404, "订单信息错误，请重新打开");
+  }else{
+    data.pid = Getvariable("pid");
+
+    if(Getvariable("hasback")=='false'){
+      //false的时候，隐藏，默认显示
+      document.getElementById('hasback').style.display='none';
+    }
+    hui.post(
+      path_inter+'/parents/activity/getOrderDetail',
+      {
+        token: token, oid: data.pid
+      },
+      function(res){
+        res = JSON.parse(res);
+        pre_loading(100);
+        if (user_overdue(res.code,res.msg)) {
+          for(var i=0;i<res.data.list.length;i++){
+            res.data.list[i].selected=true;//默认是 都选中的
+          }
+
+          data.detail = res.data;
+
+          //计算预计退款金额 总金额-（总金额/总人数）*已退的人   总金额/总人数要向下取整，保留两位小数
+          var tuimoney=data.detail.pay_money-((data.detail.pay_money/data.detail.num).toFixed(2))*0;
+          if(tuimoney<1){
+            tuimoney=Math.round(tuimoney*100)/100;
+          }
+
+          renderhtml();
+
+          document.getElementById('tuimoney').innerHTML=Number(tuimoney).toFixed(2);
+        }
+      },
+      function(){
+        //error
+        pre_loading(1);
+      }
+    );
+  }
+
+
+
+
+
+
+
+
+  function submit_txt() {
+    if (!data.oprate) {
+      return false;
+    }
+
+    var reason=document.getElementById('reason').value;
+    var tuimoney=document.getElementById('tuimoney').innerHTML;
+
+    var aod_ids=[];
+    for(var i=0;i<data.detail.list.length;i++){
+      if(data.detail.list[i].selected){
+        aod_ids.push(data.detail.list[i].aod_id);
+      }
+    }
+    aod_ids=aod_ids.toString();
+
+    if(parseFloat(tuimoney)==0){
+      hui.toast('退款金额为空');
+      return false;
+    }
+    if(reason==''){
+      hui.toast('请填写退款原因');
+      return false;
+    }
+
+    data.oprate = false;
+    hui.post(
+      path_inter+'/parents/Activity/refundOrder',
+      {
+        token:token,
+        oid: data.pid,
+        aod_ids:aod_ids,
+        reason:reason
+      },
+      function(res){
+        res = JSON.parse(res);
+        data.oprate = true;
+        if (user_overdue(res.code,res.msg)) {
+          if (res.code == 1) {
+            hui.toast('申请成功');
+            setTimeout(function () {
+              location.href = "javascript:history.go(-1);";
+            }, 800)
+          }
+        }
+      },
+      function(){
+        //error
+        data.oprate = true;
+        hui.toast('申请失败');
+      }
+    );
+  }
+</script>
+</body>
+</html>

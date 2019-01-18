@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title>notitle</title>
+		<script type="text/javascript" src="js/com.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/stylea.css">
+		<link rel="stylesheet" type="text/css" href="css/weui.min.css">
+		<link rel="stylesheet" type="text/css" href="css/jquery-weui.css">
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery-weui.js"></script>
+		<script type="text/javascript" src="js/template-native.js"></script>
+		<style>
+			.weui-pull-to-refresh{margin-top: -46px;}
+			.weui-pull-to-refresh__layer{height: 46px;line-height: 46px;}
+			.yhqitem.gray .editbtn{background: #9e9e9f}
+			.yhqitem.gray .money{color:#737373}
+		</style>
+	</head>
+	<body>
+
+		<div style="width:100%;height:45px;background:#ff6000;padding:0 4%;padding-top:10px;z-index: 2" class="rela">
+			<div class="tableblock">
+				<div>
+					<img onclick="goBack()" style="width:9px;height:16px;" src="img/left.png">
+				</div>
+				<div class="font16" style="color:#fff;text-align:center;">
+					我的优惠券
+				</div>
+				<div class="font13" style="color:#fff;text-align:right;">
+					<a style="color:#fff;text-align:right;" href="yhq_add.html">发布优惠券</a>
+				</div>
+			</div>
+		</div>
+
+		<div ontouchstart class="content_box" style="padding-top: 45px;z-index:1;">
+			<div class="content_scroll">
+				<div id="box"></div>
+			</div>
+		</div>
+
+		<script type="text/html" id="tpl">
+
+			<%if(quanlist.length==0){%>
+			<div class="empty bgcolorfff">暂无优惠券</div>
+			<%}%>
+			<ul>
+				<%for(var i=0;i<quanlist.length;i++){%>
+				<%var el=quanlist[i];%>
+				<li class="mar_b10 rela bgcolorfff mar_b5 yhqitem <%=el.c_status==2?'gray':''%>">
+					<div class="pad_l10 pad_r10">
+						<div class="pad_b10 pad_t10 border_b">
+							<div class="dot dotright abso" style="left: -5px;bottom: 34px;"></div>
+							<div class="dot dotleft abso" style="right: -5px;bottom: 34px;"></div>
+							<div class="border_all border_radiu4" style="overflow: auto">
+								<div class="pad10">
+									<div class="tableblock">
+										<div class="txt_center" style="width: 130px;">
+											<div class="font18 colorzt money">￥<span class="font26"><%=el.money%></span></div>
+											<div class="font12 color666">满<%=el.min_consumption%>元可用</div>
+										</div>
+										<div>
+											<div class="font18 color333"><%=el.title%></div>
+											<div class="color999 font12">限<%=el.expire_date%>前使用</div>
+										</div>
+										<div class="wrem4">
+											<%if(el.can==1){%>
+											<span class="inblock font16 colorfff bgcolorzt border_radiu20 txt_center w100 editbtn" onclick="gobianji(<%=el%>)" style="padding: 3px 0">编辑</span>
+											<%}%>
+										</div>
+									</div>
+								</div>
+								<div class="pad10 bgcolorf3f3 color666 font12">
+									限：<%=el.pp_name%>使用
+								</div>
+							</div>
+						</div>
+						<!--el.can 1可以编辑删除禁用 -1不能操作-->
+						<div class="txt_right" style="padding: 8px 0">
+							<%if(el.can==1){%>
+								<%if(el.c_status==1){%>
+								<div class="inblock mar_r10" onclick="jinyong(<%=el%>,<%=i%>)">
+									<img src="img/jinyong.png" style="width: 14px;height: 14px;" alt="">
+									<span class="font16 colora8 inblock">禁用</span>
+								</div>
+								<%}else if(el.c_status==2){%>
+								<div class="inblock mar_r10" onclick="qiyong(<%=el%>,<%=i%>)">
+									<img src="img/qiyong.png" style="width: 12px;height: 14px;" alt="">
+									<span class="font16 colora8 inblock">启用</span>
+								</div>
+								<%}%>
+								<div class="inblock mar_l10" onclick="del(<%=el%>,<%=i%>)">
+									<img src="img/deldel.png" style="width: 14px;height: 16px" alt="">
+									<span class="font16 colora8 inblock">删除</span>
+								</div>
+							<%}%>
+						</div>
+					</div>
+				</li>
+				<%}%>
+			</ul>
+
+		</script>
+
+		<script type="text/javascript">
+			ioshistorygoback();
+
+			var token=localStorage.getItem('user_token');
+
+			if(Getvariable('token')){
+				token=Getvariable('token');
+			}
+
+			var data = {
+				path_img:path_img,
+
+				oprate:true,
+				loading:false,
+				page:2
+			};
+			function renderhtml() {
+				document.getElementById('box').innerHTML = template('tpl',data);
+			}
+
+			pre_loading(0);
+			$.ajax({
+				url:path_inter+"ManagedClient/coupon/index",
+				dataType:'json',
+				type:'post',
+				data:{
+					token:token
+				},
+				success:function(res){
+					if(user_overdue(res)){
+						pre_loading(100);
+						data.quanlist=res.data;
+						renderhtml();
+					}
+				},
+				error:function(){
+					$.toast('获取数据失败','text');
+				}
+			});
+
+
+			function jinyong(el,i){
+				if(!data.oprate){
+					return false;
+				}
+				data.oprate=false;
+				$.ajax({
+					url:path_inter+"ManagedClient/coupon/ban",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						cid:el.cid,
+						c_status:2
+					},
+					success:function(res){
+						data.oprate=true;
+						if(user_overdue(res)){
+							pre_loading(100);
+							data.quanlist[i].c_status=2;
+							renderhtml();
+						}
+					},
+					error:function(){
+						data.oprate=true;
+						$.toast('获取数据失败','text');
+					}
+				});
+			}
+			function qiyong(el,i){
+				if(!data.oprate){
+					return false;
+				}
+				data.oprate=false;
+				$.ajax({
+					url:path_inter+"ManagedClient/coupon/ban",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						cid:el.cid,
+						c_status:1
+					},
+					success:function(res){
+						data.oprate=true;
+						if(user_overdue(res)){
+							pre_loading(100);
+							data.quanlist[i].c_status=1;
+							renderhtml();
+						}
+					},
+					error:function(){
+						data.oprate=true;
+						$.toast('获取数据失败','text');
+					}
+				});
+			}
+			function del(el,i){
+				if(!data.oprate){
+					return false;
+				}
+
+				$.confirm("确认删除？","", function() {
+					//点击确认后的回调函数
+					data.oprate=false;
+					$.ajax({
+						url:path_inter+"ManagedClient/coupon/delete",
+						dataType:'json',
+						type:'post',
+						data:{
+							token:token,
+							cid:el.cid
+						},
+						success:function(res){
+							data.oprate=true;
+							if(user_overdue(res)){
+								pre_loading(100);
+								data.quanlist.splice(i,1);
+								renderhtml();
+								$.toast('删除成功','text');
+							}
+						},
+						error:function(){
+							data.oprate=true;
+							$.toast('获取数据失败','text');
+						}
+					});
+				}, function() {
+					//点击取消后的回调函数
+				});
+			}
+			function gobianji(el){
+				location.href='yhq_add.html?edit=true&pid='+el.cid;
+			}
+
+
+			// 下拉刷新
+			xiala_reload($(".content_box"));
+			$(".content_box").pullToRefresh().on("pull-to-refresh", function() {
+				if(!data.oprate){
+					return false;
+				}
+
+				data.loading=false;
+				data.page=2;
+				load_closeanimation('load_animation',1);
+
+				data.oprate=false;
+				$.ajax({
+					url:path_inter+"ManagedClient/coupon/index",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token
+					},
+					success:function(res){
+						data.oprate=true;
+						$(".content_box").pullToRefreshDone();
+
+						if(user_overdue(res)){
+							data.quanlist=res.data;
+							renderhtml();
+						}
+					},
+					error:function(){
+						data.oprate=true;
+						pre_loading(1);
+						$.toast('刷新失败','text');
+					}
+				});
+			});
+
+			// 上拉加载
+			$(".content_box").infinite().on("infinite", function() {
+				if(data.quanlist.length==0 || data.loading || !data.oprate)
+				{
+					return false;
+				}
+
+				var obj=$(this);
+				load_addanimation("load_animation",obj);
+				data.loading = true;//关闭下拉加载
+
+				data.oprate=false;
+				$.ajax({
+					url:path_inter+"ManagedClient/coupon/index",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						page:data.page
+					},
+					success:function(res){
+						data.oprate=true;
+						if(user_overdue(res)){
+							if(res.data.length>0){
+								data.quanlist=data.quanlist.concat(res.data);
+								data.loading=false;
+								data.page++;
+								load_closeanimation('load_animation',1);
+								renderhtml();
+							}else{
+								load_closeanimation('load_animation',0);
+							}
+						}
+					},
+					error:function(){
+						data.oprate=true;
+					}
+				});
+			});
+		</script>
+	</body>
+</html>

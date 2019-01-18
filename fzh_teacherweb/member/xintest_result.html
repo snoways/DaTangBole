@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title>心理测评</title>
+		<script type="text/javascript" src="../js/com.js" ></script>
+		<link rel="stylesheet" type="text/css" href="../css/stylea.css">
+		<link rel="stylesheet" type="text/css" href="../css/weui.min.css">
+		<link rel="stylesheet" type="text/css" href="../css/jquery-weui.css">
+		<script type="text/javascript" src="../js/hui.js" ></script>
+		<script type="text/javascript" src="../js/jquery.min.js" ></script>
+		<script type="text/javascript" src="../js/jquery-weui.js" ></script>
+		<script type="text/javascript" src="../js/template-native.js" ></script>
+	</head>
+	<body>
+		<div class="xintestRes content_box" >
+			<div class="content_scroll no">
+				<div id="box"></div>
+			</div>
+		</div>
+		<script type="text/html" id="tpl">
+			<!--内容开始-->
+			<div class="scoreArea txt_center">
+				<div class="colorfff font14" style="padding-top: 75px">您最终的答题分数为</div>
+				<div class="font14 coloryellow mar_t5">
+					<span class="font28"><%=score%></span> 分
+				</div>
+			</div>
+			<div class="conArea">
+				<div class="topbg">
+					<div class="bgcolorfff" id="bgsetheight">
+						<div class="color666 font14 pad_b10"><%=shuju%></div>
+					</div>
+				</div>
+			</div>
+			<!--内容end-->
+		</script>
+		<script>
+			var token=localStorage.getItem('user_token');
+
+			if(Getvariable('token')){
+				token=Getvariable('token');
+			}
+			
+			var data = {
+				score:'',
+				shuju:'',
+
+				loading:false,
+				page:1
+			};
+			function renderhtml() {
+				document.getElementById('box').innerHTML = template('tpl',data)
+			};
+			
+
+
+			// avalon.ready(function(){
+				//设置高度
+				var currh=$('#bgsetheight').height();
+				var minh=window.innerHeight-230;
+				if(currh<minh){
+					$('#bgsetheight').css({'min-height':minh});
+				}
+
+				//初始加载
+				pre_loading(0);
+
+			//	console.log(token)
+			//	var score=Getvariable('score');
+			//	if(!score){
+			//		pre_loading(3);
+			//		return false;
+			//	}
+			//	vm.score=score;
+				$.ajax({
+					url:path_inter+"Teacher/Approve/search_score",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token
+					},
+					success:function(res){
+						console.log(res)
+						pre_loading(100);
+						if(res.code==-1)
+						{
+							data.shuju={desc:"暂无说明"};
+							return false;
+						}
+						if(user_overdue(res.code,res.msg)){
+							// var data=res.data;
+							//data.desc=data.sleft+'分-'+data.sright+'分：'+data.desc;
+							data.score=res.data.eval_score
+							data.shuju=res.data.evaluation;
+						}
+						renderhtml();
+					},
+					error:function(){
+						pre_loading(1);
+					}
+				});
+
+		</script>
+	</body>
+</html>

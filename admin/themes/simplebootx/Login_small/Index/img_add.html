@@ -1,0 +1,81 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('index/small_table')}">{$info.s_name}个人中心</a></li>
+        <li><a href="{:U('index/small_pass',array('id'=>$info['id']))}">修改密码</a></li>
+        <li class="active"><a href="{:U('index/img_add',array('id'=>$info['id']))}">查看/编辑图集</a></li>
+    </ul>
+    <?php if(!empty($image)){ ?>
+
+    <?php }else{ ?>
+    <form method="post" class="form-horizontal" enctype="multipart/form-data" action="__CONTROLLER__/insert">
+        <?php } ?>
+        <fieldset>
+            <?php if(!empty($image)){ ?>
+            <foreach name="image" item="u">
+                <form method="post" class="form-horizontal" enctype="multipart/form-data" action="__CONTROLLER__/modlunbo">
+                    <div class="control-group" id="adds">
+                        <label class="control-label">图集{$key+1}</label>
+                        <div class="controls">
+                            <input type="file" name="url" value="__ROOT__{$u['url']}">
+                            <input type="hidden" name="u_id" value="{$u['id']}">
+                            <input type="hidden" value="{$_GET['id']}" name="id">
+                            <img src="__ROOT__{$u['url']}" height="150" width="150">
+                            <button type="submit" class="btn btn-primary">修改</button>
+                            <a class="btn btn-primary" href="__CONTROLLER__/delurl/id/{$u['id']}/st_id/{$_GET['id']}" onclick="return del()" id="add33" >删除</a>
+                        </div>
+                    </div>
+                </form>
+            </foreach>
+            <?php }else{ ?>
+            <div class="control-group" id="adds">
+                <label class="control-label">图集</label>
+                <div class="controls">
+                    <input type="hidden" value="{$_GET['id']}" name="id">
+                    <input type="file" name="url[]">
+                    <button type="button" class="btn btn-primary add2">{:L('ADD')}</button>
+                </div>
+            </div>
+            <?php } ?>
+        </fieldset>
+        <div class="form-actions">
+            <?php if(!empty($image)){ ?>
+            <?php }else{ ?>
+            <button type="submit" class="btn btn-primary">{:L('ADD')}</button>
+            <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+            <?php } ?>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    $(".add2").click(function(){
+        $("#adds").append('<div class="controls" style="margin-top: 10px;"><input type="file" name="url[]">&nbsp;<input type="button" name="add3" class="btn btn-danger" id="add3" value="删除" /></div>');
+
+        $('[id="add3"]').bind("click",function(){
+            //$(this).parent().empty();
+            $(this).parent().remove();
+            $(this).remove();
+        })
+    });
+
+    function del() {
+        var msg = "确定要删除吗？删除后不可恢复！";
+        if (confirm(msg)==true){
+            return true;
+        }else{
+            /*$('[id="add33"]').bind("click",function(){
+             //$(this).parent().empty();
+             $(this).parent().parent().remove();
+             $(this).remove();
+             });*/
+            return false;
+        }
+    }
+
+</script>
+<script src="__PUBLIC__/js/common.js"></script>
+
+</body>
+</html>

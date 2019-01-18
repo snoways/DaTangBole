@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>我的关注</title>
+  <script src="../js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="../css/ku/weui.min.css">
+  <link rel="stylesheet" href="../css/ku/jquery-weui.min.css">
+  <link rel="stylesheet" href="../css/ku/hui.css">
+  <link rel="stylesheet" href="../css/ku/style.css">
+  <script src="../js/ku/hui.js"></script>
+  <script src="../js/ku/template-web.js"></script>
+  <script src="../js/ku/jquery-1.12.4.min.js"></script>
+  <script src="../js/ku/jquery-weui.js"></script>
+</head>
+<body>
+
+<!--tab-->
+<div id="containtab"></div>
+<script type="text/html" id="tpltab">
+  <div class="header txt_center font14 bgcolorf3f3 color666" style="height: 50px;padding-bottom: 5px;">
+    <div class="tableblock bgcolorfff" style="height: 45px;">
+      <%for(var i=1;i<order_tab.length;i++){%>
+      <%var el=order_tab[i];%>
+      <div class="pad_l5 pad_r5 tab_b <%=tab_index==i?'colorzt':''%> <%=tab_index==i?'cur':''%>">
+        <a href="javascript:;" onclick="tab_click(<%=i%>)" class="block pad_t2"><%=el%></a>
+      </div>
+      <%}%>
+    </div>
+  </div>
+</script>
+
+<!--教师-->
+<div class="content_box bgcolorf3f3" style="display: none;padding-top: 50px" id="tabcontent1" ms-class="{Hide:@tab_index==1,no_scroll:@list[0].length==0}">
+  <div class="content_scroll">
+    <div id="contain1"></div>
+  </div>
+</div>
+<script type="text/html" id="tpl1">
+  <%if(list[0].length==0){%>
+  <div class="L_notice">暂无数据~</div>
+  <%}%>
+  <ul class="pad_b10">
+    <%for(var i=0;i<list[0].length;i++){%>
+    <%var el=list[0][i];%></list>
+    <li class="mar_b5 bgcolorfff">
+      <div class="pad10 pad_r5">
+        <div class="tableblock font16">
+          <a href="javascript:;" onclick="yuyue(0,<%=el%>)" style="width: 62px">
+            <img src="<%=el.t_img%>" width="52" height="52" class="border_radius50">
+          </a>
+          <a href="javascript:;" onclick="yuyue(0,<%=el%>)">
+            <div>
+              <span class="L_sex inblock mar_r5 <%=el.sex==2?'cur':''%>">&nbsp;</span>
+              <span class="inblock mar_r5"><%=el.name%></span>
+              <span class="inblock font12 color666"><%=el.age%>岁</span>
+            </div>
+            <div class="txt_oneline font12">
+              <span class="inblock mar_r10 color666 font12"><i class="noh color666 font12">年级：</i><%=el.t_grade%></span>
+              <span class="inblock color666 font12"><i class="noh color666 font12">科目：</i><i class="noh color666 font12"><%=el.subject%></i></span>
+            </div>
+            <div class="font0 mar_t5">
+              <%for(var j=0;j<score.length;j++){%>
+              <%var elel=score[j];%>
+              <span class="L_star small inblock mar_r5 <%=elel<el.score||elel==el.score?'all':''%> <%=elel<el.score&&(elel+1)>el.score?'half':''%>">&nbsp;</span>
+              <%}%>
+              <span class="inblock font12 colorzt"><%=$imports.num1(el.score)%></span>
+            </div>
+          </a>
+          <div class="txt_center colorzt font12 wrem5">
+            <a href="javascript:;" onclick="yuyue(0,<%=el%>)" class="block border_r">
+              <span class="inblock L_yuyue L_icon mar_b5">&nbsp;</span><br>
+              <i class="noh font11 colorzt">立即预约</i>
+            </a>
+          </div>
+          <div class="txt_center color666 font12 wrem5">
+            <a href="javascript:;" class="block" onclick="cancel(0,<%=el%>,<%=i%>)">
+              <span class="inblock L_collect L_icon mar_b5">&nbsp;</span><br>
+              <span class="font11 color666">取消关注</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </li>
+    <%}%>
+  </ul>
+</script>
+
+<!--托管-->
+<div class="content_box bgcolorf3f3" style="display: none;padding-top: 50px" id="tabcontent2" ms-class="{Hide:@tab_index==0,no_scroll:@list[1].length==0}">
+  <div class="content_scroll">
+    <div id="contain2"></div>
+  </div>
+</div>
+<script type="text/html" id="tpl2">
+  <%if(list[1].length==0){%>
+  <div class="L_notice">暂无数据~</div>
+  <%}%>
+  <ul class="pad_b10">
+    <%for(var i=0;i<list[1].length;i++){%>
+    <%var el=list[1][i];%>
+    <li class="mar_b5 bgcolorfff">
+      <div class="pad10 pad_r5">
+        <div class="tableblock font16">
+          <a href="javascript:;" onclick="yuyue(1,<%=el%>)" style="width: 74px;">
+            <img src="<%=el.s_img%>" width="74" height="74" class="border_radiu4">
+          </a>
+          <a href="javascript:;" onclick="yuyue(1,<%=el%>)">
+            <div class="pad_l10 font16">
+              <%=el.s_name%>
+            </div>
+            <div class="txt_oneline font12 color999 pad_l10">
+              <div><%=el.c_name%></div>
+              <div><%=el.s_phone%></div>
+              <div><%=el.address%></div>
+            </div>
+          </a>
+          <div class="txt_center color666 font12 wrem5">
+            <a href="javascript:;" class="block" onclick="cancel(1,<%=el%>,<%=i%>)">
+              <span class="inblock L_collect L_icon mar_b5">&nbsp;</span><br>
+              <span class="font11 color666">取消关注</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </li>
+    <%}%>
+  </ul>
+</script>
+
+<!--家长-->
+<div class="content_box bgcolorf3f3" style="display: none;padding-top: 50px;" id="tabcontent3" ms-class="{Hide:@tab_index==0,no_scroll:@list[2].length==0}">
+  <div class="content_scroll">
+    <div id="contain3"></div>
+  </div>
+</div>
+<script type="text/html" id="tpl3">
+  <%if(list[2].length==0){%>
+  <div class="L_notice">暂无数据~</div>
+  <%}%>
+  <ul class="pad_b10">
+    <%for(var i=0;i<list[2].length;i++){%>
+    <%var el=list[2][i];%>
+    <li class="mar_b5 bgcolorfff">
+      <div class="pad_l10 pad_r10 pad_t20 pad_b20 pad_r5">
+        <div class="tableblock font16">
+          <div onclick="gotoqinzi(<%=el%>);" style="width: 62px">
+            <img src="<%=el.p_img%>" width="52" height="52" class="border_radius50">
+          </div>
+          <div onclick="gotoqinzi(<%=el%>);">
+            <div class="font14 color333 txt_oneline mar_b5"><%=el.parent_name%></div>
+            <!-- 没有 描述-->
+            <!--<div class="font10 color999 txt_oneline">描述</div>-->
+          </div>
+          <div class="txt_center color666 font12 wrem5">
+            <a href="javascript:;" class="block" onclick="cancelfamily(2,<%=el%>,<%=i%>)">
+              <span class="inblock L_collect L_icon mar_b5">&nbsp;</span><br>
+              <span class="font11 color666">取消关注</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </li>
+    <%}%>
+  </ul>
+</script>
+
+
+<script>
+  ioshistorygoback();
+  var token=localStorage.getItem('user_token');
+
+  if(Getvariable('token')){
+    token=Getvariable('token');
+  }
+
+  var data={
+    order_tab: ["老师", "托管/机构","家长"],
+    tab_index: 1,
+    score: [1, 2, 3, 4, 5],
+    list: [[],[],[]],
+    oprate: true,
+    loading:[false,false,false],
+    page:[2,2,2]
+  };
+  function rendertab(){
+    document.getElementById('containtab').innerHTML=template('tpltab', data);
+  }
+  function rendercontain1(){
+    document.getElementById('contain1').innerHTML=template('tpl1', data);
+  }
+  function rendercontain2(){
+    document.getElementById('contain2').innerHTML=template('tpl2', data);
+  }
+  function rendercontain3(){
+    document.getElementById('contain3').innerHTML=template('tpl3', data);
+  }
+
+
+
+
+  //初始加载
+  pre_loading(0);
+
+  if (Getvariable("pid") == 0) {
+    // data.tab_index = Getvariable("pid");
+    data.tab_index = 1;
+    rendertab();
+    // if(data.tab_index==0){
+    //   $('#tabcontent2').show();
+    //   data.tab_index = 1;
+    // }else 
+    if(data.tab_index==0 || data.tab_index==1){
+      $('#tabcontent2').show();
+    }else if(data.tab_index==2){
+      $('#tabcontent3').show();
+    }
+  }else{
+    //不携带tab参数，默认是老师
+    $('#tabcontent2').show();
+    rendertab();
+  }
+
+
+
+  //加载初始数据
+  // if(data.tab_index==0){
+  //   data.tab_index = 1;
+  //   gettab2();
+  // }else 
+  if(data.tab_index==0 || data.tab_index==1){
+    gettab2();
+  }else if(data.tab_index==2){
+    gettab3();
+  }
+
+
+
+
+
+
+  function gettab1(){
+    //老师
+    hui.post(
+      path_inter+'/parents/UserCenter/collectionTeacher',
+      {
+        token: token
+      },
+      function(res){
+        data.oprate=true;
+        res = JSON.parse(res);
+        if(data.tab_index==0){
+          pre_loading(100);
+        }
+        if (user_overdue(res.code,res.msg)) {
+          for(var i=0;i<res.data.length;i++){
+            res.data[i].subject=res.data[i].subject.substring(0,res.data[i].subject.lastIndexOf(','));
+            res.data[i].t_img = path_img + res.data[i].t_img;
+          }
+          data.list[0]=res.data;
+          rendercontain1();
+        }
+      },
+      function(){
+        //error
+        data.oprate=true;
+        pre_loading(1);
+      }
+    );
+  }
+  function gettab2(){
+    //托管/机构
+    hui.post(
+      path_inter+'/parents/UserCenter/collectionManaged',
+      {
+        token: token
+      },
+      function(res){
+        data.oprate=true;
+        res = JSON.parse(res);
+        if(data.tab_index==1){
+          pre_loading(100);
+        }
+        if (user_overdue(res.code,res.msg)) {
+          for(var i=0;i<res.data.length;i++){
+            res.data[i].st_id=parseFloat(res.data[i].st_id);//00000000044  去掉前面多余的0
+            res.data[i].s_img = path_img + res.data[i].s_img;
+          }
+          data.list[1]=res.data;
+          rendercontain2();
+        }
+      },
+      function(){
+        //error
+        data.oprate=true;
+        pre_loading(1);
+      }
+    );
+  }
+  function gettab3(){
+    //家长
+    hui.post(
+      path_inter+'/parents/UserCenter/collectionParent',
+      {
+        token: token
+      },
+      function(res){
+        data.oprate=true;
+        res = JSON.parse(res);
+        if(data.tab_index==2){
+          pre_loading(100);
+        }
+        if (user_overdue(res.code,res.msg)) {
+          for(var i=0;i<res.data.length;i++){
+            res.data[i].p_img = path_img + res.data[i].p_img;
+          }
+          data.list[2]=res.data;
+          rendercontain3();
+        }
+      },
+      function(){
+        //error
+        data.oprate=true;
+        pre_loading(1);
+      }
+    );
+  }
+  function gotoqinzi(el){
+    appFamilyQinzi(el.pid);
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+  function yuyue(index, el) {
+    //预约课程 --跳到详情
+    //点击 家长 不做任何跳转
+    var href = "";
+    if (index == 0) {
+      href =  "../find_teacher_detail.html?pid=" + el.t_id;//教师
+    }
+    else if(index==1){
+      href =  "../tuoguan_detail.html?pid=" + el.st_id;//机构
+    }
+    location.href = href;
+  }
+  function cancel(listi, elem,index){
+    if(!data.oprate){
+      return false;
+    }
+
+    if (!token) {
+      go_login();
+      return false;
+    }
+    else {
+      data.oprate=false;
+      //取消关注   可以取消   1.老师  2.托管/机构
+      hui.confirm('确认取消?','',function(){
+        hui.post(
+          path_inter+'/parents/UserCenter/cancelCollection',
+          {
+            token: token, collection_id: elem.collection_id
+          },
+          function(res){
+            data.oprate=true;
+            res = JSON.parse(res);
+            if (user_overdue(res.code,res.msg)) {
+              if (res.code == 1) {
+                data.list[listi].splice(index,1);
+                if(data.tab_index==0){
+                  rendercontain1();
+                }else if(data.tab_index==1){
+                  rendercontain2();
+                }
+                hui.toast('已取消');
+              }
+            }
+          },
+          function(){
+            //error
+            data.oprate=true;
+            hui.toast('取消失败');
+          }
+        );
+      },function(){
+        data.oprate=true;
+      });
+    }
+  }
+  function cancelfamily(listi, elem,index){
+    if(!data.oprate){
+      return false;
+    }
+
+    if (!token) {
+      go_login();
+      return false;
+    }
+    else {
+      data.oprate=false;
+      //取消关注   可以取消   3.家长
+      hui.confirm('确认取消?','',function(){
+        hui.post(
+          path_inter+'/parents/UserCenter/cancelColParents',
+          {
+            token:token, parent_id: elem.pid
+          },
+          function(res){
+            data.oprate=true;
+            res = JSON.parse(res);
+            if (user_overdue(res.code,res.msg)) {
+              if (res.code == 1) {
+                data.list[listi].splice(index,1);
+                rendercontain3();
+                hui.toast('已取消');
+              }
+            }
+          },
+          function(){
+            //error
+            data.oprate=true;
+            hui.toast('取消失败');
+          }
+        );
+      },function(){
+        data.oprate=true;
+      });
+    }
+  }
+  function tab_click(index) {
+    if (index != data.tab_index) {
+      if (!data.oprate) {
+        return false;
+      }
+      data.oprate=false;
+
+      data.tab_index = index;
+      data.page=[2,2,2];
+      if(data.tab_index==0){
+        $('#tabcontent1').show();
+        $('#tabcontent2').hide();
+        $('#tabcontent3').hide();
+        gettab1();
+      }else if(data.tab_index==1){
+        $('#tabcontent1').hide();
+        $('#tabcontent2').show();
+        $('#tabcontent3').hide();
+        gettab2();
+      }else if(data.tab_index==2){
+        $('#tabcontent1').hide();
+        $('#tabcontent2').hide();
+        $('#tabcontent3').show();
+        gettab3();
+      }
+      rendertab();
+    }
+  }
+
+
+
+
+
+
+
+  //下拉刷新
+  xiala_reload($(".content_box"));
+  $(".content_box").pullToRefresh().on("pull-to-refresh", function () {
+    if (!data.oprate) {
+      $(".content_box").pullToRefreshDone();
+      return false;
+    }
+    data.oprate = false;
+
+    data.list.splice(data.tab_index, 1, []);
+    data.loading[data.tab_index] = false;
+    data.page[data.tab_index] = 2;
+    load_closeanimation("load_animation" + data.tab_index, 1);
+
+    if(data.tab_index==0){
+      //老师
+      $.ajax({
+        url:path_inter+"/parents/UserCenter/collectionTeacher",
+        dataType:'json',
+        type:'post',
+        data:{
+          token: token,
+          page:1
+        },
+        success:function(res){
+          data.oprate=true;
+          $(".content_box").pullToRefreshDone();
+
+          if(user_overdue(res.code,res.msg))
+          {
+            for(var i=0;i<res.data.length;i++){
+              if(res.data[i].subject){
+                res.data[i].subject=res.data[i].subject.substring(0,res.data[i].subject.lastIndexOf(','));
+              }
+              res.data[i].t_img = path_img + res.data[i].t_img;
+            }
+            data.list[0]=res.data;
+            rendercontain1();
+          }
+        },
+        error:function(){
+          data.oprate=true;
+          $.toast("刷新失败", "text");
+          $(".content_box").pullToRefreshDone();
+        }
+      });
+    }else if(data.tab_index==1){
+      //托管/机构
+      $.ajax({
+        url:path_inter+"/parents/UserCenter/collectionManaged",
+        dataType:'json',
+        type:'post',
+        data:{
+          token:token,
+          page:1
+        },
+        success:function(res){
+          data.oprate=true;
+          $(".content_box").pullToRefreshDone();
+
+          if(user_overdue(res.code,res.msg))
+          {
+            for(var i=0;i<res.data.length;i++){
+              res.data[i].st_id=parseFloat(res.data[i].st_id);//00000000044  去掉前面多余的0
+              res.data[i].s_img = path_img + res.data[i].s_img;
+            }
+            data.list[1]=res.data;
+            rendercontain2();
+          }
+        },
+        error:function(){
+          data.oprate=true;
+          $.toast("刷新失败", "text");
+          $(".content_box").pullToRefreshDone();
+        }
+      });
+    }else if(data.tab_index==2){
+      //家长
+      $.ajax({
+        url:path_inter+"/parents/UserCenter/collectionParent",
+        dataType:'json',
+        type:'post',
+        data:{
+          token:token,
+          page:1
+        },
+        success:function(res){
+          data.oprate=true;
+          $(".content_box").pullToRefreshDone();
+
+          if(user_overdue(res.code,res.msg))
+          {
+            for(var i=0;i<res.data.length;i++){
+              res.data[i].p_img = path_img + res.data[i].p_img;
+            }
+            data.list[2]=res.data;
+            rendercontain3();
+          }
+        },
+        error:function(){
+          data.oprate=true;
+          $.toast("刷新失败", "text");
+          $(".content_box").pullToRefreshDone();
+        }
+      });
+    }
+  });
+  //上拉加载
+  $(".content_box").infinite().on("infinite", function(){
+    if(data.list[data.tab_index].length==0||data.loading[data.tab_index]||!data.oprate)
+    {
+      return false;
+    }
+
+    data.oprate=false;
+
+    var obj=$(this);
+    load_addanimation("load_animation"+data.tab_index,obj);
+    data.loading[data.tab_index] = true;//关闭下拉加载
+
+    if(data.tab_index==0){
+      //老师
+      $.ajax({
+        url:path_inter+"/parents/UserCenter/collectionTeacher",
+        dataType:'json',
+        type:'post',
+        data:{
+          token:token,
+          page:data.page[data.tab_index]
+        },
+        success:function(res){
+          data.oprate=true;
+          if(user_overdue(res.code,res.msg))
+          {
+            for(var i=0;i<res.data.length;i++){
+              res.data[i].subject=res.data[i].subject.substring(0,res.data[i].subject.lastIndexOf(','));
+              res.data[i].t_img = path_img + res.data[i].t_img;
+            }
+            data.list[0]=data.list[0].concat(res.data);
+            rendercontain1();
+
+            if(res.data.length>0)
+            {
+              data.page[data.tab_index]++;
+              data.loading[data.tab_index] = false;
+              load_closeanimation("load_animation"+data.tab_index,1);
+            }
+            else
+            {
+              load_closeanimation("load_animation"+data.tab_index,0);
+            }
+          }
+        },
+        error:function(){
+          data.oprate=true;
+        }
+      });
+    }else if(data.tab_index==1){
+      //托管/机构
+      $.ajax({
+        url:path_inter+"/parents/UserCenter/collectionManaged",
+        dataType:'json',
+        type:'post',
+        data:{
+          token:token,
+          page:data.page[data.tab_index]
+        },
+        success:function(res){
+          data.oprate=true;
+          if(user_overdue(res.code,res.msg))
+          {
+            for(var i=0;i<res.data.length;i++){
+              res.data[i].s_img = path_img + res.data[i].s_img;
+            }
+            data.list[1]=data.list[1].concat(res.data);
+            rendercontain2();
+
+            if(res.data.length>0)
+            {
+              data.page[data.tab_index]++;
+              data.loading[data.tab_index] = false;
+              load_closeanimation("load_animation"+data.tab_index,1);
+            }
+            else
+            {
+              load_closeanimation("load_animation"+data.tab_index,0);
+            }
+          }
+        },
+        error:function(){
+          data.oprate=true;
+        }
+      });
+    }else if(data.tab_index==2){
+      //家长
+      $.ajax({
+        url:path_inter+"/parents/UserCenter/collectionParent",
+        dataType:'json',
+        type:'post',
+        data:{
+          token:token,
+          page:data.page[data.tab_index]
+        },
+        success:function(res){
+          data.oprate=true;
+          if(user_overdue(res.code,res.msg))
+          {
+            for(var i=0;i<res.data.length;i++){
+              res.data[i].p_img = path_img + res.data[i].p_img;
+            }
+            data.list[2]=data.list[2].concat(res.data);
+            rendercontain3();
+
+            if(res.data.length>0)
+            {
+              data.page[data.tab_index]++;
+              data.loading[data.tab_index] = false;
+              load_closeanimation("load_animation"+data.tab_index,1);
+            }
+            else
+            {
+              load_closeanimation("load_animation"+data.tab_index,0);
+            }
+          }
+        },
+        error:function(){
+          data.oprate=true;
+        }
+      });
+    }
+  });
+</script>
+</body>
+</html>

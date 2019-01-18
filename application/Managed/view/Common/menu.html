@@ -1,0 +1,318 @@
+<!-- navbar -->
+<header class="navbar navbar-inverse" role="banner">
+    <div class="navbar-header" style="overflow: hidden">
+        <img src="__PUBLIC__/images/120.png" style="float: left;display: block;">
+        <a class="navbar-brand" style="float: left;display: block;margin-left: -15px;" href="{:U('Index/index')}">大唐伯乐商户端</a>
+    </div>
+    <ul class="nav navbar-nav pull-right hidden-xs">
+        <li class="cfff">
+            <a href="{:U('Auth/login')}">
+                <i class="icon-off"></i>
+                <span class="mar_l5">退出登录</span>
+            </a>
+        </li>
+    </ul>
+</header>
+<!-- end navbar -->
+<style>
+    #sidebar-nav #dashboard-menu-home {
+        list-style: none;
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-bottom: 0;
+        margin-left: 20px;
+        /* sidebar submenus */
+    }
+    #sidebar-nav #dashboard-menu-home > li > a {
+        display: block;
+        padding: 19px 14px 15px 14px;
+        margin-left: -15px;
+        margin-bottom: 5px;
+        border-bottom: 1px solid #dae1e8;
+        box-shadow: 0 2px 1px -1px #FFFFFF;
+        color: #2F4554;
+        outline: 0px;
+        line-height: 21px;
+    }
+    #sidebar-nav #dashboard-menu-home > li {
+        position: relative;
+        /* font awesome icon */
+    }
+    #sidebar-nav #dashboard-menu-home > li i {
+        font-size: 23px;
+        top: 17px;
+    }
+    #sidebar-nav #dashboard-menu-home > li:hover i {
+        opacity: 1;
+    }
+    #sidebar-nav #dashboard-menu-home > li > a:hover {
+        color: #33455a;
+        text-decoration: none;
+    }
+    #sidebar-nav #dashboard-menu-home a span {
+        margin-left: 10px;
+        transition: color .1s linear;
+        -moz-transition: color .1s linear;
+        -webkit-transition: color .1s linear;
+        -o-transition: color .1s linear;
+        font-size: 14px;
+    }
+</style>
+<!-- sidebar -->
+<div id="sidebar-nav">
+    <ul id="dashboard-menu-home">
+        <li>
+            <a class="dropdown-toggle" href="{:U('Index/index')}">
+                <i class="icon-home"></i>
+                <span>商户首页</span>
+            </a>
+        </li>
+    </ul>
+    <ul id="dashboard-menu">
+        <li class="<php>if(CONTROLLER_NAME == 'Index' && ACTION_NAME == 'person'){echo 'active';}</php>">
+            <a class="dropdown-toggle" href="#">
+                <i class="icon-user"></i>
+                <span>个人中心</span>
+                <i class="icon-chevron-down"></i>
+            </a>
+            <ul class="submenu <php>if(CONTROLLER_NAME == 'Index'){echo 'active';}</php>">
+                <li><a href="{:U('Index/person')}"
+                       class="<php>if(CONTROLLER_NAME == 'Index' && ACTION_NAME == 'person'){echo 'active';}</php>">个人资料</a>
+                </li>
+                <li><a href="{:U('Index/add_small')}"
+                       class="<php>if(CONTROLLER_NAME == 'Index' && ACTION_NAME == 'add_small'){echo 'active';}</php>">添加下级代理商</a>
+                </li>
+                <li><a href="{:U('Index/sub_list')}"
+                       class="<php>if(CONTROLLER_NAME == 'Index' && ACTION_NAME == 'sub_list'){echo 'active';}</php>">下级代理商列表</a>
+                </li>
+            </ul>
+        </li>
+        <li class="<php>if(CONTROLLER_NAME == 'Image'){echo 'active';}</php>">
+            <a class="dropdown-toggle" href="#">
+                <i class="icon-picture"></i>
+                <span>我的图集</span>
+                <i class="icon-chevron-down"></i>
+            </a>
+            <ul class="submenu <php>if(CONTROLLER_NAME == 'Image'){echo 'active';}</php>">
+                <li><a href="{:U('Image/index')}"
+                       class="<php>if(CONTROLLER_NAME == 'Image' && ACTION_NAME == 'index'){echo 'active';}</php> ">图集列表</a>
+                </li>
+                <li><a href="{:U('Image/add')}"
+                       class="<php>if(CONTROLLER_NAME == 'Image' && ACTION_NAME == 'add'){echo 'active';}</php> ">添加图集</a>
+                </li>
+            </ul>
+        </li>
+        <li class="<php>if(CONTROLLER_NAME == 'Video'){echo 'active';}</php>">
+            <a class="dropdown-toggle" href="#">
+                <i class="icon-film"></i>
+                <span>我的视频</span>
+                <i class="icon-chevron-down"></i>
+            </a>
+            <ul class="submenu <php>if(CONTROLLER_NAME == 'Video'){echo 'active';}</php>">
+                <li><a href="{:U('Video/index')}"
+                       class="<php>if(CONTROLLER_NAME == 'Video' && ACTION_NAME == 'index'){echo 'active';}</php> ">视频列表</a>
+                </li>
+                <li><a href="{:U('Video/add')}"
+                       class="<php>if(CONTROLLER_NAME == 'Video' && ACTION_NAME == 'add'){echo 'active';}</php>">添加视频</a>
+                </li>
+            </ul>
+        </li>
+        <li class="<php>if(CONTROLLER_NAME == 'Index' && ACTION_NAME == 'updatePwd'){echo 'active';}</php>">
+            <a class="dropdown-toggle" href="#">
+                <i class="icon-cog"></i>
+                <span>安全中心</span>
+                <i class="icon-chevron-down"></i>
+            </a>
+            <ul class="submenu <php>if(CONTROLLER_NAME == 'Index' && ACTION_NAME == 'updatePwd'){echo 'active';}</php>">
+                <li><a href="{:U('Index/updatePwd')}"
+                       class="<php>if(CONTROLLER_NAME == 'Index' && ACTION_NAME == 'updatePwd'){echo 'active';}</php>">修改密码</a>
+                </li>
+                <li><a href="{:U('Index/updatePhone')}"
+                       class="<php>if(CONTROLLER_NAME == 'Index' && ACTION_NAME == 'updatePhone'){echo 'active';}</php>">修改手机号</a>
+                </li>
+            </ul>
+        </li>
+        <!--<li class="<php>if(CONTROLLER_NAME == 'Vip'){echo 'active';}</php>">-->
+            <!--<a class="dropdown-toggle" href="#">-->
+                <!--<i class="icon-star"></i>-->
+                <!--<span>会员特权</span>-->
+                <!--<i class="icon-chevron-down"></i>-->
+            <!--</a>-->
+            <!--<ul class="submenu <php>if(CONTROLLER_NAME == 'Vip'){echo 'active';}</php>">-->
+                <!--<li><a href="{:U('Vip/index')}"-->
+                       <!--class="<php>if(CONTROLLER_NAME == 'Vip' && ACTION_NAME == 'index'){echo 'active';}</php> ">权益介绍</a>-->
+                <!--</li>-->
+            <!--</ul>-->
+        <!--</li>-->
+        <li class="<php>if(CONTROLLER_NAME == 'Activity'){echo 'active';}</php>">
+            <a class="dropdown-toggle" href="#">
+                <i class="icon-th-large"></i>
+                <span>活动管理</span>
+                <i class="icon-chevron-down"></i>
+            </a>
+            <ul class="submenu <php>if(CONTROLLER_NAME == 'Activity'){echo 'active';}</php>">
+                <li><a href="{:U('Activity/index')}"
+                       class="<php>if(CONTROLLER_NAME == 'Activity' && ACTION_NAME == 'index'){echo 'active';}</php> ">活动列表</a>
+                </li>
+                <li><a href="{:U('Activity/add')}"
+                       class="<php>if(CONTROLLER_NAME == 'Activity' && ACTION_NAME == 'add'){echo 'active';}</php> ">添加活动</a>
+                </li>
+                <li><a href="{:U('Activity/order')}"
+                       class="<php>if(CONTROLLER_NAME == 'Activity' && ACTION_NAME == 'order'){echo 'active';}</php> ">活动订单</a>
+                </li>
+                <li><a href="{:U('Activitycomment/index')}"
+                       class="<php>if(CONTROLLER_NAME == 'Activitycomment' && ACTION_NAME == 'index'){echo 'active';}</php> ">活动评论</a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="<php>if(CONTROLLER_NAME == 'Travels'){echo 'active';}</php>">
+            <a href="#" class="dropdown-toggle">
+                <i class="icon-file-alt"></i>
+                <span>游记管理</span>
+                <i class="icon-chevron-down"></i>
+            </a>
+            <ul class="submenu <php>if(CONTROLLER_NAME == 'Travels'){echo 'active';}</php>">
+                <li><a href="{:U('Travels/index')}"
+                       class="<php>if(CONTROLLER_NAME == 'Travels' && ACTION_NAME == 'index'){echo 'active';}</php> ">游记列表</a>
+                </li>
+                <li><a href="{:U('Travels/edit')}"
+                       class="<php>if(CONTROLLER_NAME == 'Travels' && ACTION_NAME == 'edit'){echo 'active';}</php> ">添加游记</a>
+                </li>
+            </ul>
+        </li>
+        <li class="<php>if(CONTROLLER_NAME == 'Online'){echo 'active';}</php>">
+            <a class="dropdown-toggle" href="#">
+                <i class="icon-laptop"></i>
+                <span>线上课堂</span>
+                <i class="icon-chevron-down"></i>
+            </a>
+            <ul class="submenu <php>if(CONTROLLER_NAME == 'Online'){echo 'active';}</php>">
+                <li><a href="{:U('Online/index')}"
+                       class="<php>if(CONTROLLER_NAME == 'Online' && ACTION_NAME == 'index'){echo 'active';}</php> ">线上课堂列表</a>
+                </li>
+                <li><a href="{:U('Online/add')}"
+                       class="<php>if(CONTROLLER_NAME == 'Online' && ACTION_NAME == 'add'){echo 'active';}</php> ">添加线上课堂</a>
+                </li>
+                <li><a href="{:U('Online/order')}"
+                       class="<php>if(CONTROLLER_NAME == 'Online' && ACTION_NAME == 'order'){echo 'active';}</php> ">线上课堂订单</a>
+                </li>
+            </ul>
+        </li>
+        <li class="<php>if(CONTROLLER_NAME == 'Visitor'){echo 'active';}</php>">
+            <a href="{:U('Visitor/index')}" class="<php>if(CONTROLLER_NAME == 'Visitor'){echo 'active';}</php>">
+                <i class="icon-eye-open"></i>
+                <span>查看访客</span>
+            </a>
+        </li>
+        <li class="<php>if(CONTROLLER_NAME == 'Wallet'){echo 'active';}</php>">
+            <a href="{:U('Wallet/index',['type'=>1])}"
+               class="<php>if(CONTROLLER_NAME == 'Wallet'){echo 'active';}</php>">
+                <i class="icon-bar-chart"></i>
+                <span>我的营业额</span>
+            </a>
+        </li>
+        <if condition="($_SESSION['small_table']['s_type'] eq 2) or ($_SESSION['small_table']['s_type'] eq 3)">
+            <!-- 我的课程 我的托管 后台需要判断显示-->
+            <li class="<php>if(CONTROLLER_NAME == 'Course'){echo 'active';}</php>">
+                <a href="#" class="dropdown-toggle">
+                    <i class="icon-book"></i>
+                    <span>我的课程</span>
+                    <i class="icon-chevron-down"></i>
+                </a>
+                <ul class="submenu <php>if(CONTROLLER_NAME == 'Course'){echo 'active';}</php>">
+                    <li><a href="{:U('Course/index')}"
+                           class="<php>if(CONTROLLER_NAME == 'Course' && ACTION_NAME == 'index'){echo 'active';}</php> ">课程列表</a>
+                    </li>
+                    <li><a href="{:U('Course/add')}"
+                           class="<php>if(CONTROLLER_NAME == 'Course' && ACTION_NAME == 'add'){echo 'active';}</php> ">添加课程</a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="<php>if(CONTROLLER_NAME == 'Order'){echo 'active';}</php>">
+                <a href="{:U('Order/index')}">
+                    <i class="icon-shopping-cart"></i>
+                    <span class="<php>if(CONTROLLER_NAME == 'Order' && ACTION_NAME == 'index'){echo 'active';}</php>">我的订单</span>
+                </a>
+            </li>
+
+        </if>
+
+        <if condition="$_SESSION['small_table']['s_type'] eq 1">
+            <li class="<php>if(CONTROLLER_NAME == 'Hosting'){echo 'active';}</php>">
+                <a href="#" class="dropdown-toggle">
+                    <i class="icon-tasks"></i>
+                    <span>我的托管</span>
+                    <i class="icon-chevron-down"></i>
+                </a>
+                <ul class="submenu <php>if(CONTROLLER_NAME == 'Hosting'){echo 'active';}</php>">
+                    <li><a href="{:U('Hosting/index')}"
+                           class="<php>if(CONTROLLER_NAME == 'Hosting' && ACTION_NAME == 'index'){echo 'active';}</php> ">托管列表</a>
+                    </li>
+                    <li><a href="{:U('Hosting/add')}"
+                           class="<php>if(CONTROLLER_NAME == 'Hosting' && ACTION_NAME == 'add'){echo 'active';}</php> ">添加托管</a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="<php>if(CONTROLLER_NAME == 'HostingOrder'){echo 'active';}</php>">
+                <a href="{:U('HostingOrder/index')}">
+                    <i class="icon-th-large"></i>
+                    <span class="<php>if(CONTROLLER_NAME == 'HostingOrder' && ACTION_NAME == 'index'){echo 'active';}</php>">我的订单</span>
+                </a>
+            </li>
+        </if>
+
+        <!--<li class="<php>if(CONTROLLER_NAME == 'Circle'){echo 'active';}</php>">-->
+            <!--<a href="#" class="dropdown-toggle">-->
+                <!--<i class="icon-comments"></i>-->
+                <!--<span>圈子</span>-->
+                <!--<i class="icon-chevron-down"></i>-->
+            <!--</a>-->
+            <!--<ul class="submenu <php>if(CONTROLLER_NAME == 'Circle'){echo 'active';}</php>">-->
+                <!--<li><a href="{:U('Circle/index')}"-->
+                       <!--class="<php>if(CONTROLLER_NAME == 'Circle' && ACTION_NAME == 'index'){echo 'active';}</php> ">亲子时光</a>-->
+                <!--</li>-->
+                <!--<li><a href="{:U('Circle/school')}"-->
+                       <!--class="<php>if(CONTROLLER_NAME == 'Circle' && ACTION_NAME == 'school'){echo 'active';}</php> ">校园日记</a>-->
+                <!--</li>-->
+            <!--</ul>-->
+        <!--</li>-->
+
+        <li class="<php>if(CONTROLLER_NAME == 'Coupon'){echo 'active';}</php>">
+            <a href="#" class="dropdown-toggle">
+                <i class="icon-money"></i>
+                <span>优惠券管理</span>
+                <i class="icon-chevron-down"></i>
+            </a>
+            <ul class="submenu <php>if(CONTROLLER_NAME == 'Coupon'){echo 'active';}</php>">
+                <li><a href="{:U('Coupon/index')}"
+                       class="<php>if(CONTROLLER_NAME == 'Coupon' && ACTION_NAME == 'index'){echo 'active';}</php> ">优惠券列表</a>
+                </li>
+                <li><a href="{:U('Coupon/add')}"
+                       class="<php>if(CONTROLLER_NAME == 'Coupon' && ACTION_NAME == 'add'){echo 'active';}</php> ">添加优惠券</a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="<php>if(CONTROLLER_NAME == 'Teacher'){echo 'active';}</php>">
+            <a href="#" class="dropdown-toggle">
+                <i class="icon-group"></i>
+                <span>师资管理</span>
+                <i class="icon-chevron-down"></i>
+            </a>
+            <ul class="submenu <php>if(CONTROLLER_NAME == 'Teacher'){echo 'active';}</php>">
+                <li><a href="{:U('Teacher/index')}"
+                       class="<php>if(CONTROLLER_NAME == 'Teacher' && ACTION_NAME == 'index'){echo 'active';}</php> ">师资列表</a>
+                </li>
+                <li><a href="{:U('Teacher/add')}"
+                       class="<php>if(CONTROLLER_NAME == 'Teacher' && ACTION_NAME == 'add'){echo 'active';}</php> ">添加师资</a>
+                </li>
+            </ul>
+        </li>
+
+
+    </ul>
+</div>
+<!-- end sidebar -->   

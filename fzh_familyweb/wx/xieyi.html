@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>平台服务协议</title>
+  <script src="../js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="../css/ku/style.css">
+  <script src="../js/ku/hui.js"></script>
+</head>
+<body>
+
+<div class="content_box bgcolorfff">
+  <div class="content_scroll">
+    <div class="color666 font14 pad10" id="tuwen"></div>
+  </div>
+</div>
+
+<script>
+  //初始加载
+  pre_loading(0);
+
+  //各种配置
+  hui.post(
+    path_inter+'Client/Common/config',
+    {},
+    function(res){
+      res = JSON.parse(res);
+      pre_loading(100);
+      if (user_overdue(res.code,res.msg)){
+        document.getElementById('tuwen').innerHTML=res.data.legal;
+        pre_loading(100);
+      }
+    },
+    function(){
+      //error
+      pre_loading(1);
+    }
+  );
+</script>
+</body>
+</html>

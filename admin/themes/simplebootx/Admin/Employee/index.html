@@ -1,0 +1,100 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="{:U('Employee/index')}">员工列表</a></li>
+			<li><a href="{:U('Employee/add')}">添加员工</a></li>
+		</ul>
+		<form class="well form-search" id="formurl" method="post" action="{:U('Employee/index')}">
+
+			员工状态：
+			<select name="status" style="width: 120px;">
+				<option value="0">全部</option>
+				<option value="1" <if condition="$_REQUEST['status'] eq 1">selected</if>>正常</option>
+				<option value="2" <if condition="$_REQUEST['status'] eq 2">selected</if>>冻结</option>
+			</select>
+			排序：
+			<select name="sort" style="width: 120px;">
+				<option value="0">默认</option>
+				<option value="1" <if condition="$_REQUEST['sort'] eq 1">selected</if>>总注册人数</option>
+				<option value="2" <if condition="$_REQUEST['sort'] eq 2">selected</if>>注册家长人数</option>
+				<option value="3" <if condition="$_REQUEST['sort'] eq 3">selected</if>>注册老师人数</option>
+				<option value="4" <if condition="$_REQUEST['sort'] eq 4">selected</if>>注册机构人数</option>
+			</select>
+			关键字：
+			<input type="text" name="keyword" style="width: 200px;" value="{:I('request.keyword')}" placeholder="姓名/手机号/员工编号">
+			时间：
+			<input type="text" name="start_time" class="js-datetime" placeholder="开始时间" value="{$_REQUEST['start_time']|default=''}" style="width: 120px;" autocomplete="off">-
+			<input type="text" class="js-datetime" name="end_time" placeholder="结束时间" value="{$_REQUEST['end_time']|default=''}" style="width: 120px;" autocomplete="off"> &nbsp; &nbsp;
+
+			<input type="submit" class="btn btn-primary" onclick="return search();" value="搜索" />
+			<a class="btn btn-danger" href="{:U('Employee/index')}">清空</a>
+			<input type="submit" class="btn btn-primary" onclick="return excel();" value="导出Excel" />
+		</form>
+		<form method="post" class="js-ajax-form">
+			<table class="table table-hover table-bordered">
+				<thead>
+					<tr>
+						<th align="center">ID</th>
+						<th>姓名</th>
+						<th>手机号</th>
+						<th>员工编号</th>
+						<th>员工二维码(右键另存为即可下载二维码)</th>
+						<th>总注册人数</th>
+						<th>注册家长人数</th>
+						<th>注册老师人数</th>
+						<th>老师成交金额</th>
+						<th>注册机构人数</th>
+						<th>机构成交金额</th>
+						<th>创建时间</th>
+						<th>{:L('STATUS')}</th>
+						<th align="center">{:L('ACTIONS')}</th>
+					</tr>
+				</thead>
+				<tbody>
+					<foreach name="list" key="k" item="vo">
+					<tr>
+						<td align="center">{$k+1}</td>
+						<td>{$vo['e_name']}</td>
+						<td>{$vo['e_phone']}</td>
+						<td>{$vo['e_num']}</td>
+						<td><img src="{$vo['e_img']}" width="120"></td>
+						<td>{$vo.count1}</td>
+						<td><a href="{:U('Employee/parents', array('num'=>$vo['e_num']))}">{$vo.count2}</a></td>
+						<td><a href="{:U('Employee/teacher', array('num'=>$vo['e_num']))}">{$vo.count3}</a></td>
+						<td>{$vo.teacher_money}</td>
+						<td><a href="{:U('Employee/shop', array('num'=>$vo['e_num']))}">{$vo.count4}</a></td>
+						<td>{$vo.smalltable_money}</td>
+						<td>{$vo.e_time}</td>
+						<td>
+							{$vo['e_status']==1?"正常":"冻结"}
+						</td>
+						<td align="center">
+							<if condition="$vo['e_status'] eq 1">
+								<a href="{:U('Employee/status',array('id'=>$vo['id'], 'status'=>2))}" class="js-ajax-dialog-btn" data-msg="您确定要冻结该用户吗？" > 冻结</a>|
+							<else/>
+								<a href="{:U('Employee/status',array('id'=>$vo['id'], 'status'=>1))}" class="js-ajax-dialog-btn" data-msg="您确定要解冻该用户吗" > 解冻 </a>|
+							</if>
+							<a href="{:U('Employee/edit',array('id'=>$vo['id']))}" > 编辑 </a>
+						</td>
+					</tr>
+					</foreach>
+				</tbody>
+			</table>
+			<div class="pagination">{$page}</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+	<script>
+        function search() {
+            $("#formurl").attr('action', "{:U('Employee/index')}");
+            return true;
+        }
+        function excel() {
+            $("#formurl").attr('action', "{:U('Employee/oexcel')}");
+            return true;
+        }
+	</script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>个人资料</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- bootstrap -->
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap.css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+
+  <!-- libraries -->
+  <link href="__PUBLIC__/Shopadmin/css/lib/uniform.default.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/select2.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/font-awesome.css" type="text/css" rel="stylesheet"/>
+
+  <!-- global styles -->
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/layout.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/elements.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/icons.css">
+
+  <!-- this page specific styles -->
+  <link rel="stylesheet" href="__PUBLIC__/Shopadmin/css/compiled/form-showcase.css" type="text/css" media="screen"/>
+
+  <!-- open sans font -->
+  <link
+    href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+    rel='stylesheet' type='text/css'>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.2&key=aaeb9bb85528fb6aa40ffbcdefa5de32&plugin=AMap.Autocomplete"></script>
+  <script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
+
+  <link href="__PUBLIC__/js/artDialog/skins/default.css" rel="stylesheet" />
+  <style>
+    #content{
+      width: 80%; min-height: 400px;margin-left: 140px;
+    }
+  </style>
+  <script type="text/javascript">
+      //全局变量
+      var GV = {
+          ROOT: "__ROOT__/",
+          WEB_ROOT: "__WEB_ROOT__/",
+          JS_ROOT: "public/js/",
+          APP:'{$Think.MODULE_NAME}'/*当前应用名*/
+      };
+  </script>
+  <script src="__PUBLIC__/js/wind.js"></script>
+</head>
+<body>
+
+<include file="common/menu" />
+
+
+<!-- main container -->
+<div class="content">
+
+
+  <div id="pad-wrapper" class="form-page">
+    <div class="row header">
+      <div class="col-md-12">
+        <h3>个人资料</h3>
+      </div>
+    </div>
+    <div class="row form-wrapper">
+      <form method="post" class="form-horizontal js-ajax-form" action="{:U('index/person',array('id'=>$_GET['id']))}">
+        <fieldset>
+          <div class="field-box">
+            <label class="inputlh">图片</label>
+            <div class="col-md-7">
+              <!--<img src="{$info.s_img}" style="width: 80px;height: 80px">
+              <input type="file" name="img" class="form-control mar_l5" style="width: 260px">-->
+              <div style="margin-bottom: 10px;">
+                <input type="hidden" name="smeta[thumb]" id="thumb" value="">
+                <a href="javascript:upload_one_image('图片上传','#thumb');" class="inb">
+                  <img src="{$info.s_img}" id="thumb-preview" style="width: 135px;height: 135px;">
+                </a>
+              </div>
+              <div class="mar_t10">
+                <input type="button" class="btn btn-default" onclick="$('#thumb-preview').attr('src','/admin/themes/simplebootx/Public/assets/images/default-thumbnail.png');$('#thumb').val('');return false;" value="取消图片">
+              </div>
+              <span style="color:red;" class="mar_l5">不修改可以不添加</span>
+            </div>
+          </div>
+          <div class="field-box">
+            <label class="inputlh">名称</label>
+            <div class="col-md-7">
+              <input type="text" name="s_name" class="form-control" value="{$info.s_name}" required>
+            </div>
+          </div>
+          <div class="field-box">
+            <label class="inputlh">联系人姓名</label>
+            <div class="col-md-7">
+              <input type="text" name="c_name" class="form-control" value="{$info.c_name}" required>
+            </div>
+          </div>
+          <div class="field-box">
+            <label class="inputlh">会员标识</label>
+            <div class="col-md-7">
+              <select class="form-control" disabled>
+                <foreach name="level" item="v">
+                  <option <if condition="$v['id'] eq $info['level_id']">selected</if> >{$v.name}</option>
+                </foreach>
+              </select>
+            </div>
+          </div>
+          <div class="field-box">
+            <label class="inputlh">手机号</label>
+            <div class="col-md-7">
+              <input type="text" name="s_phone" class="form-control" value="{$info.s_phone}" disabled>
+            </div>
+          </div>
+          <div class="field-box">
+            <label class="inputlh">地址</label>
+            <div class="col-md-7">
+              <div class="row">
+                <div class="col-md-6">
+                  <input type="text" class="form-control" name="address" value="{$info.address}" placeholder="按关键字搜索,并在地图上选择" id="tipinput" required>
+                </div>
+                <div class="col-md-6">
+                  <input type="text" class="form-control" readonly value="{$info.s_xy}" style="color: #0f1217" id="lnglat" name="s_xy">
+                </div>
+              </div>
+              <div id="container" style="width:600px;height: 600px;margin-top: 20px;"></div>
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label">机构宗旨</label>
+            <div class="controls">
+              <textarea class="form-control" type="text" name="s_content" required style="height: 100px;width: 400px; margin-bottom:20px;">{$info.s_content}</textarea>
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label">机构简介</label>
+            <div class="controls">
+              <script type="text/plain" id="content" name="introduction" >{$info.introduction}</script>
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label">营业执照照片</label>
+            <div class="controls">
+              <img src="{$info.business_license}" />
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label">法人手持身份证照片</label>
+            <div class="controls">
+              <img src="{$info.holding_card}" />
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label">身份证正面照片</label>
+            <div class="controls">
+              <img src="{$info.card1}" />
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label">身份证反面照片</label>
+            <div class="controls">
+              <img src="{$info.card2}" />
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label">店门面照片</label>
+            <div class="controls">
+              <img src="{$info.store1}" />
+              <img src="{$info.store2}" />
+            </div>
+          </div>
+        </fieldset>
+        <div class="field-box">
+          <label class="inputlh"></label>
+          <div class="col-md-7">
+            <input type="hidden" name="id" value="{$info.id}" />
+            <button type="submit" class="btn btn-primary js-ajax-submit">保存</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- end main container -->
+
+<!-- scripts for this page -->
+<script src="__PUBLIC__/Shopadmin/js/wysihtml5-0.3.0.js"></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/jquery.uniform.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/theme.js"></script>
+<!--laryer-->
+<script src="__PUBLIC__/Shopadmin/layer/layer.js"></script>
+
+
+<script src="__PUBLIC__/js/common.js"></script>
+<script type="text/javascript">
+  //编辑器路径定义
+  var editorURL = GV.WEB_ROOT;
+</script>
+<script type="text/javascript" src="__PUBLIC__/js/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript">
+  var editorcontent = new baidu.editor.ui.Editor();
+  editorcontent.render('content');
+</script>
+<script type="text/javascript">
+  var xy = "{$info.s_xy}";
+  var nxy = [];
+  if (xy!='')
+  {
+    nxy = xy.split(",");
+  }
+
+  var map = new AMap.Map("container", {
+    resizeEnable: true,
+    zoom:18,
+    center: nxy
+  });
+  //为地图注册click事件获取鼠标点击出的经纬度坐标
+  var clickEventListener = map.on('click', function(e) {
+    document.getElementById("lnglat").value = e.lnglat.getLng() + ',' + e.lnglat.getLat()
+  });
+  var auto = new AMap.Autocomplete({
+    input: "tipinput"
+  });
+  AMap.event.addListener(auto, "select", select);//注册监听，当选中某条记录时会触发
+  function select(e) {
+    if (e.poi && e.poi.location) {
+      map.setZoom(15);
+      map.setCenter(e.poi.location);
+    }
+  }
+</script>
+
+
+</body>
+</html>

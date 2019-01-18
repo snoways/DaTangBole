@@ -1,0 +1,199 @@
+<admintpl file="header" />
+<style>
+    #text{
+        width: 640px;
+        height: 72px;
+        resize: none;
+    }
+    .controls input[type='radio']{
+        margin-right: 32px;
+        display: inline-block;
+        margin-top: 0px;
+    }
+
+</style>
+<script src="__PUBLIC__/js/common.js"></script>
+<script type="text/html" id="photos-item-wrapper">
+    <li id="savedimage{id}">
+        <input id="photo-{id}" type="hidden" name="photos_url[]" value="{filepath}">
+        <input id="photo-{id}-name" type="text" name="photos_alt[]" value="{name}" style="width: 160px;" title="图片名称">
+        <img id="photo-{id}-preview" src="{url}" style="height:36px;width: 36px;" onclick="parent.image_preview_dialog(this.src);">
+        <a href="javascript:upload_one_image('图片上传','#photo-{id}');">替换</a>
+        <a href="javascript:(function(){$('#savedimage{id}').remove();})();">移除</a>
+    </li>
+</script>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('OnlineClass/index')}">线上课堂列表</a></li>
+        <li class="active"><a href="{:U('OnlineClass/edit',['id'=>$info['id']])}">编辑</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form" action="{:U('OnlineClass/edit')}">
+        <fieldset>
+            <input type="hidden" name="id" value="{$info.id}">
+            <div class="control-group">
+                <label class="control-label">分类</label>
+                <div class="controls">
+                    <select name="sub1" id="sub1">
+                        <option value="0">请选择一级学科</option>
+                        <foreach name="sub1" item="s">
+                            <option value="{$s.s_name}" data-id="{$s.id}" <if condition="$info['t_sub1'] eq $s['s_name']">selected</if>>{$s.s_name}</option>
+                        </foreach>
+                    </select>
+                    <select name="sub2" id="sub2">
+                        <option value="0">请选择二级学科</option>
+                        <foreach name="sub2" item="s">
+                        <option value="{$s.s_name}" data-id="{$s.id}" <if condition="$info['t_sub2'] eq $s['s_name']">selected</if>>{$s.s_name}</option>
+                        </foreach>
+                    </select>
+                    <select name="sub3" id="sub3">
+                        <option value="0">请选择三级学科</option>
+                        <foreach name="sub3" item="s">
+                            <option value="{$s.s_name}" data-id="{$s.id}" <if condition="$info['t_sub3'] eq $s['s_name']">selected</if>>{$s.s_name}</option>
+                        </foreach>
+                    </select>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">标题</label>
+                <div class="controls">
+                    <input type="text" name="title" value="{$info['title']}">
+                </div>
+            </div>
+            <div class="control-group" style="width: 400px;">
+                <label class="control-label">是否收费</label>
+                <div class="controls">
+                    <label><input type="radio" name="price_type" {$info['price_type']==1?'checked':''} value="1" />收费</label>
+                    <label><input type="radio" name="price_type" {$info['price_type']==0?'checked':''} value="0" />免费</label>
+                </div>
+            </div>
+            <div class="control-group" id="price" >
+                <label class="control-label">普通价格</label>
+                <div class="controls">
+                    <input type="text" name="price" value="{$info['price']}" />
+                </div>
+            </div>
+            <div class="control-group" id="pass">
+                <label class="control-label">访问密码</label>
+                <div class="controls">
+                    <input type="text" name="access_password" value="{$info['access_password']}" />
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">适合年龄段</label>
+                <div class="controls">
+                    <select name="age_id">
+                        <option value="">--请选择--</option>
+                        <volist name="ages" id="a">
+                            <option {$info['age_id']==$a['id']?'selected':''} value="{$a['id']}">{$a['title']}</option>
+                        </volist>
+                    </select>
+
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">推荐</label>
+                <div class="controls">
+                    <label><input type="radio" name="hot" <if condition="$info['hot'] eq 1">checked</if>  value="1">推荐到精品课程</label>
+                    <label><input type="radio" name="hot" <if condition="$info['hot'] eq 2">checked</if> value="2">普通课程</label>
+                </div>
+            </div>
+            <div id="video">
+                <div class="control-group">
+                    <label class="control-label">{:L('封面图')}</label>
+                    <div class="controls">
+                        <input type="text" readonly value="{$info['img_url']}" name="video_cover" id="js-link-image">
+                        <a href="javascript:upload_one_image('图片上传','#js-link-image');">上传图片</a>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">上传视频</label>
+                    <div class="controls">
+                        <input type="text" readonly value="{$info['video_url']}" name="video" id="js-link-video">
+                        <a href="javascript:upload_one('视频上传','#js-link-video','video');">上传视频</a>
+                    </div>
+                </div>
+                <div>
+                    <div class="control-group">
+                        <label class="control-label">视频介绍</label>
+                        <div class="controls"><script type="text/plain" id="content" name="content" style="width: 80%; min-height: 400px;">{$info.content}</script></div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary js-ajax-submit">{:L('SAVE')}</button>
+            <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    //编辑器路径定义
+    var editorURL = GV.WEB_ROOT;
+</script>
+<script type="text/javascript" src="__PUBLIC__/js/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript">
+    var editorcontent = new baidu.editor.ui.Editor();
+    editorcontent.render('content');
+    var price_type = "{$info['price_type']}";
+    if (price_type === '0') {
+        $('#price').hide();
+        $('#pass').hide();
+    } else {
+        $('#price').show();
+        $('#pass').show();
+    }
+    $("#sub1,#sub2").change(function(){
+        var id = $(this).find("option:selected").attr("data-id");
+        var name = $(this).attr('name');
+        var $id = 2;
+        var str = '<option value="0">请选择二级学科</option>';
+        if (name === 'sub2') {
+            str = '<option value="0">请选择三级学科</option>';
+            $id = 3;
+        }
+        $.post("{:U('OnlineClass/subject')}",{
+            id:id
+        },function(data){
+            var data = JSON.parse(data);
+            for(var i=0;i<data.length;i++){
+                str += '<option value="'+data[i].s_name+'" data-id="'+data[i].id+'">'+data[i].s_name+'</option>';
+            }
+            $("#sub"+$id).html(str);
+            if (name === 'sub1') {
+                $("#sub3").html('<option value="0">请选择三级学科</option>');
+            }
+        })
+
+    });
+    $('form').submit(function () {
+        var data = $(this).serializeArray();
+        $.post("{:U('OnlineClass/edit')}",data,function (obj) {
+            if (obj.state === 'success') {
+                layer.confirm(obj.info, {
+                    btn: ['继续编辑','返回列表']
+                }, function() {
+                    window.location.reload();
+                }, function() {
+                    location = "{:U('OnlineClass/index')}";
+                });
+            } else {
+                layer.msg(obj.info);
+            }
+        },'json');
+        return false;
+    });
+    $('input:radio[name="price_type"]').change(function () {
+        if ($(this).val()==0) {
+            $('#price').hide(300);
+            $('#pass').hide(300);
+        } else {
+            $('#price').show(300);
+            $('#pass').show(300);
+        }
+    });
+</script>
+</body>
+</html>

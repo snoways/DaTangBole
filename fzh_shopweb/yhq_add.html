@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title>发布优惠券</title>
+		<script type="text/javascript" src="js/com.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/stylea.css">
+		<link rel="stylesheet" type="text/css" href="css/weui.min.css">
+		<link rel="stylesheet" type="text/css" href="css/jquery-weui.css">
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery-weui.js"></script>
+		<script type="text/javascript" src="js/template-native.js"></script>
+	</head>
+	<body >
+
+		<div style="width:100%;height:45px;background:#ff6000;padding:0 4%;padding-top:10px;z-index: 2" class="rela">
+			<div class="tableblock">
+				<div>
+					<img onclick="goBack()" style="width:9px;height:16px;" src="img/left.png">
+				</div>
+				<div class="font16" style="color:#fff;text-align:center;">
+					我的优惠券
+				</div>
+				<div class="font13" style="color:#fff;text-align:right;">
+					&nbsp;
+				</div>
+			</div>
+		</div>
+
+		<div ontouchstart class="content_box" style="padding-top: 45px;z-index: 1">
+			<div class="content_scroll">
+				<div id="box"></div>
+			</div>
+		</div>
+
+		<script type="text/html" id="tpl">
+			<div class="pad10 bgcolorfff mar_b5">
+				<div class="tableblock">
+					<div class="wrem5 font14 color333">标题</div>
+					<div>
+						<input type="text" class="w100 font14" placeholder="填写优惠券标题" id="title">
+					</div>
+				</div>
+			</div>
+			<div class="pad10 bgcolorfff mar_b5">
+				<div class="tableblock">
+					<div class="wrem5 font14 color333">使用位置</div>
+					<div>
+						<input type="text" class="w100 font14" placeholder="请选择使用位置" id="picker">
+					</div>
+				</div>
+			</div>
+			<div class="pad10 bgcolorfff mar_b5">
+				<div class="tableblock">
+					<div class="wrem5 font14 color333">消费金额</div>
+					<div>
+						<input type="text" class="w100 font14" onkeyup="numAnd2point(this)" placeholder="填写消费金额，只可输入数字" id="min_consumption">
+					</div>
+				</div>
+			</div>
+			<div class="pad10 bgcolorfff mar_b5">
+				<div class="tableblock">
+					<div class="wrem5 font14 color333">满减金额</div>
+					<div>
+						<input type="text" class="w100 font14" onkeyup="numAnd2point(this)" placeholder="填写满减金额，只可输入数字" id="money">
+					</div>
+				</div>
+			</div>
+			<div class="pad10 bgcolorfff mar_b5">
+				<div class="tableblock">
+					<div class="wrem5 font14 color333 vertop">有效日期</div>
+					<div class="font14 color333">
+						<div class="tableblock">
+							<div class="wrem2">自</div>
+							<div>
+								<input type="text" class="w100" placeholder="开始时间" id="start_date">
+							</div>
+						</div>
+						<div class="tableblock">
+							<div class="wrem2">至</div>
+							<div>
+								<input type="text" class="w100" placeholder="结束时间" id="expire_date">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div style="margin-top: 80px">
+				<div style="width: 82%;margin: 0 auto;padding: 8px 0" class="bgcolorzt colorfff txt_center border_radiu40" onclick="submitfun()">确认</div>
+			</div>
+		</script>
+
+		<script type="text/javascript">
+			var token=localStorage.getItem('user_token');
+
+			if(Getvariable('token')){
+				token=Getvariable('token');
+			}
+
+			var data = {
+				path_img:path_img,
+				uselist:[],
+				list:[],
+				oprate:true
+			};
+			function renderhtml() {
+				document.getElementById('box').innerHTML = template('tpl',data);
+			}
+
+			if(Getvariable('edit')=='true'){
+				pre_loading(0);
+				//编辑
+				//优惠券可使用位置
+				$.ajax({
+					url:path_inter+"ManagedClient/coupon/getPayPosition",
+					dataType:'json',
+					type:'post',
+					data:{token:token},
+					success:function(res){
+						if(user_overdue(res)){
+							data.uselist=res.data;
+
+							var list=[];
+							for(var i=0;i<res.data.length;i++){
+								list.push(res.data[i].pp_name);
+							}
+							data.list=list;
+							renderhtml();
+
+							//优惠券详情
+							$.ajax({
+								url:path_inter+"ManagedClient/coupon/getDetail",
+								dataType:'json',
+								type:'post',
+								data:{token:token,cid:Getvariable('pid')},
+								success:function(res){
+									pre_loading(100);
+									if(user_overdue(res)){
+										$('#title').val(res.data.title);
+										$('#money').val(res.data.money);
+										$('#min_consumption').val(res.data.min_consumption);
+										pagedo2(res.data.pp_id,res.data.start_date,res.data.expire_date);
+									}
+								},
+								error:function(){
+									$.toast('获取数据失败','text');
+								}
+							});
+						}
+					},
+					error:function(){
+						$.toast('获取数据失败','text');
+					}
+				});
+
+			}else{
+				//新增
+				pre_loading(0);
+				//优惠券可使用位置
+				$.ajax({
+					url:path_inter+"ManagedClient/coupon/getPayPosition",
+					dataType:'json',
+					type:'post',
+					data:{token:token},
+					success:function(res){
+						if(user_overdue(res)){
+							pre_loading(100);
+							data.uselist=res.data;
+
+							var list=[];
+							for(var i=0;i<res.data.length;i++){
+								list.push(res.data[i].pp_name);
+							}
+							data.list=list;
+							renderhtml();
+							pagedo1();
+						}
+					},
+					error:function(){
+						$.toast('获取数据失败','text');
+					}
+				});
+			}
+
+			function numtoTwo(num){
+				return num<10?'0'+num:num;
+			}
+			function pagedo1(){
+				$("#picker").picker({
+					title: "使用位置",
+					cols: [
+						{
+							textAlign: 'center',
+							values: data.list
+						}
+					]
+				});
+
+				var currdate=new Date();
+				var currdateStr=currdate.getFullYear()+'-'+numtoTwo(currdate.getMonth()+1)+'-'+numtoTwo(currdate.getDate());
+				$("#start_date").datetimePicker({
+					value: '',
+					min:currdateStr,
+					times: function (){
+						//不要 时分
+						return false;
+					},
+					parse: function (t) {
+						var e = t.split(this.datetimeSplit);
+
+						if(e[1]){
+							//2018-06-11 15:00
+							return e[0].split(/\D/).concat(e[1].split(/:|时|分|秒/)).filter(function (t) {
+								return !!t
+							})
+						}else{
+							//2018-06-11
+							return e[0].split(/\D/).filter(function (t) {
+								return !!t
+							})
+						}
+					},
+					onChange: function (picker, values, displayValues) {
+						console.log(values);
+					}
+				});
+				$("#expire_date").datetimePicker({
+					value: '',
+					min:currdateStr,
+					times: function (){
+						//不要 时分
+						return false;
+					},
+					parse: function (t) {
+						var e = t.split(this.datetimeSplit);
+
+						if(e[1]){
+							//2018-06-11 15:00
+							return e[0].split(/\D/).concat(e[1].split(/:|时|分|秒/)).filter(function (t) {
+								return !!t
+							})
+						}else{
+							//2018-06-11
+							return e[0].split(/\D/).filter(function (t) {
+								return !!t
+							})
+						}
+					},
+					onChange: function (picker, values, displayValues) {
+						console.log(values);
+					}
+				});
+			}
+			function pagedo2(pp_id,startval,endval){
+				$("#picker").picker({
+					title: "使用位置",
+					cols: [
+						{
+							textAlign: 'center',
+							values: data.list
+						}
+					]
+				});
+				data.uselist.forEach(function(item){
+					if(item.pp_id==pp_id){
+						$('#picker').val(item.pp_name);
+					}
+				});
+
+				var currdate=new Date();
+				var currdateStr=currdate.getFullYear()+'-'+numtoTwo(currdate.getMonth()+1)+'-'+numtoTwo(currdate.getDate());
+				$("#start_date").datetimePicker({
+					value: startval,
+					min:currdateStr,
+					times: function (){
+						//不要 时分
+						return false;
+					},
+					parse: function (t) {
+						var e = t.split(this.datetimeSplit);
+
+						if(e[1]){
+							//2018-06-11 15:00
+							return e[0].split(/\D/).concat(e[1].split(/:|时|分|秒/)).filter(function (t) {
+								return !!t
+							})
+						}else{
+							//2018-06-11
+							return e[0].split(/\D/).filter(function (t) {
+								return !!t
+							})
+						}
+					},
+					onChange: function (picker, values, displayValues) {
+						console.log(values);
+					}
+				});
+				$("#expire_date").datetimePicker({
+					value: endval,
+					min:currdateStr,
+					times: function (){
+						//不要 时分
+						return false;
+					},
+					parse: function (t) {
+						var e = t.split(this.datetimeSplit);
+
+						if(e[1]){
+							//2018-06-11 15:00
+							return e[0].split(/\D/).concat(e[1].split(/:|时|分|秒/)).filter(function (t) {
+								return !!t
+							})
+						}else{
+							//2018-06-11
+							return e[0].split(/\D/).filter(function (t) {
+								return !!t
+							})
+						}
+					},
+					onChange: function (picker, values, displayValues) {
+						console.log(values);
+					}
+				});
+			}
+			//限制 只能输入数字，且2个小数点
+			function numAnd2point(obj){
+				obj.value = obj.value.replace(/[^\d.]/g,""); //清除"数字"和"."以外的字符
+				obj.value = obj.value.replace(/^\./g,""); //验证第一个字符是数字
+				obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个, 清除多余的
+				obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+				obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3'); //只能输入两个小数
+			}
+			function submitfun(){
+				if(!data.oprate){
+					return false;
+				}
+
+				var title=$('#title').val();
+				var picker=$('#picker').val();
+				var pp_id;
+				data.uselist.forEach(function(item){
+					if(item.pp_name==picker){
+						pp_id=item.pp_id;
+					}
+				});
+				var money=$('#money').val();
+				var min_consumption=$('#min_consumption').val();
+				var start_date=$('#start_date').val();
+				var expire_date=$('#expire_date').val();
+
+				if(title==''){
+					$.toast('填写优惠券标题','text');
+					return false;
+				}
+				if(!pp_id){
+					$.toast('请选择使用位置','text');
+					return false;
+				}
+				if(money==''){
+					$.toast('请填写消费金额','text');
+					return false;
+				}
+				if(min_consumption==''){
+					$.toast('请填写满减金额','text');
+					return false;
+				}
+				if(start_date==''){
+					$.toast('请选择开始时间','text');
+					return false;
+				}
+				if(expire_date==''){
+					$.toast('请选择结束时间','text');
+					return false;
+				}
+				var sdate=start_date.replace(/-/g,'/');
+				sdate=new Date(sdate);
+				var edate=expire_date.replace(/-/g,'/');
+				edate=new Date(edate);
+				if(edate-sdate<0){
+					$.toast('结束时间不小于开始时间','text');
+					return false;
+				}
+
+				data.oprate=false;
+				if(Getvariable('edit')=='true'){
+					//编辑
+					$.ajax({
+						url:path_inter+"ManagedClient/coupon/edit",
+						dataType:'json',
+						type:'post',
+						data:{
+							token:token,
+							cid:Getvariable('pid'),
+							pp_id:pp_id,
+							title:title,
+							money:money,
+							min_consumption:min_consumption,
+							start_date:start_date,
+							expire_date:expire_date
+						},
+						success:function(res){
+							data.oprate=true;
+							if(user_overdue(res)){
+								$.toast('编辑成功','text');
+								setTimeout(function(){
+									history.go(-1);
+								},600);
+							}
+						},
+						error:function(){
+							data.oprate=true;
+							$.toast('获取数据失败','text');
+						}
+					});
+				}else{
+					//新增
+					$.ajax({
+						url:path_inter+"ManagedClient/coupon/add",
+						dataType:'json',
+						type:'post',
+						data:{
+							token:token,
+							pp_id:pp_id,
+							title:title,
+							money:money,
+							min_consumption:min_consumption,
+							start_date:start_date,
+							expire_date:expire_date
+						},
+						success:function(res){
+							data.oprate=true;
+							if(user_overdue(res)){
+								$.toast('发布成功','text');
+								setTimeout(function(){
+									history.go(-1);
+								},600);
+							}
+						},
+						error:function(){
+							data.oprate=true;
+							$.toast('获取数据失败','text');
+						}
+					});
+				}
+			}
+		</script>
+	</body>
+</html>

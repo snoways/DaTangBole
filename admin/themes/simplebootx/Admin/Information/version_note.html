@@ -1,0 +1,45 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li><a href="{:U('Information/index')}">信息添加</a></li>
+			<li><a href="{:U('Information/add')}">关于平台添加</a></li>
+			<li><a href="{:U('Information/problem')}">常见问题添加</a></li>
+			<li><a href="{:U('Information/legal')}">法律声明添加</a></li>
+			<li><a href="{:U('Information/registered')}">注册协议添加</a></li>
+			<li><a href="{:U('Information/VIPBenefits')}">会员权益</a></li>
+			<li class="active"><a href="{:U('Information/version_note')}">版本更新说明</a></li>
+			<li><a href="{:U('Information/business_agreement')}">商家注册协议</a></li>
+			<li><a href="{:U('Information/teacher_agreement')}">老师注册协议</a></li>
+		</ul>
+		<form method="post" class="form-horizontal js-ajax-form" action="{:U('Information/version_note')}">
+			<fieldset>
+				<div class="control-group">
+					<label class="control-label">家长端版本说明</label>
+					<div class="controls">
+						<textarea type="text" name="pversion_note" style="width: 500px;height: 100px" required>{$find.pversion_note}</textarea>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">老师端版本说明</label>
+					<div class="controls">
+						<textarea type="text" name="tversion_note" style="width: 500px;height: 100px" required>{$find.tversion_note}</textarea>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">商户端版本说明</label>
+					<div class="controls">
+						<textarea type="text" name="sversion_note" style="width: 500px;height: 100px" required>{$find.sversion_note}</textarea>
+					</div>
+				</div>
+			</fieldset>
+			<div class="form-actions">
+				<button type="submit" class="btn btn-primary js-ajax-submit">{:L('SAVE')}</button>
+				<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+			</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

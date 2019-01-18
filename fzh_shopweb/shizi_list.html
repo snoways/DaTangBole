@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title>师资介绍</title>
+		<script type="text/javascript" src="js/com.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/stylea.css">
+		<link rel="stylesheet" type="text/css" href="css/weui.min.css">
+		<link rel="stylesheet" type="text/css" href="css/jquery-weui.css">
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery-weui.js"></script>
+		<script type="text/javascript" src="js/template-native.js"></script>
+		<style>
+			.weui-pull-to-refresh{margin-top: -46px;}
+			.weui-pull-to-refresh__layer{height: 46px;line-height: 46px;}
+		</style>
+	</head>
+	<body >
+
+		<div ontouchstart class="content_box">
+			<div class="content_scroll">
+				<div id="box"></div>
+			</div>
+		</div>
+		
+		<div class="zhezhao" style="display: none"></div>
+		<div style="position: fixed;top: 30%;width: 80%;left: 10%;z-index: 11;display: none" class="kuang">
+			<div class="bgcolorfff border_radiu6" style="padding: 24px 0;">
+				<div class="txt_center mar_b10">
+					<img src="img/tishi1.png" alt="" style="width: 46px;height: 46px;">
+				</div>
+				<div class="txt_center font14 color666 pad_t10" style="line-height: 1.8em;">
+					只可有四名老师置顶，请取消不需要<br>
+					置顶的老师后再次操作。
+				</div>	
+			</div>
+			<div class="txt_center pad_t20">
+				<img src="img/t_del.png" alt="" onclick="xfun()" style="width: 36px;height: 36px;">
+			</div>
+		</div>
+
+		<script type="text/html" id="tpl">
+			<div class="pad_t10 bgcolorfff marok">
+				<%if(list.length==0){%>
+				<div class="empty">暂无数据</div>
+				<%}%>
+				<ul class="clear pad_l5 pad_r5 shizilist">
+					<%for(var i=0;i<list.length;i++){%>
+					<%var el=list[i];%>
+					<li class="L col-xs-6 mar_b10">
+						<div class="pad_l5 pad_r5 rela">
+							<img src="img/deldel.png" style="width: 18px;height:17px;right: 10px;bottom: 6px;z-index: 2" class="abso" alt="" onclick="delfun(<%=el%>,<%=i%>)">
+							<%if(el.top==1){%>
+							<div class="abso font12 colorfff txt_center" style="z-index:2;right: 5px;top: 0;height:36px;width: 36px;line-height: 36px;background: #ff9453" onclick="zhiding(<%=el%>,<%=i%>)">置顶</div>
+							<%}else if(el.top==2){%>
+							<div class="abso font12 colorfff txt_center" style="z-index:2;right: 5px;top: 0;height:36px;width: 36px;line-height: 14px;background: #ff6000" onclick="cancelzhiding(<%=el%>,<%=i%>)">
+								<div style="padding-top: 5px">取消<br/>置顶</div>
+							</div>
+							<%}%>
+							<div class="border_all border_radiu4 tableblock pad10 rela" style="z-index: 1">
+								<div style="width: 35%" onclick="godet(<%=el%>)">
+									<div class="imgp" style="padding-bottom: 100%">
+										<%if(el.img.indexOf('http')==-1){%>
+										<img src="<%=path_img+el.img%>" class="border_radius50" alt="">
+										<%}else{%>
+										<img src="<%=el.img%>" class="border_radius50" alt="">
+										<%}%>
+									</div>
+								</div>
+								<div style="width: 65%" class="rela cont">
+									<div style="padding: 0 25px 0 10px" onclick="godet(<%=el%>)">
+										<div class="font14 color333 txt_oneline"><%=el.name%></div>
+										<div class="font12 color999 txt_oneline"><%=el.desc%></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<%}%>
+				</ul>
+			</div>
+		</script>
+
+		<script type="text/javascript">
+			var token=localStorage.getItem('user_token');
+
+			if(Getvariable('token')){
+				token=Getvariable('token');
+			}
+
+			var data = {
+				path_img:path_img,
+				list:[],
+
+				oprate: true,
+				loading:false,
+				page:2
+			};
+			function renderhtml() {
+				document.getElementById('box').innerHTML = template('tpl',data);
+			}
+
+			pre_loading(0);
+			$.ajax({
+				url:path_inter+"ManagedClient/teacher/index",
+				dataType:'json',
+				type:'post',
+				data:{
+					token:token
+				},
+				success:function(res){
+					if(user_overdue(res)){
+						pre_loading(100);
+						for(var i=0;i<res.data.length;i++){
+							res.data[i].selected=false;
+						}
+						data.list=res.data;
+						renderhtml();
+					}
+				},
+				error:function(){
+					$.toast('获取数据失败','text');
+				}
+			});
+
+			function godet(el){
+				location.href='shizi_det.html?pid='+el.teacher_id;
+			}
+			function zhiding(el,i){
+				if(!data.oprate){
+					return false;
+				}
+
+				//置顶的个数
+				var count=0;
+				data.list.forEach(function(item){
+					if(item.top==2){
+						count++;
+					}
+				});
+				if(count==4){
+					$('.zhezhao').fadeIn();
+					$('.kuang').fadeIn();
+					return false;
+				}
+
+				data.oprate=false;
+				//置顶
+				$.ajax({
+					url:path_inter+"ManagedClient/teacher/recommend",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						teacher_id:el.teacher_id,
+						top:2
+					},
+					success:function(res){
+						data.oprate=true;
+						if(user_overdue(res)){
+							pre_loading(100);
+							data.list[i].top=2;
+							renderhtml();
+						}
+					},
+					error:function(){
+						data.oprate=true;
+						$.toast('获取数据失败','text');
+					}
+				});
+			}
+			function cancelzhiding(el,i){
+				if(!data.oprate){
+					return false;
+				}
+				data.oprate=false;
+				//取消置顶
+				$.ajax({
+					url:path_inter+"ManagedClient/teacher/recommend",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						teacher_id:el.teacher_id,
+						top:1
+					},
+					success:function(res){
+						data.oprate=true;
+						if(user_overdue(res)){
+							pre_loading(100);
+							data.list[i].top=1;
+							renderhtml();
+						}
+					},
+					error:function(){
+						data.oprate=true;
+						$.toast('获取数据失败','text');
+					}
+				});
+			}
+			function xfun(){
+				$('.zhezhao').fadeOut();
+				$('.kuang').fadeOut();
+			}
+			function delfun(el,i){
+				if(!data.oprate){
+					return false;
+				}
+				$.confirm("确认删除？","", function() {
+					//点击确认后的回调函数
+					//删除师资
+					data.oprate=false;
+					$.ajax({
+						url:path_inter+"ManagedClient/teacher/del",
+						dataType:'json',
+						type:'post',
+						data:{
+							token:token,
+							teacher_ids:el.teacher_id
+						},
+						success:function(res){
+							data.oprate=true;
+							if(user_overdue(res)){
+								pre_loading(100);
+								data.list.splice(i,1);
+								renderhtml();
+								$.toast('删除成功','text');
+							}
+						},
+						error:function(){
+							data.oprate=true;
+							$.toast('获取数据失败','text');
+						}
+					});
+				}, function() {
+					//点击取消后的回调函数
+				});
+			}
+
+			// 下拉刷新
+			xiala_reload($(".content_box"));
+			$(".content_box").pullToRefresh().on("pull-to-refresh", function() {
+				if(!data.oprate){
+					return false;
+				}
+
+				data.loading=false;
+				data.page=2;
+				load_closeanimation('load_animation',1);
+
+				data.oprate=false;
+				$.ajax({
+					url:path_inter+"ManagedClient/teacher/index",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token
+					},
+					success:function(res){
+						data.oprate=true;
+						$(".content_box").pullToRefreshDone();
+
+						if(user_overdue(res)){
+							for(var i=0;i<res.data.length;i++){
+								res.data[i].selected=false;
+							}
+							data.list=res.data;
+							renderhtml();
+						}
+					},
+					error:function(){
+						data.oprate=true;
+						pre_loading(1);
+						$.toast('刷新失败','text');
+					}
+				});
+			});
+
+			// 上拉加载
+			$(".content_box").infinite().on("infinite", function() {
+				if(data.list.length==0 || data.loading || !data.oprate)
+				{
+					return false;
+				}
+
+				var obj=$(this);
+				load_addanimation("load_animation",obj);
+				data.loading = true;//关闭下拉加载
+
+				data.oprate=false;
+				$.ajax({
+					url:path_inter+"ManagedClient/teacher/index",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						page:data.page
+					},
+					success:function(res){
+						data.oprate=true;
+						if(user_overdue(res)){
+							if(res.data.length>0){
+								for(var i=0;i<res.data.length;i++){
+									res.data[i].selected=false;
+								}
+								data.list=data.list.concat(res.data);
+								data.loading=false;
+								data.page++;
+								load_closeanimation('load_animation',1);
+								renderhtml();
+							}else{
+								load_closeanimation('load_animation',0);
+							}
+						}
+					},
+					error:function(){
+						data.oprate=true;
+					}
+				});
+			});
+		</script>
+	</body>
+</html>

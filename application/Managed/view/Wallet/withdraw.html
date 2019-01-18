@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>申请提现</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- bootstrap -->
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap.css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+
+  <!-- libraries -->
+  <link href="__PUBLIC__/Shopadmin/css/lib/uniform.default.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/select2.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/font-awesome.css" type="text/css" rel="stylesheet"/>
+
+  <!-- global styles -->
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/layout.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/elements.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/icons.css">
+
+  <!-- this page specific styles -->
+  <link rel="stylesheet" href="__PUBLIC__/Shopadmin/css/compiled/form-showcase.css" type="text/css" media="screen"/>
+
+  <!-- open sans font -->
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+  <style>
+    .zhifubao{
+      display: none;
+    }
+  </style>
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+
+  <![endif]-->
+</head>
+<body>
+
+<include file="common/menu" />
+
+
+<!-- main container -->
+<div class="content">
+
+  <div id="pad-wrapper" class="form-page">
+    <div class="row header">
+      <div class="col-md-12">
+        <h3>提现</h3>
+      </div>
+    </div>
+    <div class="row form-wrapper">
+      <div class="col-md-8 column">
+        <form method="post" class="form-horizontal js-ajax-form" action="{:U('Wallet/apply')}">
+          <fieldset>
+            <div class="field-box">
+              <label class="inputlh">选择提现类型</label>
+              <div class="col-md-8">
+                <input type="radio" name="t_type" value="1" checked>银行卡
+                <input type="radio" name="t_type" value="2">支付宝
+              </div>
+            </div>
+            <div class="field-box zhifubao" >
+              <label class="inputlh">支付宝账号</label>
+              <div class="col-md-8">
+                <input type="text" name="number" class="form-control" required>
+              </div>
+            </div>
+            <div class="field-box zhifubao">
+              <label class="inputlh">用户名</label>
+              <div class="col-md-8">
+                <input type="text" name="card_name" class="form-control" required>
+              </div>
+            </div>
+            <div class="field-box yinhangka">
+              <label class="inputlh">银行卡</label>
+              <div class="col-md-8">
+                <select class="form-control" name="card_id">
+                  <foreach name="list" item="item">
+                    <option value="{$item.id}">{$item.name}&nbsp;&nbsp;&nbsp;&nbsp;{$item.phone}&nbsp;&nbsp;&nbsp;&nbsp;{$item.address}&nbsp;&nbsp;&nbsp;&nbsp;{$item.card} </option>
+                  </foreach>
+                </select>
+              </div>
+            </div>
+            <div class="field-box">
+              <label class="inputlh">提现金额</label>
+              <div class="col-md-8">
+                <input type="number" name="money" class="form-control" required>
+              </div>
+            </div>
+            <div class="field-box">
+              <label class="inputlh">验证码</label>
+              <div class="col-md-8">
+                <div class="row">
+                  <div class="col-md-8">
+                    <input type="text" name="code" class="form-control" required>
+                  </div>
+                  <div class="col-md-4" style="padding: 0">
+                    <button type="button" class="btn btn-info" id="sendma">发送验证码</button>
+                  </div>
+                </div>
+                <div class="mar_t10">请输入 {$info.s_phone} 收到的验证码</div>
+              </div>
+            </div>
+          </fieldset>
+          <div class="field-box">
+            <label class="inputlh"></label>
+            <div class="col-md-8">
+              <button type="submit" class="btn btn-primary mar_r5">提交</button>
+              <a href="javascript:history.back(-1)" class="btn btn-default">返回</a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end main container -->
+
+<!-- scripts for this page -->
+<script src="__PUBLIC__/Shopadmin/js/wysihtml5-0.3.0.js"></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script>
+    var index = 0;
+    $("input[name='t_type']").click(function () {
+        index = $(this).val();
+        if(index == 2){
+            $(".zhifubao").show();
+            $(".yinhangka").hide();
+        }else if(index == 1){
+            $(".yinhangka").slideDown();
+            $(".zhifubao").slideUp();
+        }
+    });
+</script>
+
+
+
+
+<script src="__PUBLIC__/Shopadmin/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/jquery.uniform.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/theme.js"></script>
+<!--laydate-->
+<script src="__PUBLIC__/Shopadmin/laydate/laydate.js"></script>
+<!--laryer-->
+<script src="__PUBLIC__/Shopadmin/layer/layer.js"></script>
+
+<script>
+
+
+  var timer=null;
+  var mzhi=60;
+  var currzhi=mzhi;
+  //点击 发送验证码
+  $('#sendma').click(function(){
+      var thisa = $(this);
+      var phone = "<?php echo $info['s_phone'] ?>";
+      var text = thisa.text();
+      if(text=='发送验证码' || text=='重新发送') {
+          $.post("__ROOT__/Client/common/getImgCode",
+              {'phone': phone},
+              function (json) {
+                  var data = JSON.parse(json);
+                  if (data.code == 1) {
+                      var code = data.data.code.slice(2, 6);
+                      $.post("__ROOT__/Client/common/sendMsg",
+                          {'phone': phone, 'img_code': code},
+                          function (a) {
+                              currzhi--;
+                              thisa.text(currzhi + 's');
+                              timer = setInterval(function () {
+                                  if (currzhi > 1) {
+                                      currzhi--;
+                                      thisa.text(currzhi + 's');
+                                  } else {
+                                      clearInterval(timer);
+                                      timer = null;
+                                      currzhi = mzhi;
+                                      thisa.text('重新发送');
+                                  }
+                              }, 1000);
+                          }, "text");
+                  }
+
+              }, "text");
+      }
+  });
+</script>
+
+
+
+
+
+</body>
+</html>

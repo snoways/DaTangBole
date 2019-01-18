@@ -1,0 +1,48 @@
+<admintpl file="header" />
+<style>
+    .thumbs{
+        height: 40px;
+        width: auto;
+    }
+</style>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="__CONTROLLER__/age"> 年龄段 </a></li>
+        <li><a href="__CONTROLLER__/addAge">添加年龄段</a></li>
+    </ul>
+    <form method="post" class="js-ajax-form">
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <th align="center">ID</th>
+                <th> 年龄段 </th>
+                <th> 图标 </th>
+                <th align="center">{:L('ACTIONS')}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach name="list" key="k" item="vo">
+                <tr>
+                    <td align="center">{$k+1}</td>
+                    <td>{$vo['min']} - {$vo['max']} </td>
+                    <td><img src="{$vo['icon']}" class="thumbs" alt=""> </td>
+
+                    <td align="center" width="120">
+                        <a href="__CONTROLLER__/editAge/id/{$vo['id']}">编辑</a> |
+                        <a href="javascript:;" data-id="{$vo['id']}" class="del js-ajax-delete">删除</a>
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+        <div class="pagination">{$page}</div>
+    </form>
+</div>
+<script type="text/javascript" src="__PUBLIC__/layer/layer.js"></script>
+
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+</body>
+</html>

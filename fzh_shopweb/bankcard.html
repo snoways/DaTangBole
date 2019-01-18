@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title>notitle</title>
+		<meta charset="utf-8" />
+		<script type="text/javascript" src="js/com.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/stylea.css">
+		<link rel="stylesheet" type="text/css" href="css/weui.min.css">
+		<link rel="stylesheet" type="text/css" href="css/jquery-weui.css">
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery-weui.js"></script>
+		<script type="text/javascript" src="js/template-native.js"></script>
+		<style type="text/css">
+			.my_radio{background: url(img/select2.png) no-repeat;background-size:100% auto;width: 16px;height: 16px;}
+			.my_radio:checked{background-image:url(img/select1.png)}
+
+			.my_radio1{background: url(img/select2.png) no-repeat;background-size:100% auto;width: 16px;height: 16px;}
+			.my_radio1:checked{background-image:url(img/select1.png)}
+			.hide{display:none;}
+		</style>
+	</head>
+	<body>
+		<div id="box"></div>
+
+		<script type="text/html" id="tpl">
+			<!-- 我的银行卡页面-->
+			<div id="mainpage">
+				<div style="width:100%;height:45px;background:#ff6000;padding:0 4%;padding-top:10px;">
+					<div class="tableblock">
+						<div>
+							<img onclick="goBack()" style="width:9px;height:16px;" src="img/left.png">
+						</div>
+						<div class="font16" style="color:#fff;text-align:center;">
+							我的银行卡
+						</div>
+						<div class="font13" style="color:#fff;text-align:right;">
+							<span onclick="dian($(this))" style="color:#fff;text-align:right;">编辑</span>
+						</div>
+					</div>
+				</div>
+				<div>
+					<%for(var i = 0; i < list.length;i++){%>
+					<%var el = list[i];%>
+					<div class="pad14 bgcolorfff clear" style="border-bottom:1px solid #f5f5f5;">
+						<div class="L hide" style="width: 26px;">
+							<input class="every my_radio" type="checkbox" name="cardList" value="<%=el.bid%>" >
+						</div>
+						<div class="L">
+							<div class="font13" style="line-height: 24px;"><%=el.address%></div>
+							<div class="font13" style="line-height: 24px;">尾号<%=$imports.num4(el.card)%></div>
+						</div>
+					</div>
+					<%}%>
+					<!-- 添加银行卡框 -->
+					<div style="margin:14px;" onclick="showaddPage();">
+						<div class="clear" style="line-height: 80px;text-align: center;border:2px dashed #e0e0e0;border-radius:5px;">
+							<div style="display: inline-block;">
+								<img style="width:16px;height:16px;" src="img/jia.png">
+							</div>
+							<div class="font13" style="display: inline-block;">添加银行卡</div>
+						</div>
+					</div>
+					<!-- 底部 -->
+					<div id="bottom" class="bgcolorfff hide" style="padding:0 14px;width:100%;height:49px;position:fixed;left:0;bottom:0;z-index: 200;">
+						<div class="L" style="padding:14px 0;">
+							<div style="display: inline-block;">
+								<input id="all" class="my_radio1" type="checkbox" name="cardList" value="" >
+							</div>
+							<div class="font13" style="display: inline-block;">全选</div>
+						</div>
+						<div id="delAll" class="font13 R colorfff bgcolorzt border_radiu40 txt_center" style="margin:10px 0;width:80px;height:30px;line-height: 30px;">删除</div>
+					</div>
+				</div>
+			</div>
+
+
+
+
+
+
+			<!-- 添加银行卡页面-->
+			<div id="addpage" class="hide">
+				<div style="width:100%;height:45px;background:#ff6000;padding:0 4%;padding-top:10px;">
+					<div class="tableblock">
+						<div>
+							<img onclick="showmainPage()" style="width:9px;height:16px;" src="img/left.png">
+						</div>
+						<div class="font16" style="color:#fff;text-align:center;">
+							添加银行卡
+						</div>
+						<div class="font13">&nbsp;</div>
+					</div>
+				</div>
+				<div class="bgcolorfff" style="width:100%">
+					<div class="tableblock " style="width:90%;margin:0 5%;line-height: 50px;border-bottom:1px solid #f9f9f9;">
+						<div class="color333 font13" style="width:20%;">卡号</div>
+						<div style="width:80%;">
+							<input id="cardnum" class="font13" type="text" name="" value="" placeholder="请输入银行卡号">
+						</div>
+					</div>
+					<div class="tableblock " style="width:90%;margin:0 5%;line-height: 50px;border-bottom:1px solid #f9f9f9;">
+						<div class="color333 font13" style="width:20%;">持卡人</div>
+						<div style="width:80%;">
+							<input id="cardname" class="font13" type="text" name="" value="" placeholder="请输入持卡人姓名">
+						</div>
+					</div>
+					<div class="tableblock " style="width:90%;margin:0 5%;line-height: 50px;border-bottom:1px solid #f9f9f9;">
+						<div class="color333 font13" style="width:20%;">开户行</div>
+						<div style="width:80%;">
+							<input id="cardbank" class="font13 color666" type="text" name="" value="" placeholder="请填写开户行名称">
+						</div>
+					</div>
+					<!--不要开户地 -->
+					<div class="tableblock " style="width:90%;margin:0 5%;line-height: 50px;border-bottom:1px solid #f9f9f9;">
+						<div class="color333 font13" style="width:20%;">手机号</div>
+						<div style="width:80%;">
+							<input id="cardphone" class="font13" type="text" name="" value="" placeholder="请输入银行卡预留手机号">
+						</div>
+					</div>
+				</div>
+				<div style="width:100%;">
+					<div onclick="conf()" class="colorfff font14" style="width:80%;height: 40px;line-height:40px;margin:0 10%;background:#ff6000;border-radius:20px;text-align: center;margin-top:10%;">确认</div>
+				</div>
+			</div>
+		</script>
+
+
+
+
+		<script type="text/javascript">
+			pre_loading(0);
+
+			var token=localStorage.getItem('user_token');
+			if(Getvariable('token')){
+				token=Getvariable('token');
+			}
+
+			var data = {
+				oprate:true,
+				list: []
+			};
+			function renderhtml() {
+				document.getElementById('box').innerHTML = template('tpl',data)
+			}
+
+			//我的银行卡页面操作=======================================
+			// 获取银行卡列表
+			function getbanklistfun(){
+				$.ajax({
+					url:path_inter+"ManagedClient/SecurityCenter/getBankList",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token
+					},
+					success:function(res){
+						if(user_overdue(res)){
+							pre_loading(100);
+							data.list = res.data;
+							renderhtml();
+							pagedo();
+						}
+					},
+					error:function(){
+						$.toast('获取数据失败','text');
+					}
+				});
+			}
+			getbanklistfun();
+
+			function dian(obj){
+				if(obj.html() == '编辑'){
+					obj.html("完成");
+					$('.every').parent().removeClass('hide');
+					$('#bottom').removeClass('hide');
+				} else{
+					obj.html("编辑");
+					$('.every').parent().addClass('hide');
+					$('#bottom').addClass('hide');
+				}
+			}
+			function pagedo(){
+				// 全选与全不选
+			  $('#all').click(function(){
+				 	$('.every').prop('checked',$(this).prop('checked'));
+			  });
+			 	$('.every').click(function(){
+					if ($('.every:checked').length == $('.every').length) {
+						$('#all').prop('checked',true)
+					} else {
+						$('#all').prop('checked',false)
+					}
+			 	});
+				//批量删除
+				$("#delAll").click(function() {
+					if(!data.oprate){
+						return false;
+					}
+
+					var arrUserid = [];
+					var delindexArr=[];
+					$(".every").each(function(i) {
+						if (this.checked == true) {
+							arrUserid.push($(this).val());
+							delindexArr.push(i);
+						}
+					});
+
+					if(arrUserid.length==0){
+						$.toast('请选择要删除的银行卡','text');
+						return false;
+					}
+
+					$.confirm("确认删除？",'',function() {
+						data.oprate=false;
+						var id = arrUserid.toString();
+						$.ajax({
+							url:path_inter+"ManagedClient/SecurityCenter/delBank",
+							dataType:'json',
+							type:'post',
+							data:{
+								token:token,
+								bid:id
+							},
+							success:function(res){
+								data.oprate=true;
+								if(user_overdue(res)){
+									for(var i=delindexArr.length-1;i>=0;i--){
+										data.list.splice(delindexArr[i],1);
+									}
+									renderhtml();
+									$.toast('删除成功','text');
+								}
+							},
+							error:function(){
+								data.oprate=true;
+								$.toast('获取数据失败','text');
+							}
+						});
+					}, function() {
+
+					});
+
+				});
+			}
+			//显示添加银行卡页面
+			function showaddPage(){
+				$('#addpage').removeClass('hide');
+				$('#mainpage').addClass('hide');
+			}
+			//显示我的银行卡页面
+			function showmainPage(){
+				$('#addpage').addClass('hide');
+				$('#mainpage').removeClass('hide');
+			}
+
+
+
+
+
+
+
+
+			//添加银行卡页面操作=======================================
+			function conf(){
+				if(!data.oprate){
+					return false;
+				}
+
+				var card = $('#cardnum').val();
+				var name = $('#cardname').val();
+				var bank = $('#cardbank').val();
+				var phone = $('#cardphone').val();
+
+				if(card==''){
+					$.toast('请输入银行卡号','text');
+					return false;
+				}
+				if(name==''){
+					$.toast('请输入持卡人姓名','text');
+					return false;
+				}
+				if(bank==''){
+					$.toast('请填写开户行名称','text');
+					return false;
+				}
+				if(phone==''){
+					$.toast('请输入银行卡预留手机号','text');
+					return false;
+				}
+				if(!checktel(phone)){
+					$.toast('手机号不正确','text');
+					return false;
+				}
+
+				data.oprate=false;
+				$.ajax({
+					url:path_inter+"ManagedClient/SecurityCenter/addBank",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						card: card,
+						name: name,
+						address: bank,
+						phone: phone
+					},
+					success:function(res){
+						data.oprate=true;
+
+						$.toast('添加成功','text');
+						setTimeout(function(){
+							getbanklistfun();
+							showmainPage();
+						},600);
+					},
+					error:function(){
+						data.oprate=true;
+						$.toast('获取数据失败','text');
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

@@ -1,0 +1,48 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="{:U('Banner/index')}">Banner列表</a></li>
+			<li><a href="{:U('Banner/add')}">Banner添加</a></li>
+		</ul>
+		<form method="post" class="js-ajax-form">
+			<table class="table table-hover table-bordered">
+				<thead>
+				<tr>
+					<th width="50">ID</th>
+					<th width="100">图片</th>
+					<th width="100">展示位置</th>
+					<!--<th width="150">位置</th>-->
+					<th width="120">操作</th>
+				</tr>
+				</thead>
+				<tbody>
+				<foreach name="list" key="k" item="vo">
+					<tr>
+						<td>{$k+1}</td>
+						<td><img src="{$vo.url}" style="width: 40px;height: 40px"></td>
+						<td>{$vo['position']==1?"首页轮播图":"线上课堂轮播图"}</td>
+						<!--<td>-->
+							<!--<if condition="$vo['type'] eq 1">-->
+								<!--名师推荐-->
+								<!--<elseif condition="$vo['type'] eq 2" />-->
+								<!--学习方法-->
+								<!--<elseif condition="$vo['type'] eq 3" />-->
+								<!--资讯-->
+							<!--</if>-->
+						<!--</td>-->
+						<td>
+							<a href="{:U('Banner/edit',array('id'=>$vo['id']))}">编辑</a>
+							<a href="{:U('Banner/delete',array('id'=>$vo['id']))}" class="js-ajax-delete">{:L('DELETE')}</a>
+						</td>
+					</tr>
+				</foreach>
+				</tbody>
+			</table>
+			<div class="pagination">{$page}</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="{:U('Employee/index')}">返回</a></li>
+		</ul>
+
+		<form method="post" class="js-ajax-form" action="{:U('Teacher/sort')}">
+			<table class="table table-hover table-bordered">
+				<thead>
+					<tr>
+						<th align="center">ID</th>
+						<th>手机号</th>
+						<th>姓名</th>
+						<th>性别</th>
+						<th>头像</th>
+						<th>类型</th>
+						<th>注册时间</th>
+						<th>擅长年级</th>
+						<th>擅长科目</th>
+						<th>课时费</th>
+						<th>会员等级</th>
+						<th>状态</th>
+					</tr>
+				</thead>
+				<tbody>
+					<foreach name="lists" key="k" item="vo">
+					<tr>
+						<td align="center">{$vo.id}</td>
+						<td>{$vo.phone}</td>
+						<td>{$vo.name}</td>
+						<td>{$vo['sex']==1?男:女}</td>
+						<td><img width="25" height="25" src="{$vo.t_img}" /></td>
+						<td>{$vo['t_type']==1?大学生:老师}</td>
+						<td>{$vo['t_time']}</td>
+						<td>{$vo['t_grade']}</td>
+						<td>{$vo['t_sub2']}</td>
+						<td>{$vo['price']}</td>
+						<td>{$vo['level_name']}</td>
+						<td>
+							<php>
+								if($vo['state']==1){
+									echo "未审核";
+								}else if($vo['state']==0){
+								     echo "未上传认证资质";
+								}else if($vo['state']==2){
+									if($vo['status']==1){
+										echo "正常";
+									}else{
+										echo "冻结";
+									}
+								}else{
+								   echo "未通过";
+								}
+							</php>
+						</td>
+					</tr>
+					</foreach>
+				</tbody>
+			</table>
+			<div class="pagination">{$page}</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>亲子时光</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- bootstrap -->
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap.css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+
+  <!-- libraries -->
+  <link href="__PUBLIC__/Shopadmin/css/lib/uniform.default.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/select2.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/font-awesome.css" type="text/css" rel="stylesheet"/>
+
+  <!-- global styles -->
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/layout.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/elements.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/icons.css">
+
+  <!-- this page specific styles -->
+  <link rel="stylesheet" href="__PUBLIC__/Shopadmin/css/compiled/form-showcase.css" type="text/css" media="screen"/>
+
+  <!-- open sans font -->
+  <link
+    href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+    rel='stylesheet' type='text/css'>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <style>
+    .options{
+      overflow: hidden;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+    .options ul{
+      padding: 0px;
+      margin: 0px;
+      overflow: hidden;
+    }
+    .options ul li{
+      float: left;
+      list-style: none;
+      padding: 5px 12px;
+      border: solid 1px #6FB3E0;
+      margin-left: 2px;
+    }
+    .options ul .active {
+      background: #ededed;
+    }
+  </style>
+</head>
+<body>
+<include file="common/menu" />
+<!-- main container -->
+<div class="content">
+
+  <div id="pad-wrapper" class="form-page" >
+    <div class="row header" style="margin-bottom: 20px">
+      <div class="col-md-12">
+        <h3>亲子时光</h3>
+      </div>
+    </div>
+
+    <div class="options" style="padding: 10px; border: 1px solid #ccc;  margin-bottom: 10px; margin-left: -15px; margin-right: -15px;width: calc(100% + 30px );background-color: #F5FAFD;">
+      <ul>
+        <li class="active">
+          <a  href="{:U('Circle/index')}">亲子时光列表</a>
+        </li>
+        <li  >
+          <a href="{:U('Circle/add')}">发布亲子时光</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="table-wrapper products-table section">
+      <div class="row">
+        <table class="table table-hover" id="videotable">
+          <thead>
+          <tr>
+            <th width="50">
+              ID
+            </th>
+            <th width="120">
+              <span class="line"></span>用户头像
+            </th>
+            <th width="200">
+              <span class="line"></span>用户姓名
+            </th>
+            <th>
+              <span class="line"></span>用户类型
+            </th>
+            <th width="">
+              <span class="line"></span>文字
+            </th>
+            <th >
+              <span class="line"></span>图片
+            </th>
+            <th width="150">
+              <span class="line"></span>视频
+            </th>
+            <th>
+              <span class="line"></span>发布时间
+            </th>
+            <th>
+              <span class="line"></span>点赞数量
+            </th>
+            <th>
+              <span class="line"></span>浏览量
+            </th>
+            <th width="120">
+              <span class="line"></span>操作
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <!-- row -->
+          <foreach name="list" key="k" item="vo">
+            <tr>
+              <td>
+                {$k+1}
+              </td>
+              <td align="center">
+                <div class="img">
+                  <img src="{$vo.img}" width="50">
+                </div>
+              </td>
+              <td align="center">
+                {$vo['uname']?$vo['uname']:'无'}
+              </td>
+              <td>{$vo['u_type']==1?"家长":($vo['u_type']==2?"老师":($vo['u_type']==3?"商户":"平台"))}</td>
+              <td>{$vo.content}</td>
+              <td align="center">
+                <foreach name="vo['img_list']" item="item">
+                  <img src="{$item}" width="90" height="60" style="margin: 0 5px;">
+                </foreach>
+              </td>
+              <td align="center">
+                <if condition="$vo['video_url'] neq null">
+                  <video width="200" height="150" controls>
+                    <source src="{$vo.video_url}" type="video/mp4">
+                    您的浏览器不支持 video 标签。
+                  </video>
+                </if>
+              </td>
+              <td align="center">{$vo.c_time}</td>
+              <td>{$vo.zan}</td>
+              <td>{$vo.view_num}</td>
+              <td align="center">
+                <!--<a href="{:U('Circle/edit',array('id'=>$vo['circle_id']))}">编辑</a>   |-->
+                <!--<a class="js-ajax-dialog-btn" data-msg="您确定要删除吗" href="{:U('Circle/delete',array('id'=>$vo['circle_id'],'type'=>1))}">删除</a>-->
+                <span class="btn btn-link delbtn" data-id="{$vo['circle_id']}">删除</span>
+              </td>
+
+            </tr>
+          </foreach>
+          </tbody>
+        </table>
+        <div class="pagination">{$page}</div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end main container -->
+
+<!-- scripts for this page -->
+<script src="__PUBLIC__/Shopadmin/js/wysihtml5-0.3.0.js"></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/jquery.uniform.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/theme.js"></script>
+<!--laryer-->
+<script src="__PUBLIC__/Shopadmin/layer/layer.js"></script>
+<script src="__PUBLIC__/layer/layer.js"></script>
+
+
+
+<script>
+  $('#videotable').on('click','.xiajiabtn',function(){
+    //下架
+    var id=$(this).data('id');
+    console.log(id)
+      layer.confirm('您确定要下架该视频吗?', {icon: 3, title:'提示'}, function(index){
+
+          $.post("__CONTROLLER__/status",
+              {'id':id, 'status':1},
+              function(json){
+                  var data = JSON.parse(json);
+                  if (data.code==1){
+                      window.location.reload();
+                  }else{
+                      layer.alert(data.msg);
+                  }
+              },"text");
+          layer.close(index);
+      });
+  }).on('click','.shangjiabtn',function(){
+    //上架
+    var id=$(this).data('id');
+    console.log(id)
+      layer.confirm('您确定要上架该视频吗?', {icon: 3, title:'提示'}, function(index){
+
+          $.post("__CONTROLLER__/status",
+              {'id':id, 'status':2},
+              function(json){
+                  var data = JSON.parse(json);
+                  if (data.code==1){
+                      window.location.reload();
+                  }else{
+                      layer.alert(data.msg);
+                  }
+              },"text");
+          layer.close(index);
+      });
+  }).on('click','.delbtn',function(){
+    //删除
+    var id=$(this).data('id');
+    console.log(id)
+      layer.confirm('您确定要删除该视频吗?', {icon: 3, title:'提示'}, function(index){
+
+          $.post("__CONTROLLER__/del",
+              {"id":id},
+              function(json){
+                  var data = JSON.parse(json);
+                  if (data.code==1){
+                      window.location.reload();
+                  }else{
+                      layer.alert(data.msg);
+                  }
+
+              },"text");
+          layer.close(index);
+      });
+  }).on('click','.zhiding',function(){
+      //删除
+      var id=$(this).data('id');
+      console.log(id)
+      layer.confirm('您确定要置顶该视频吗?', {icon: 3, title:'提示'}, function(index){
+
+          $.post("__CONTROLLER__/top",
+              {"id":id},
+              function(json){
+                  var data = JSON.parse(json);
+                  if (data.code==1){
+                      window.location.reload();
+                  }else{
+                      layer.alert(data.msg);
+                  }
+
+              },"text");
+          layer.close(index);
+      });
+  });
+</script>
+
+
+
+</body>
+</html>

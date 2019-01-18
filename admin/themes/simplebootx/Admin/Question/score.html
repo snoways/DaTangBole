@@ -1,0 +1,38 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="{:U('Question/score')}">题库分数管理</a></li>
+			<li><a href="{:U('Question/addscore')}">添加题库分数</a></li>
+		</ul>
+		<form method="post" class="js-ajax-form">
+			<table class="table table-hover table-bordered">
+				<thead>
+				<tr>
+					<th width="50">ID</th>
+					<th width="100">分数区间</th>
+					<th width="100">答案描述</th>
+					<th width="120">操作</th>
+				</tr>
+				</thead>
+				<tbody>
+				<foreach name="rs" key="ko" item="vo">
+					<tr>
+						<td>{$ko+1}</td>
+						<td>{$vo.sleft}-{$vo.sright}</td>
+						<td>{$vo.desc}</td>
+						<td>
+							<a href="{:U('Question/editscore',array('id'=>$vo['id']))}">编辑</a>|
+							<a href="{:U('Question/deletescore',array('id'=>$vo['id']))}" class="js-ajax-delete" data-msg="确定删除该描述吗？">{:L('DELETE')}</a>
+						</td>
+					</tr>
+				</foreach>
+				</tbody>
+			</table>
+			<div class="pagination">{$page}</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

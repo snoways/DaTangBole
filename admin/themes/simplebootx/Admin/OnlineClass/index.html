@@ -1,0 +1,223 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('OnlineClass/index')}">线上课堂列表</a></li>
+        <li><a href="{:U('OnlineClass/add_index')}">添加</a></li>
+    </ul>
+    <form class="well form-search" id="formurl" method="post" action="{:U('OnlineClass/index')}">
+        关键字：
+        <input type="text" name="keyword" style="width: 250px;" value="{:I('request.keyword')}" placeholder="请输入标题或科目关键字">
+        <input type="submit" class="btn btn-primary" onclick="return search();" value="搜索" />
+        <a class="btn btn-danger" href="{:U('OnlineClass/index')}">清空</a>
+    </form>
+    <form method="post" class="js-ajax-form" action="{:U('OnlineClass/sort')}">
+        <button type="submit" class="btn btn-primary btn-sm js-ajax-submit">排序</button>
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <th align="center">序号</th>
+                <th align="center">ID</th>
+                <th>标题</th>
+                <th>发布人</th>
+                <th width="120">封面图</th>
+                <th width="200">视频</th>
+                <th>发布时间</th>
+                <th>浏览量</th>
+                <th>价格</th>
+                <th>会员价</th>
+                <th width="120">视频介绍</th>
+                <th>举报次数</th>
+                <th>科目</th>
+                <th>销量</th>
+                <th>精品课程</th>
+                <th>热门</th>
+                <th>状态</th>
+                <th width="110">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach name="info" key="k" item="vo">
+                <tr>
+                    <td align="center">
+                        <input type="text" class="small" name="sort[]" value="{$vo['sort']}" style="max-width: 40px;text-align: center">
+                        <input type="hidden" name="id[]" value="{$vo['id']}">
+                    </td>
+                    <td align="center">{$k+1}</td>
+                    <td>{$vo['title']}</td>
+                    <td><if condition="$vo['u_type'] eq  3">后台添加<else/>{$vo['name']}</if></td>
+                    <td><img src="{$vo.img_url}" width="120"></td>
+                    <!--<td><video src="{$vo.video_url}" width="200">您的浏览器不支持 video 标签。</video></td>-->
+                    <td>
+                        <if condition="$vo['video_url'] neq null">
+                            <video width="320" height="240" controls>
+                                <source src="{$vo.video_url}" type="video/mp4">
+                                您的浏览器不支持 video 标签。
+                            </video>
+                        </if>
+                    </td>
+                    <td>{$vo.oc_time}</td>
+                    <td>{$vo.view}</td>
+                    <td>{$vo.price}</td>
+                    <td>{$vo.vip_price}</td>
+                    <td style="max-width: 120px;">
+                        <a href="javascript:;" class="show_content">点击查看</a>
+                        <div style="display: none;">{$vo.content}</div>
+                    </td>
+                    <td>{$vo.report_num}</td>
+                    <td style="text-align: center;width: 100px;">{$vo.t_sub1} {$vo.t_sub2}<br/>{$vo.t_sub3}</td>
+                    <td>{$vo.sale_num}</td>
+                    <td>
+                        <if condition="$vo['hot'] eq 1">
+                            是（<a href="javascript:;" data-id="{$vo['id']}" class="status1">取消推荐</a>）
+                            <else />
+                            否 （<a href="javascript:;" data-id="{$vo['id']}" class="status12">点击推荐</a>）
+                        </if>
+                    </td>
+                    <td>
+                        <if condition="$vo['is_popular'] eq 1">
+                            是（<a href="javascript:;" data-id="{$vo['id']}" class="is_popular1">取消推荐</a>）
+                            <else />
+                            否 （<a href="javascript:;" data-id="{$vo['id']}" class="is_popular2">点击推荐</a>）
+                        </if>
+                    </td>
+                    <td>{$vo['status']==1?正常:已下架}</td>
+                    <td align="center">
+                        <if condition="$vo['status'] eq 1">
+                            <a href="javascript:;" data-id="{$vo['id']}" data-status="2" class="jy">禁用</a> |
+                            <else/>
+                            <a href="{:U('OnlineClass/ban',array('id'=>$vo['id'],'status'=>1))}" class="js-ajax-dialog-btn" data-msg="您确定要启用吗">启用</a> |
+                        </if>
+                        <a  href="javascript:;" class="sc" data-id="{$vo['id']}">删除</a>|<br/>
+                        <if condition="$vo['u_type'] eq  3">
+                            <a href="{:U('OnlineClass/edit',array('id'=>$vo['id']))}" >编辑</a> |
+                            <php>$form_request = json_encode($_REQUEST);</php>
+                            <a href='{:U("Share/Setting")}?id={$vo["id"]}&type=1&ob_title={$vo["title"]}&form_request={$form_request}' >分享设置</a> |                        </if>
+                        <a href="{:U('OnlineClass/evaluate',array('id'=>$vo['id']))}">查看评价</a>
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+        <div class="pagination">{$page}</div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script>
+    $(".status1").click(function () {
+        var id = $(this).attr('data-id');
+        tujian('您确定要取消推荐到精品课程?',id,2,'__CONTROLLER__/status');
+    });
+
+    $(".status12").click(function () {
+        var id = $(this).attr('data-id');
+        tujian('您确定要推荐到精品课程?',id,1,'__CONTROLLER__/status');
+    });
+    $(".is_popular1").click(function () {
+        var id = $(this).attr('data-id');
+        tujian('您确定要取消推荐到热门课程?',id,0,'__CONTROLLER__/is_popular');
+    });
+
+    $(".is_popular2").click(function () {
+        var id = $(this).attr('data-id');
+        tujian('您确定要推荐到热门课程?',id,1,'__CONTROLLER__/is_popular');
+    });
+    $('.show_content').click(function () {
+        var $html = $(this).next().html();
+        if ($html) {
+            layer.open({
+                type: 1,
+                shade: false,
+                title: false, //不显示标题
+                area: ['55%', '70%'], //宽高
+                content: $(this).next().html()//捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
+            });
+        } else {
+            layer.msg('没有介绍');
+        }
+
+    });
+    function tujian(ts,id,state,url) {
+        layer.confirm(ts, {icon: 3, title:'提示'}, function(index){
+
+            $.post(url,
+                {'id':id, 'hot':state},
+                function(json){
+                    var data = JSON.parse(json);
+                    if (data.code==1){
+                        window.location.reload();
+                    }else{
+                        layer.alert(data.msg);
+                    }
+                },"text");
+            layer.close(index);
+        });
+    }
+    var url = "";
+    var id = '';
+    var status = '';
+    $('.jy').click(function () {
+        url = "{:U('OnlineClass/ban')}";
+        id = $(this).data('id');
+        status = $(this).data('status');
+        //弹出一个页面层
+        layer.open({
+            type: 1,
+            title:'禁用操作：请说明原因！',
+            area: ['573px', '370px'],
+            shadeClose: true, //点击遮罩关闭
+            content: '<div>' +
+            '<textarea style="    min-width: 545px;max-width: 545px;min-height: 260px;max-height: 260px;margin: 5px;" name="msg" id="msg" placeholder="请输入......"></textarea>' +
+            '<button type="button" style="margin: 5px;float: right;" id="qd" class="btn btn-small btn-success">确定</button>' +
+            '</div>'
+        });
+    });
+    $(document).on('click','#qd',function () {
+        var msg = $('#msg').val();
+        $.post(url,
+            {id:id,status:status,msg:msg},
+            function(json){
+               if (json.status===1 && json.state === 'success') {
+                   window.location.reload();
+               }else{
+                   layer.alert(json.info);
+               }
+            },"json");
+    });
+    $('.sc').click(function () {
+        url = "{:U('OnlineClass/delete')}";
+        id = $(this).data('id');
+        layer.confirm('您确定要删除吗？', {
+            btn: ['确定','取消'] //按钮
+        }, function(){
+            $.post(
+                url,
+                {id:id},
+                function(json){
+                    layer.alert(json.info,{closeBtn:1},function () {
+                        if (json.status===1 && json.state === 'success') {
+                            window.location.reload();
+                        }
+                    });
+                },
+                "json"
+            );
+        }, function(){
+
+        });
+        // //弹出一个页面层
+        // layer.open({
+        //     type: 1,
+        //     title:'禁用操作：请说明原因！',
+        //     area: ['573px', '370px'],
+        //     shadeClose: true, //点击遮罩关闭
+        //     content: '<div>' +
+        //     '<textarea style="    min-width: 545px;max-width: 545px;min-height: 260px;max-height: 260px;margin: 5px;" name="msg" id="msg" placeholder="请输入......"></textarea>' +
+        //     '<button type="button" style="margin: 5px;float: right;" id="qd" class="btn btn-small btn-success">确定</button>' +
+        //     '</div>'
+        // });
+    });
+</script>
+</body>
+</html>

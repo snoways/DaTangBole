@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title>授课评价</title>
+		<script type="text/javascript" src="../js/com.js" ></script>
+		<link rel="stylesheet" type="text/css" href="../css/stylea.css">
+		<link rel="stylesheet" type="text/css" href="../css/weui.min.css">
+		<link rel="stylesheet" type="text/css" href="../css/jquery-weui.css">
+		<script type="text/javascript" src="../js/hui.js" ></script>
+		<script type="text/javascript" src="../js/jquery.min.js" ></script>
+		<script type="text/javascript" src="../js/jquery-weui.js" ></script>
+		<script type="text/javascript" src="../js/template-native.js" ></script>
+	</head>
+	<body>
+		<div ontouchstart class="content_box" >
+			<div class="content_scroll">
+				<div id="box"></div>
+			</div>
+		</div>
+		<script type="text/html" id='tpl'>
+			<!--内容开始-->
+			<div class="pad_l10 pad_r10 bgcolorfff mar_b5">
+				<div class="pad10 border_b">
+					<img src="../img/icon3.png" height="14" alt=""/>
+					<span class="inblock colorzt font14 mar_l10">授课教案</span>
+				</div>
+				<div class="pad10 color666 font12">
+					<div class="tuwen"><%=html1%></div>
+					
+				</div>
+			</div>
+
+			<div class="pad_l10 pad_r10 bgcolorfff mar_b5">
+				<div class="pad10 border_b">
+					<img src="../img/icon4.png" height="14" alt=""/>
+					<span class="inblock colorzt font14 mar_l10">学生评语</span>
+				</div>
+				<div class="pad10 color666 font12">
+					<div class="tuwen"><%=html2%></div>
+				</div>
+			</div>
+
+				<!--内容end-->
+		</script>
+		<script>
+			var token=localStorage.getItem('user_token');
+
+			if(Getvariable('token')){
+				token=Getvariable('token');
+			}
+
+			var data = {
+				html1:'授课教案没有内容',//授课教案
+				html2:'学生评语没有内容',//学生评语
+				loading:false,
+				page:1
+			};
+			function renderhtml(){
+				document.getElementById('box').innerHTML = template('tpl',data)
+			};
+
+
+			//初始加载
+			pre_loading(0);
+			if(Getvariable('id')&&Getvariable('num'))
+			{
+				var id=Getvariable('id');
+				var num=Getvariable('num');
+			}
+			else
+			{
+				pre_loading(3);
+				// return false;
+			}
+			
+			$.ajax({
+				url:path_inter+"Teacher/Course/remark",
+				dataType:'json',
+				type:'post',
+				data:{
+					token:token,
+					id:id,
+					num:num
+				},
+				success:function(res){
+					if(user_overdue(res.code,res.msg)){
+						pre_loading(100);
+						if(res.data.lesson_plan)
+						{
+							data.html1=res.data.lesson_plan;
+						}
+						if(res.data.comments)
+						{
+							data.html2=res.data.comments;
+						}
+						
+					}
+					renderhtml();
+				},
+				error:function(){
+					pre_loading(1);
+				}
+			});
+			
+
+
+			// hui.post(
+			//     path_inter+'Teacher/Course/remark',
+			//     {
+			//     	id: 363,  // 有待传值
+			//     	mun: 3, // 有待传值
+			//     	token: token
+			//     },
+			//     function(res){
+			//     	res = JSON.parse(res);
+			//     	if(res.code == 1 || res.code == 0){
+			//     		data.student = res.data.comments;
+			//     		data.teacher = res.data.lesson_plan;
+			//     		renderhtml();
+			//     	};
+   //                  if( res.code == -1 ){
+   //                      hui.toast(res.msg)
+			// 		};
+   //                  if(res.code == 20003){
+   //                      hui.toast(res.msg);
+   //                  };
+			//         console.log(res);
+			//         hui.upToast(res);
+			//     },
+			//     function(e){
+			//         hui.iconToast('读取消息失败', 'warn');
+			//     }
+			// );
+		</script>
+	</body>
+</html>

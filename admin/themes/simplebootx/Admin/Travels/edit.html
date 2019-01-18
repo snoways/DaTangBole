@@ -1,0 +1,159 @@
+<admintpl file="header"/>
+<style type="text/css">
+    .input-medium {
+        width: 80%;
+        display: inline-table;
+    }
+
+    .input-small {
+        width: 22%;
+        display: inline-table;
+    }
+
+    .label_att span {
+        text-align: right;
+        padding-top: 10px;
+        font-size: 14px;
+    }
+</style>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('Travels/index')}">游记列表</a></li>
+        <li class="active"><a href="{:U('Travels/edit')}">编辑游记</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form" action="{:U('Travels/edit',array('id'=>$_GET['id']))}">
+        <div class="control-group">
+            <label class="control-label">游记封面图片<span style="color: red;">*</span></label>
+            <div class="controls">
+                <table class="table table-bordered" style="width: 320px;">
+                    <tr>
+                        <td>
+                            <div style="text-align: center; padding-top: 10px;">
+                                <input type="hidden" name="img1" id="img1" value="{$info.img_url}">
+                                <if condition="!empty($info['img_url'])">
+                                    <a href="javascript:upload_one_image('图片上传','#img1',null,'Managed');">
+                                        <img src="{$info.img_url}" id="img1-preview" style="width: 315px;height: 195px;"/>
+                                    </a>
+                                    <else/>
+                                    <a href="javascript:upload_one_image('图片上传','#img1',null,'Managed');">
+                                        <img src="__TMPL__Public/assets/images/default-thumbnail.png" id="img1-preview" style="width: 315px;height: 195px;"/>
+                                    </a>
+                                </if>
+
+                                <br><br>
+                                <input type="button" class="btn btn-small"
+                                       onclick="$('#img1-preview').attr('src','__TMPL__Public/assets/images/default-thumbnail.png');$('#img1').val('');return false;" value="取消图片">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>建议图片宽高为1050*650，大小不要超过200K</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label"><span style="color: red;">*</span>游记标题：</label>
+            <div class="controls">
+                <input type="text" name="title" class="input-medium" value="{$info.title}" required>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label"><span style="color: red;">*</span>游记作者：</label>
+            <div class="controls label_att">
+                <input type="text" maxlength="30" id="author" name="author" class="form-control input-small"
+                       value="{$info['author']}" required>
+                <span style="color: red;">*</span><span>发布日期：</span>
+                <input type="date" id="add_date" name="add_date" class="form-control input-small"
+                       value="{$info['add_date']}" required>
+                <span style="color: red;">*</span><span>活动玩伴：</span>
+                <select name="person" id="person" class="form-control input-small" required>
+                    <option value="家人"
+                    <if condition="$info['person'] eq 家人">selected</if>
+                    >家人</option>
+                    <option value="朋友"
+                    <if condition="$info['person'] eq 朋友">selected</if>
+                    >朋友</option>
+                    <option value="同事"
+                    <if condition="$info['person'] eq 同事">selected</if>
+                    >同事</option>
+                    <option value="旅行社"
+                    <if condition="$info['person'] eq 旅行社">selected</if>
+                    >旅行社</option>
+                    <option value="其它"
+                    <if condition="$info['person'] eq 其它">selected</if>
+                    >其它</option>
+                </select>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label"><span style="color: red;">*</span>游玩天数：</label>
+            <div class="controls label_att">
+                <input type="number" min="1" max="30" name="travel_days" class="form-control input-small"
+                       value="{$info['travel_days']}" required>
+                <span style="color: red;">*</span><span>游玩月份：</span>
+                <select name="travel_month" id="travel_month" class="form-control input-small" required>
+                    <option value="">请选择游玩月份</option>
+                    <?php for($month=1; $month<=12; $month++): ?>
+                    <option value="{$month}月"
+                    <if condition="$info['travel_month'] eq $month.'月'">selected</if>
+                    >{$month}月</option>
+                    <?php endfor; ?>
+                </select>
+                <span style="color: red;">*</span><span>人均消费： </span>
+                <input type="number" min="1" max="999999999" name="price" class="form-control input-small"
+                       value="{$info['price']}" required> <span>元</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">浏览数：</label>
+            <div class="controls label_att">
+                <input type="number" min="0" max="10000" name="viewnum" class="form-control input-small"
+                       value="{$info['viewnum']}" required>
+                <span>评论数：</span>
+                <input type="number" name="commentnum" class="form-control input-small" value="{$info['commentnum']}"
+                       readonly="readonly" required>
+                <span>点赞数：</span>
+                <input type="number" min="0" max="10000" name="zannum" class="form-control input-small"
+                       value="{$info['zannum']}" required>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label"><span style="color: red;">*</span>游记详情：</label>
+            <div class="controls">
+                <textarea id="content" name="content" style="width: 80%; min-height: 600px;">{$info.content}</textarea>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label"><span style="color: red;">*</span>是否启用：</label>
+            <div class="controls label_att">
+                <input type="radio" value="1" name="status" <if condition="$info['status'] eq 1">checked</if>><span>立即发布</span>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="radio" value="2" name="status" <if condition="$info['status'] eq 2">checked</if>><span>等待发布</span>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="radio" value="-1" name="status" <if condition="$info['status'] eq -1">checked</if>><span>强制关闭</span>
+            </div>
+        </div>
+        <div class="form-actions">
+            <input type="hidden" name="id" value="{$info.id}"/>
+            <input type="hidden" name="agent_id" value="{$info.agent_id}"/>
+            <button type="submit" class="btn btn-primary js-ajax-submit">{:L('SAVE')}</button>
+            <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+<script type="text/javascript">
+    //编辑器路径定义
+    var editorURL = GV.WEB_ROOT;
+</script>
+<script type="text/javascript" src="__PUBLIC__/js/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript">
+    var editorcontent = new baidu.editor.ui.Editor();
+    editorcontent.render('content');
+</script>
+</body>
+</html>

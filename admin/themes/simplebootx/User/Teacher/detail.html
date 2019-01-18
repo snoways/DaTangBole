@@ -1,0 +1,342 @@
+<admintpl file="header" />
+<style>
+    img { width: 400px;}
+</style>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('teacher/index')}">老师列表</a></li>
+        <li class="active"><a href="{:U('teacher/detail',['id'=>$detail['id']])}">老师详情</a></li>
+    </ul>
+    <form action="{:U('teacher/detail')}" method="post" class="form-horizontal js-ajax-forms" enctype="multipart/form-data">
+        <input type="hidden" id="teacher_id" name="id" value="{$detail['id']}">
+        <div class="row-fluid">
+            <div class="span8">
+                <table class="table table-bordered">
+                    <tr>
+                        <th width="180">老师姓名</th>
+                        <td>
+                            {$detail.name}({$detail['sex']==1?男:女})
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>教师资格证/学生证</th>
+                        <td>
+                            <if condition="$detail['t_card'] neq ''">
+                            <img src="{$detail.t_card}" style="width: 50%;height: auto">
+                            <foreach name="examine" item="e">
+                                <if condition="$e['option_key'] eq 't_card'">
+                                    <if condition="$e['status'] eq 1">
+                                        <a href="javascript:;"> <img src="__PUBLIC__/images/shenghe1.png" style="width: 33px;height: 33px;"></img></a>
+                                        <elseif condition="$e['status'] eq 2"/>
+                                        <a href="javascript:;"> <img src="__PUBLIC__/images/shenghe2.png" style="width: 33px;height: 33px;"></img></a>
+                                        <else/>
+                                        <a href="javascript:;" class="shenghe3" data-str="t_card" > <img src="__PUBLIC__/images/shenghe3.png" style="width: 33px;height: 33px;"></img></a>
+                                    </if>
+                                </if>
+                            </foreach>
+                                <else/>
+                                未上传
+                            </if>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>身份证正反面</th>
+                        <td>
+                            <if condition="$detail['idcard1'] neq ''">
+                            <img src="{$detail.idcard1}" style="width: 50%;height: auto">
+                            <foreach name="examine" item="e">
+                                <if condition="$e['option_key'] eq 'idcard1'">
+                                    <if condition="$e['status'] eq 1">
+                                        <a href="javascript:;"> <img src="__PUBLIC__/images/shenghe1.png" style="width: 33px;height: 33px;"></img></a>
+                                        <elseif condition="$e['status'] eq 2"/>
+                                        <a href="javascript:;"> <img src="__PUBLIC__/images/shenghe2.png" style="width: 33px;height: 33px;"></img></a>
+                                        <else/>
+                                        <a href="javascript:;" class="shenghe3" data-str="idcard1"> <img src="__PUBLIC__/images/shenghe3.png" style="width: 33px;height: 33px;"></img></a>
+                                    </if>
+                                </if>
+                            </foreach>
+                                <else/>
+                                未上传
+                            </if>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <if condition="$detail['idcard2'] neq ''">
+                            <img src="{$detail.idcard2}" style="width: 50%;height: auto">
+                            <foreach name="examine" item="e">
+                                <if condition="$e['option_key'] eq 'idcard2'">
+                                    <if condition="$e['status'] eq 1">
+                                        <a href="javascript:;"> <img src="__PUBLIC__/images/shenghe1.png" style="width: 33px;height: 33px;"></img></a>
+                                        <elseif condition="$e['status'] eq 2"/>
+                                        <a href="javascript:;"> <img src="__PUBLIC__/images/shenghe2.png" style="width: 33px;height: 33px;"></img></a>
+                                        <else/>
+                                        <a href="javascript:;" class="shenghe3" data-str="idcard2"> <img src="__PUBLIC__/images/shenghe3.png" style="width: 33px;height: 33px;"></img></a>
+                                    </if>
+                                </if>
+                            </foreach>
+                                <else/>
+                                未上传
+                            </if>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>手持身份证照</th>
+                        <td>
+                            <if condition="$detail['hand_card'] neq ''">
+                            <img src="{$detail.hand_card}" style="width: 50%;height: auto">
+                            <foreach name="examine" item="e">
+                                <if condition="$e['option_key'] eq 'hand_card'">
+                                    <if condition="$e['status'] eq 1">
+                                        <a href="javascript:;"> <img src="__PUBLIC__/images/shenghe1.png" style="width: 33px;height: 33px;"></img></a>
+                                        <elseif condition="$e['status'] eq 2"/>
+                                        <a href="javascript:;"> <img src="__PUBLIC__/images/shenghe2.png" style="width: 33px;height: 33px;"></img></a>
+                                        <else/>
+                                        <a href="javascript:;" class="shenghe3" data-str="hand_card"> <img src="__PUBLIC__/images/shenghe3.png" style="width: 33px;height: 33px;"></img></a>
+                                    </if>
+                                </if>
+                            </foreach>
+                                <else/>
+                                未上传
+                            </if>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>学历证</th>
+                        <td>
+                            <if condition="$detail['academic'] neq ''">
+                            <img src="{$detail.academic}" style="width: 50%;height: auto">
+                            <foreach name="examine" item="e">
+                                <if condition="$e['option_key'] eq 'academic'">
+                                    <if condition="$e['status'] eq 1">
+                                        <a href="javascript:;"> <img src="__PUBLIC__/images/shenghe1.png" style="width: 33px;height: 33px;"></img></a>
+                                        <elseif condition="$e['status'] eq 2"/>
+                                        <a href="javascript:;"> <img src="__PUBLIC__/images/shenghe2.png" style="width: 33px;height: 33px;"></img></a>
+                                        <else/>
+                                        <a href="javascript:;" class="shenghe3" data-str="academic"> <img src="__PUBLIC__/images/shenghe3.png" style="width: 33px;height: 33px;"></img></a>
+                                    </if>
+                                </if>
+                            </foreach>
+                                <else/>
+                                未上传
+                            </if>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>健康证</th>
+                        <td>
+                            <if condition="$detail['health'] neq ''">
+                                <img src="{$detail.health}" style="width: 50%;height: auto">
+                                <foreach name="examine" item="e">
+                                    <if condition="$e['option_key'] eq 'health'">
+                                        <if condition="$e['status'] eq 1">
+                                            <a href="javascript:;"> <img src="__PUBLIC__/images/shenghe1.png" style="width: 33px;height: 33px;"></img></a>
+                                            <elseif condition="$e['status'] eq 2"/>
+                                            <a href="javascript:;"> <img src="__PUBLIC__/images/shenghe2.png" style="width: 33px;height: 33px;"></img></a>
+                                            <else/>
+                                            <a href="javascript:;" class="shenghe3" data-str="health"> <img src="__PUBLIC__/images/shenghe3.png" style="width: 33px;height: 33px;"></img></a>
+                                        </if>
+                                    </if>
+                                </foreach>
+                                <else/>
+                                未上传
+                            </if>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>特点</th>
+                        <td>{$detail.features}</td>
+                    </tr>
+                    <tr>
+                        <th>测评分数</th>
+                        <td>{$detail.eval_score}</td>
+                    </tr>
+                    <tr>
+                        <th>测评结果</th>
+                        <td>{$detail.evaluation}</td>
+                    </tr>
+                    <tr>
+                        <th>教育经历</th>
+                        <td>{$detail.experience}</td>
+                    </tr>
+                    <tr>
+                        <th>所获荣誉</th>
+                        <td>
+                            <foreach name="honor" key="k" item="vo">
+                                <img style="width: 400px;" src="{$vo.url}" style="width: 50%;height: auto">
+                                <p>{$vo.msg}</p>
+                            </foreach>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="span3">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>头像</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div style="text-align: center;">
+                                <img src="{$detail.t_img}" id="thumb-preview" width="135" style="cursor: hand"/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>手机号</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            {$detail.phone}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>创建时间</th>
+                    </tr>
+                    <tr>
+                        <td>{$detail.t_time}</td>
+                    </tr>
+                    <tr>
+                        <th>毕业院校</th>
+                    </tr>
+                    <tr>
+                        <td>{$detail.school}</td>
+                    </tr>
+                    <tr>
+                        <th>所学专业</th>
+                    </tr>
+                    <tr>
+                        <td>{$detail.profession}</td>
+                    </tr>
+                    <tr>
+                        <th>用户类型</th>
+                    </tr>
+                    <php>
+                        $type = array(
+                            1 => '大学生',
+                            2 => '老师',
+                            3 => '外教'
+                        );
+                    </php>
+                    <tr>
+                        <td>{$type[$detail['t_type']]}</td>
+                    </tr>
+                    <tr>
+                        <th>擅长年级</th>
+                    </tr>
+                    <tr>
+                        <td>{$detail['t_grade']}</td>
+                    </tr>
+                    <tr>
+                        <th>擅长科目</th>
+                    </tr>
+                    <tr>
+                        <td>{$detail['t_sub2']}</td>
+                    </tr>
+                    <tr>
+                        <th>课时费</th>
+                    </tr>
+                    <tr>
+                        <td>{$detail['price']}</td>
+                    </tr>
+                    <tr>
+                        <th>状态</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <if condition="$detail['state'] eq 1">
+                                <if condition="$yes_count eq 6">
+                                    <label class="radio"><input type="radio" name="state" value="2" checked>审核通过</label>
+                                    <elseif condition="$count gt 0"/>
+                                    <label class="radio"><input type="radio" name="state" value="3" checked>审核不通过</label>
+                                    <elseif condition="$detail['t_type'] eq 3 && $yes_count eq 3"/>
+                                    <label class="radio"><input type="radio" name="state" value="2" checked>审核通过</label>
+                                    <elseif condition="$detail['t_type'] eq 3 && $count gt 0"/>
+                                    <label class="radio"><input type="radio" name="state" value="3" checked>审核不通过</label>
+                                    <else/>
+                                    <label class="radio"><input type="radio" name="state" value="1" checked>未审核</label>
+                                </if>
+                            <else />
+                                <label class="radio"><input type="radio" name="status" value="1" <if condition="$detail['status'] eq 1">checked</if>>正常</label>
+                                <label class="radio"><input type="radio" name="status" value="2" <if condition="$detail['status'] eq 2">checked</if>>冻结</label>
+                            </if>
+                            <if condition="$count gt 0">
+                                <textarea id="fail" name="fail_reason" placeholder="请填写不通过原因" style="width: 90%;height: 80px" required>{$detail['fail_reason']}</textarea>
+                            </if>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button class="btn btn-primary js-ajax-submit" type="submit" id="btn">确定</button>
+            <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+        </div>
+    </form>
+</div>
+<script type="text/javascript" src="__PUBLIC__/js/common.js"></script>
+<script>
+//    $("#btn").click(function(){
+//        var fail_reason = $("#fail").val();
+//        if(fail_reason == ''){
+//            layer.msg('请填写不通过原因！');
+//            return false;
+//        }
+//    })
+    var id = '';
+    var str = '';
+    $(".shenghe3").click(function(){
+        id = $("#teacher_id").val();
+        str = $(this).attr("data-str");
+
+        layer.confirm('您是如何看待这条记录的？', {
+            btn: ['通过','不通过'] //按钮
+        }, function(){
+
+        }, function(){
+
+        });
+        $(document).on('click','.layui-layer-btn0',function () {
+            if (id && str) {
+                //审核通过
+                $.post("{:U('Teacher/examine')}",{
+                    id:id,
+                    str:str,
+                    status:1
+                },function(data){
+                    if(data == 1){
+                        layer.msg('操作成功',function(){
+                            window.location.reload();
+                        });
+                    }else{
+                        layer.msg('操作失败',function(){
+                            window.location.reload();
+                        });
+                    }
+                })
+            }
+        });
+        $(document).on('click','.layui-layer-btn1',function () {
+            if (id && str) {
+                //审核不通过
+                $.post("{:U('Teacher/examine')}",{
+                    id:id,
+                    str:str,
+                    status:2
+                },function(data){
+                    if(data == 1){
+                        layer.msg('操作成功',function(){
+                            window.location.reload();
+                        });
+                    }else{
+                        layer.msg('操作失败', function(){
+                            window.location.reload();
+                        });
+                    }
+                })
+            }
+        });
+
+    })
+</script>
+</body>
+</html>

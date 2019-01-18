@@ -1,0 +1,54 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li ><a href="{:U('Circle/index')}">亲子圈列表</a></li>
+        <li class="active" ><a href="{:U('Circle/comment',array('id'=>$_GET['id']))}">查看评论</a></li>
+    </ul>
+    <!--<form class="well form-search" id="formurl" method="post" action="{:U('Circle/index')}">-->
+        <!--关键字：-->
+        <!--<input type="text" name="keyword" style="width: 250px;" value="{:I('request.keyword')}" placeholder="请输入内容关键字">-->
+        <!--用户名：-->
+        <!--<input type="text" name="name" style="width: 250px;" value="{:I('request.name')}" placeholder="请输入用户名">-->
+        <!--时间：-->
+        <!--<input type="text" name="start_time" class="js-datetime" placeholder="开始时间" value="{$_REQUEST['start_time']|default=''}" style="width: 120px;" autocomplete="off">- -->
+        <!--<input type="text" class="js-datetime" name="end_time" placeholder="结束时间" value="{$_REQUEST['end_time']|default=''}" style="width: 120px;" autocomplete="off"> &nbsp; &nbsp;-->
+        <!--<input type="submit" class="btn btn-primary" onclick="return search();" value="搜索" />-->
+        <!--<a class="btn btn-danger" href="{:U('Circle/index')}">清空</a>-->
+    <!--</form>-->
+    <form method="post" class="js-ajax-form">
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <th align="center">ID</th>
+                <th>用户头像</th>
+                <th>用户姓名</th>
+                <th>用户类型</th>
+                <th>评论内容</th>
+                <th>评论时间</th>
+                <th width="200">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach name="list" key="k" item="vo">
+                <tr>
+                    <td align="center">{$k+1}</td>
+                    <td><img src="{$vo['avatar']}" width="80"></td>
+                    <td>{$vo['u_name']?$vo['u_name']:'无'}</td>
+                    <td>{$vo['u_type']==1?"家长":($vo['u_type']==2?"老师":($vo['u_type']==3?"商户":"平台"))}</td>
+                    <td>{$vo.content}</td>
+                    <td>{$vo.create_time}</td>
+                    <td align="center">
+                        <a class="js-ajax-dialog-btn" data-msg="您确定要删除吗" href="{:U('Circle/deleteComment',array('id'=>$vo['id']))}">删除</a>
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+        <div class="pagination">{$page}</div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

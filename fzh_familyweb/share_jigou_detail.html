@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>机构详情页</title>
+  <script src="js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="css/ku/hui.css">
+  <link rel="stylesheet" href="css/ku/weui.min.css">
+  <link rel="stylesheet" href="css/ku/jquery-weui.min.css">
+  <link rel="stylesheet" href="css/ku/style.css">
+  <script src="js/ku/hui.js"></script>
+  <script src="js/ku/template-web.js"></script>
+  <script src="js/ku/jquery-1.12.4.min.js"></script>
+  <script src="js/ku/jquery-weui.js"></script>
+  <script src="js/ku/swiper_jqueryweui.js"></script>
+</head>
+
+<body ontouchstart>
+
+  <div class="content_box pad_wei">
+    <div class="content_scroll">
+      <!--内容开始-->
+      <div id="contain"></div>
+      <!--内容end-->
+    </div>
+  </div>
+
+  <!--shuju.icon需要判断下，有的有，有的没有（不是会员的就是空字符串）-->
+  <script type="text/html" id="tpl">
+    <div class="pad_l10 pad_r10 pad_t10 bgcolorfff mar_b5">
+    <div class="tableblock">
+      <div style="width: 23%;" class="vertop">
+        <div class="img_box img100 rela">
+          <%if(shuju.icon!=''){%>
+          <img src="<%=path_img+shuju.icon%>" width="18" class="abso" style="top: 1px;left: 1px;z-index: 1" alt="">
+          <%}%>
+          <div class="img_content">
+            <img class="border_radiu4 border_all imgone" src="<%=path_img+shuju.s_img%>" alt=""/>
+          </div>
+        </div>
+      </div>
+      <div class="pad_l10">
+        <div class="tableblock pad_l5 border_b">
+          <div>
+            <p class="font16"><%=shuju.s_name%></p>
+            <p class="font13 color999 mar_b5"><%=shuju.s_content%></p>
+            <div class="tableblock pad_b5">
+              <div class="col-xs-8">
+                <div class="pad_l5 font0 mar_b5 colorzt">
+                  <span class="inblock star <%=shuju.star>=1?'all':''%> <%=shuju.star>=0.5 && shuju.star<1?'half':''%>"></span>
+                  <span class="inblock star <%=shuju.star>=2?'all':''%> <%=shuju.star>=1.5 && shuju.star<2?'half':''%>"></span>
+                  <span class="inblock star <%=shuju.star>=3?'all':''%> <%=shuju.star>=2.5 && shuju.star<3?'half':''%>"></span>
+                  <span class="inblock star <%=shuju.star>=4?'all':''%> <%=shuju.star>=3.5 && shuju.star<4?'half':''%>"></span>
+                  <span class="inblock star <%=shuju.star>=5?'all':''%> <%=shuju.star>=4.5 && shuju.star<5?'half':''%>"></span>
+                  <span class="inblock lineh_normal font12 mar_l5"><%=$imports.num1(shuju.star)%></span>
+                </div>
+              </div>
+              <div class="txt_right col-xs-4">
+                <img src="img/twoqi/huo.png" class="inblock" height="12" alt="">
+                <span class="colorzt inblock font12"><%=shuju.view_num%></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="font12 color999 pad_t10 pad_b10">
+          <!-- 下面这个是固定的 点击这个并不需要跳转到认证信息页面，下面的图片都在形象展示里面-->
+          <span class="zz_icon mar_r5 inblock">身份认证</span>
+          <span class="zz_icon mar_r5 inblock">资质荣誉</span>
+          <span class="zz_icon mar_r5 inblock">健康证</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bgcolorfff">
+    <a class="block pad10 mar_b5 font14" href="javascript:;" onclick="openApp(parentId)">
+      <div class="tableblock">
+        <div>
+          <%=shuju.address%>
+        </div>
+        <div class="txt_right" style="width: 50px;">
+          <div class="border_l">
+            <img src="img/daohang.png" width="40">
+          </div>
+        </div>
+      </div>
+    </a>
+    <div class="tableblock txt_center pad_t10 pad_b10">
+      <!-- <div onclick="goqinzi()">
+        <div class="font18 color333">{{shuju.crafts}}</div>
+        <div class="font12 color999">亲子圈</div>
+      </div> -->
+      <!-- <div onclick="goxiaoyuan()">
+        <div class="font18 color333">{{shuju.campus}}</div>
+        <div class="font12 color999">教学圈</div>
+      </div> -->
+      <!--后期再加-->
+      <!--<div>-->
+        <!--<div class="font18 color333">555</div>-->
+        <!--<div class="font12 color999">萌宝游记</div>-->
+      <!--</div>-->
+      <div onclick="openApp(parentId)">
+        <div class="font18 color333">{{shuju.small_teacher}}</div>
+        <div class="font12 color999">师资</div>
+      </div>
+      <div onclick="openApp(parentId)">
+        <div class="font18 color333">{{shuju.online_list}}</div>
+        <div class="font12 color999">线上课堂</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 优惠券-->
+  <div class="pad10 mar_t5 bgcolorfff">
+    <div class="tableblock">
+      <div class="font14 color333 wrem5">优惠券</div>
+      <div>
+        <%if(shuju.coupon){%>
+        <span class="inblock border_radiu4 colorzt font12" style="padding: 4px 16px;border:1px solid #ff6000">满<%=shuju.coupon.min_consumption%>元减<%=shuju.coupon.money%>券</span>
+        <%}%>
+      </div>
+      <div class="txt_right" style="width: 50px;">
+        <div class="border_l">
+          <span class="color666 font16" onclick="openApp(parentId)">领券</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <%if(shuju.video.length>0){%>
+  <div class="bgcolorfff pad10 mar_b5 rela mar_t5">
+    <a class="nohover font12 color999 bgcolorfff border_all border_radiu4 inblock abso" href="javascript:;" style="padding: 6px 12px;right: 10px;top: 10px;z-index: 10">查看更多</a>
+    <%for(var i=0;i<shuju.video.length;i++){%>
+    <%var el=shuju.video[i];%>
+    <div class="col-xs-12 inblock rela mar_r5" onclick="openApp(parentId)">
+      <div class="imgp" style="padding-bottom: 63.63%">
+        <%if(el.img_url.indexOf('http')==-1){%>
+        <img src="<%=path_img+el.img_url%>" alt="">
+        <%}else{%>
+        <img src="<%=el.img_url%>" alt="">
+        <%}%>
+      </div>
+      <div class="mengceng"></div>
+      <img src="img/twoqi/playbtn.png" class="videolistplaybtn" alt="">
+    </div>
+    <%}%>
+  </div>
+  <%}%>
+  <%if(shuju.video.length==0){%>
+  <div class="bgcolorfff pad10 mar_b5 mar_t5" style="white-space: nowrap;overflow-x:auto;">
+    <div class="empty">暂无视频</div>
+  </div>
+  <%}%>
+
+  <div class="mar_t5 bgcolorfff pad10">
+    <div class="font14 color333 mar_b10">师资展示</div>
+    <%if(shuju.small_teacher_list.length==0){%>
+    <div class="empty">暂无数据</div>
+    <%}%>
+    <%if(shuju.small_teacher_list.length>0){%>
+    <div class="clear txt_center">
+      <%for(var i=0;i<shuju.small_teacher_list.length;i++){%>
+      <%var el=shuju.small_teacher_list[i];%>
+      <div class="col-xs-13 L" onclick="openApp(parentId)">
+        <div class="mar_b10 pad_l5 pad_r5">
+          <div class="imgp" style="padding-bottom: 100%">
+            <%if(el.img.indexOf('http')==-1){%>
+            <img src="<%=path_img+el.img%>" class="border_radius50" alt="">
+            <%}else{%>
+            <img src="<%=el.img%>" class="border_radius50" alt="">
+            <%}%>
+          </div>
+        </div>
+        <div class="font13 color333 txt_oneline pad_l5 pad_r5"><%=el.name%></div>
+        <div class="font12 color999 txt_oneline pad_l5 pad_r5"><%=el.desc%></div>
+      </div>
+      <%}%>
+      <div class="col-xs-13 L" onclick="openApp(parentId)">
+        <div class="mar_b10 pad_l5 pad_r5">
+          <div class="imgp border_radiu50" style="padding-bottom: 100%">
+            <img src="img/more.png" alt="">
+          </div>
+        </div>
+      </div>
+    </div>
+    <%}%>
+  </div>
+
+  <div class="pad_l10 pad_r10 bgcolorfff marok mar_t5">
+    <div class="tuoguandetTab tableblock bgcolorfff border_b txt_center color666 font14" style="height: 46px;">
+      <a onclick="tabClick(0)" href="javascript:;" class="posra block <%=tabIndex==0?'on':''%>">
+        <span class="tuoguanTabBdr"></span>
+        <div>课程购买</div>
+      </a>
+      <a onclick="tabClick(1)" href="javascript:;" class="posra block <%=tabIndex==1?'on':''%>">
+        <span class="tuoguanTabBdr"></span>
+        <div>线下活动</div>
+      </a>
+      <a onclick="tabClick(2)" class="posra block <%=tabIndex==2?'on':''%>" href="javascript:;">
+        <span class="tuoguanTabBdr"></span>
+        <div>形象展示</div>
+      </a>
+      <a onclick="tabClick(3)" href="javascript:;" class="block <%=tabIndex==3?'on':''%>">
+        <div>机构简介</div>
+      </a>
+    </div>
+    <%if(tabIndex==0){%>
+    <%if(tablist[0].length==0){%>
+    <div class="empty">暂无数据</div>
+    <%}%>
+    <ul class="bgcolorfff">
+      <%for(var i=0;i<tablist[0].length;i++){%>
+      <%var el=tablist[0][i];%>
+      <li class="border_b">
+        <a href="javascript:;" class="block pad_t10 pad_b10">
+          <div class="tableblock">
+            <div style="width: 94px">
+              <div class="imgp border_all" style="padding-bottom: 56.25%;width: 84px">
+                <img src="<%=path_img+el.img%>" alt=""  style="border-radius: 6px;">
+              </div>
+            </div>
+            <div>
+              <div class="tableblock">
+                <div class="col-xs-9">
+                  <div class="font14 color333 txt_oneline"><%=el.title%></div>
+                </div>
+                <div class="col-xs-3 txt_right font12 coloraaa">
+                  <span class="colorzt"><%=el.buy_num%></span>人购买
+                </div>
+              </div>
+              <div class="font12 coloraaa txt_oneline">
+                <span><%=el.grade%> <%=el.sub1%> <%=el.sub2%></span>
+                <span class="colorzt mar_l10 font14"><%=el.class%></span>
+                <span>课时</span>
+              </div>
+              <div class="tableblock">
+                <div class="col-xs-7">
+                  <div class="pad_l5 font0 mar_b5 colorzt">
+                    <span class="inblock star <%=el.star>=1?'all':''%> <%=el.star>=0.5 && el.star<1?'half':''%>"></span>
+                    <span class="inblock star <%=el.star>=2?'all':''%> <%=el.star>=1.5 && el.star<2?'half':''%>"></span>
+                    <span class="inblock star <%=el.star>=3?'all':''%> <%=el.star>=2.5 && el.star<3?'half':''%>"></span>
+                    <span class="inblock star <%=el.star>=4?'all':''%> <%=el.star>=3.5 && el.star<4?'half':''%>"></span>
+                    <span class="inblock star <%=el.star>=5?'all':''%> <%=el.star>=4.5 && el.star<5?'half':''%>"></span>
+                    <span class="inblock lineh_normal font12 mar_l5"><%=$imports.num1(el.star)%></span>
+                  </div>
+                </div>
+                <div class="col-xs-5 txt_right">
+                  <b class="font16 colorzt">￥<%=$imports.num2(el.price)%></b>
+                </div>
+              </div>
+            </div>
+          </div>
+        </a>
+      </li>
+      <%}%>
+    </ul>
+    <%}else if(tabIndex==1){%>
+    <%if(tablist[1].length==0){%>
+    <div class="empty">暂无数据</div>
+    <%}%>
+    <ul>
+      <%for(var i=0;i<tablist[1].length;i++){%>
+      <%var el=tablist[1][i];%>
+      <li class="bgcolorfff pad_l10 pad_r10 pad_b10 border_b">
+        <a class="pad_t10 block clear" href="javascript:;">
+
+          <div class="R" style="width:60%;">
+            <div>
+              <div class="font14 c333 txt_oneline"><%=el.title%></div>
+              <div class="font12 c666 txt_oneline  mar_t5">
+                <!-- <span class="inblock">活动时间：<%=el.start%>-<%=el.end%></span>   -->
+                <span class="inblock"><%=el.age_title%> | <%=el.target%></span>  
+              </div>
+              <div class="clear mar_t5">
+
+                  <!-- <div class="wrem7 txt_right R clear">
+                    <span class="colorfff font14 bgcolorzt border_radiu4 pad_t5 pad_b5 wrem6 txt_center inblock">立即报名</span>
+                  </div> -->
+                  <div class="clear mar_t5">
+                      <!-- <img src="img/twoqi/video_eye.png" height="8" class="inblock " alt="">
+                      <span class="color999 inblock"><%=el.view_num%></span> -->
+
+                      <span class="R color999 font10">￥<span class="font14" style="color:#E8314F;"><%=el.money%></span>起</span>
+                        <span class="color999 inblock L">累计<%=el.sign_up_num%>人报名</span>
+                  </div>
+
+              </div>
+            </div>
+          </div>
+          <div class="imgp mar_b10 L" style="padding-bottom: 24%;width:35%;">
+            <img src="<%=path_img+el.img%>" alt="" height="100%" style="border-radius: 6px;">
+          </div>
+          
+        </a>
+      </li>
+      <%}%>
+    </ul>
+    <%}else if(tabIndex==2){%>
+    <div>
+      <%if(shuju.imgs.length>0){%>
+      <div id="tab2con" class="clear pad_t20 pad_b10">
+        <%for(var i=0;i<shuju.imgs.length;i++){%>
+        <%var el=shuju.imgs[i];%>
+        <div class="L col-xs-6 mar_b10 pad_l5 pad_r5">
+          <div class="img_box img7187">
+            <a class="img_content" href="javascript:;" onclick="openApp(parentId)">
+              <div class="inblock imgone" style="background-image: url(<%=path_img+el.url%>);background-size: cover;background-repeat: no-repeat;border-radius: 6px;overflow:hidden;"></div>
+            </a>
+          </div>
+        </div>
+        <%}%>
+      </div>
+      <%}else{%>
+      <div class="empty">暂无数据</div>
+      <%}%>
+    </div>
+    <%}else if(tabIndex==3){%>
+    <div>
+      <%if(shuju.introduction){%>
+      <div style="padding: 20px">
+        <div class="color666 font14" id="tab1con"><%-shuju.introduction%></div>
+      </div>
+      <%}else{%>
+      <div class="empty">暂无数据</div>
+      <%}%>
+    </div>
+    <%}%>
+  </div>
+
+  <!-- 底部固定 start-->
+  <div class="footer">
+    <div class="tableblock h100">
+      <div class="col-xs-8">
+        <div class="pad_l10">
+          <div class="inblock" onclick="openApp(parentId)">
+            <img src="img/twoqi/contact.png" alt="" height="20" class="inblock">
+            <span class="font14 colorzt inblock">咨询</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-4 font16 colorfff bgcolorzt txt_center" onclick="botelfun()">
+        <img src="img/twoqi/jigou_tel.png" class="inblock" height="15" alt="">
+        <span class="inblock">联系机构</span>
+      </div>
+    </div>
+  </div>
+  <!-- 底部固定 end-->
+</script>
+
+
+
+
+
+
+
+
+  <script>
+
+    var parentId = "";
+    if (!Getvariable('parent_id')) {
+        parentId = "";
+    } else {
+        parentId = Getvariable('parent_id');
+    }
+
+    var aid; //结构id
+    if (!Getvariable('pid')) {
+        $.toast('少pid', 'text');
+    } else {
+        aid = Getvariable('pid');
+    }
+    var token = localStorage.getItem('user_token');
+    
+    if (Getvariable('token')) {
+      token = Getvariable('token');
+    }
+
+    var data = {
+      path_img: path_img,
+      shuju: {
+        video: [],
+        small_teacher_list: []
+      },
+      tabIndex: 0,
+      photosUrl: [],
+      oprate: true,
+
+      //后两个没用，占位使
+      tablist: [
+        [],
+        [],
+        [],
+        []
+      ],
+      page: [2, 2, 2, 2],
+      loading: [false, false, false, false]
+    };
+
+    function renderhtml() {
+      document.getElementById('contain').innerHTML = template('tpl', data);
+    }
+
+
+
+
+    //初始加载
+    pre_loading(0);
+    var photos, pid;
+
+    //页面参数
+    if (!Getvariable('pid')) {
+      pre_loading(3);
+    } else {
+      pid = Getvariable('pid'); //机构id
+      $.ajax({
+        url: path_inter + "parents/Educational/detail",
+        dataType: 'json',
+        type: 'post',
+        data: {
+          token: token,
+          st_id: pid
+        },
+        success: function (res) {
+          pre_loading(100);
+          if (user_overdue(res.code, res.msg)) {
+            res.data.st_id = parseInt(res.data.st_id); //0000000048  去掉前面的0
+            data.shuju = res.data;
+            var photosUrl = [];
+            for (var i = 0; i < res.data.imgs.length; i++) {
+              photosUrl.push(path_img + res.data.imgs[i].url);
+            }
+            data.photosUrl = photosUrl;
+            renderhtml();
+            iscollect(pid, res.data.collection);
+          }
+        },
+        error: function () {
+          pre_loading(1);
+        }
+      });
+
+      //课程购买
+      $.ajax({
+        url: path_inter + "parents/Course/index",
+        dataType: 'json',
+        type: 'post',
+        data: {
+          token: token,
+          st_id: pid
+        },
+        success: function (res) {
+          if (user_overdue(res.code, res.msg)) {
+            data.tablist[0] = res.data;
+            renderhtml();
+          }
+        },
+        error: function () {
+
+        }
+      });
+    }
+
+
+
+    function zixun() {
+      app_contact(data.shuju.accid);
+    }
+
+    function botelfun() {
+      app_contact2(data.shuju.s_phone);
+    }
+    //放大
+    function fangda(i) {
+      fangdaPhotos(data.photosUrl, i);
+      photos.open(i); //打开
+    }
+    //点击放大的相册
+    function fangdaPhotos(photosUrl, index) {
+      photos = $.photoBrowser({
+        items: photosUrl,
+        initIndex: index
+      });
+    }
+
+    function tabClick(zhi) {
+      data.tabIndex = zhi;
+
+      //重置
+      data.page = [2, 2, 2, 2];
+      data.loading = [false, false, false, false];
+
+      //不显示 课程购买 线下活动的 已经加载完成
+      load_closeanimation("load_animation_activity", 1);
+      load_closeanimation("load_animation_courselist", 1);
+
+      //课程购买 线下活动 形象展示 机构简介
+      if (data.tabIndex == 1) {
+        //线下活动
+        $.ajax({
+          // parents/Activity/index
+          url: path_inter + "client/activity/lists",
+          dataType: 'json',
+          type: 'post',
+          data: {
+            token: token,
+            st_id: data.shuju.st_id
+          },
+          success: function (res) {
+            if (user_overdue(res.code, res.msg)) {
+              data.tablist[1] = res.data;
+              renderhtml();
+            }
+          },
+          error: function () {
+
+          }
+        });
+      } else {
+        renderhtml();
+      }
+    }
+
+    function daohang() {
+      app_daohang(data.shuju.address, data.shuju.s_xy);
+    }
+
+    function govideodel(vid) {
+      appJigouVideoDet(vid);
+    }
+
+
+
+
+    //上拉加载
+    $(".content_box").infinite().on("infinite", function () {
+      if (data.tablist[data.tabIndex].length == 0 || data.loading[data.tabIndex] || !data.oprate) {
+        return false;
+      }
+
+      data.oprate = false;
+
+      var obj = $(this);
+      data.loading[data.tabIndex] = true; //关闭下拉加载
+
+      //课程购买 线下活动 形象展示 机构简介
+      if (data.tabIndex == 0) {
+        load_addanimation("load_animation_courselist", obj);
+
+        //课程购买
+        $.ajax({
+          url: path_inter + "parents/Course/index",
+          dataType: 'json',
+          type: 'post',
+          data: {
+            token: token,
+            st_id: pid,
+            page: data.page[data.tabIndex]
+          },
+          success: function (res) {
+            data.oprate = true;
+            if (user_overdue(res.code, res.msg)) {
+              data.tablist[data.tabIndex] = data.tablist[data.tabIndex].concat(res.data);
+              renderhtml();
+
+              if (res.data.length > 0) {
+                data.page[data.tabIndex]++;
+                data.loading[data.tabIndex] = false;
+                load_closeanimation("load_animation_courselist", 1);
+              } else {
+                load_closeanimation("load_animation_courselist", 0);
+              }
+            }
+          },
+          error: function () {
+            data.oprate = true;
+          }
+        });
+      } else if (data.tabIndex == 1) {
+        load_addanimation("load_animation_activity", obj);
+
+        //线下活动
+        $.ajax({
+          // parents/Activity/index
+          url: path_inter + "client/activity/lists",
+          dataType: 'json',
+          type: 'post',
+          data: {
+            token: token,
+            st_id: data.shuju.st_id,
+            page: data.page[data.tabIndex]
+          },
+          success: function (res) {
+            data.oprate = true;
+            if (user_overdue(res.code, res.msg)) {
+              data.tablist[data.tabIndex] = data.tablist[data.tabIndex].concat(res.data);
+              renderhtml();
+
+              if (res.data.length > 0) {
+                data.page[data.tabIndex]++;
+                data.loading[data.tabIndex] = false;
+                load_closeanimation("load_animation_activity", 1);
+              } else {
+                load_closeanimation("load_animation_activity", 0);
+              }
+            }
+          },
+          error: function () {
+            data.oprate = true;
+          }
+        });
+      }
+    });
+
+    function seemoreVideo() {
+      //查看更多
+      appJigouVideoList(data.shuju.st_id);
+    }
+
+    function goqinzi() {
+      var isshoucang = data.shuju.collection == -1 ? false : true;
+      appQinziMoreMeIndex(1, 3, data.shuju.st_id, isshoucang);
+    }
+
+    function goxiaoyuan() {
+      var isshoucang = data.shuju.collection == -1 ? false : true;
+      appQinziMoreMeIndex(2, 3, data.shuju.st_id, isshoucang);
+    }
+
+    function shizilist() {
+      location.href = 'shizi_list.html?flag=1&pid=' + pid; //flag 1机构 2托管
+    }
+
+    function shizidet(el) {
+      location.href = 'shizi_det.html?flag=1&pid=' + pid + '&tid=' + el.teacher_id;
+    }
+
+    function lingquan() {
+      //领券
+      location.href = 'jigoutuoguan_getquan.html?flag=1&pid=' + pid;
+    }
+
+    function courseOnline() {
+      appJigouCourseOnlineVideoList(data.shuju.st_id);
+    }
+
+
+    function openApp(a) {
+
+
+      // var spellId = (vm.shuju.spell_id == undefined ? " " : vm.shuju.spell_id);
+
+      // var open_IOS = 'shareparent://?business_type=1&pid=' + aid + "&spell_id=" + spellId; // ios
+      // var open_Adr = 'shareparents://project.com?business_type=1&pid=' + aid + "&spell_id=" + spellId; // android
+      var open_IOS = 'shareparent://?business_type=1&pid=' + aid; // ios
+      var open_Adr = 'shareparents://project.com?business_type=1&pid=' + aid; // android
+      console.log(open_Adr)
+      console.log(open_IOS)
+      if (/android/i.test(navigator.userAgent)) {
+        window.location.href = open_Adr;
+        window.setTimeout(function () {
+          window.location.href = '/fzh_teacherweb/twoqi/sign.html?parent_id=' + a;
+        }, 6000);
+      }
+      if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
+        window.location.href = open_IOS;
+        window.setTimeout(function () {
+          window.location.href = '/fzh_teacherweb/twoqi/sign.html?parent_id=' + a;
+        }, 6000);
+      }
+      if (navigator.userAgent.toLowerCase().indexOf("micromessenger") > -1) {
+        vm.weixinshow = true;
+      }
+    }
+  </script>
+</body>
+
+</html>

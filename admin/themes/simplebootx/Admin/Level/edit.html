@@ -1,0 +1,48 @@
+<admintpl file="header" />
+<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.2&key=aaeb9bb85528fb6aa40ffbcdefa5de32&plugin=AMap.Autocomplete"></script>
+<script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li><a href="{:U('Level/index')}">会员等级管理</a></li>
+			<li><a href="{:U('Level/add')}">新增会员等级</a></li>
+			<li class="active"><a>修改会员等级</a></li>
+		</ul>
+		<form method="post" class="form-horizontal js-ajax-form" action="{:U('Level/edit')}" enctype="multipart/form-data" >
+			<input type="hidden" name="id" value="{$rs.id}">
+			<fieldset>
+				<div class="control-group">
+					<label class="control-label">等级名称</label>
+					<div class="controls">
+						<input type="text" name="name" value="{$rs.name}" required>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">{:L('图表')}</label>
+					<div class="controls">
+						<input type="text" name="icon" value="{$rs.icon}" id="js-link-image"> <a href="javascript:upload_one_image('图片上传','#js-link-image');">上传图片</a>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">充值金额</label>
+					<div class="controls">
+						<input type="number" name="money" value="{$rs.money}" required>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">有效月数</label>
+					<div class="controls">
+						<input type="number" name="time_length" value="{$rs.time_length}" required>个月
+					</div>
+				</div>
+			</fieldset>
+			<div class="form-actions">
+				<button type="submit" class="btn btn-primary ">{:L('SAVE')}</button>
+				<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+			</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

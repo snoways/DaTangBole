@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>机构课程详情</title>
+  <script src="js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="css/ku/weui.min.css">
+  <link rel="stylesheet" href="css/ku/jquery-weui.min.css">
+  <link rel="stylesheet" href="css/ku/hui.css">
+  <link rel="stylesheet" href="css/ku/style.css">
+  <script src="js/ku/hui.js"></script>
+  <script src="js/ku/template-web.js"></script>
+  <script src="js/ku/jquery-1.12.4.min.js"></script>
+  <script src="js/ku/jquery-weui.js"></script>
+  <script src="js/ku/swiper_jqueryweui.js"></script>
+</head>
+<body>
+<div class="content_box pad_wei">
+  <div class="content_scroll">
+    <div id="contain"></div>
+  </div>
+</div>
+
+<script type="text/html" id="tpl">
+  <div class="imgp" style="padding-bottom: 56.25%;">
+    <img src="<%=shuju.img%>" alt="">
+  </div>
+
+  <div class="pad_l10 pad_r10 bgcolorfff">
+    <div class="pad_t10 pad_b10 font15 border_b">
+      <div class="color333"><%=shuju.title%></div>
+      <div class="colorzt mar_t10">
+        <span class="mar_r10 font16">￥<%=$imports.num2(shuju.price)%></span>
+        <span class="font12 color666">已有<span class="colorzt">{{shuju.buy_num}}</span>人购买</span>
+      </div>
+    </div>
+    <div class="tableblock font12 color666 pad_t10 pad_b10">
+      <div class="col-xs-7">
+        <span class="mar_r10"><%=shuju.grade%> <%=shuju.sub1%> <%=shuju.sub2%></span>
+        <span class="colorzt"><%=shuju.class%></span>
+        <span>课时</span>
+      </div>
+      <div class="txt_right col-xs-5">
+        <div class="pad_l5 font0 mar_b5 colorzt">
+          <span class="inblock star <%=shuju.star>=1?'all':''%> <%=shuju.star>=0.5 && shuju.star<1?'half':''%>"></span>
+          <span class="inblock star <%=shuju.star>=2?'all':''%> <%=shuju.star>=1.5 && shuju.star<2?'half':''%>"></span>
+          <span class="inblock star <%=shuju.star>=3?'all':''%> <%=shuju.star>=2.5 && shuju.star<3?'half':''%>"></span>
+          <span class="inblock star <%=shuju.star>=4?'all':''%> <%=shuju.star>=3.5 && shuju.star<4?'half':''%>"></span>
+          <span class="inblock star <%=shuju.star>=5?'all':''%> <%=shuju.star>=4.5 && shuju.star<5?'half':''%>"></span>
+          <span class="inblock lineh_normal font12 mar_l5"><%=$imports.num1(shuju.star)%></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 机构信息start-->
+  <div class="pad_l10 pad_r10 pad_t10 bgcolorfff mar_b5 mar_t5">
+    <div class="tableblock" onclick="jigoudet()">
+      <div style="width: 23%;" class="vertop">
+        <div class="img_box img100 rela">
+          <%if(shuju.educational.icon!=''){%>
+          <img src="<%=path_img+shuju.educational.icon%>" width="18" class="abso" style="top: 1px;left: 1px;z-index: 1" alt="">
+          <%}%>
+          <div class="img_content">
+            <img class="border_radiu4 border_all imgone" src="<%=path_img+shuju.educational.s_img%>" alt=""/>
+          </div>
+        </div>
+      </div>
+      <div class="pad_l10">
+        <div class="tableblock pad_l5 border_b">
+          <div>
+            <p class="font16"><%=shuju.educational.s_name%></p>
+            <p class="font13 color999 mar_b5"><%=shuju.educational.s_content%></p>
+            <div class="tableblock pad_b5">
+              <div class="col-xs-8">
+                <div class="pad_l5 font0 mar_b5 colorzt">
+                  <span class="inblock star <%=shuju.educational.star>=1?'all':''%> <%=shuju.educational.star>=0.5 && shuju.educational.star<1?'half':''%>"></span>
+                  <span class="inblock star <%=shuju.educational.star>=2?'all':''%> <%=shuju.educational.star>=1.5 && shuju.educational.star<2?'half':''%>"></span>
+                  <span class="inblock star <%=shuju.educational.star>=3?'all':''%> <%=shuju.educational.star>=2.5 && shuju.educational.star<3?'half':''%>"></span>
+                  <span class="inblock star <%=shuju.educational.star>=4?'all':''%> <%=shuju.educational.star>=3.5 && shuju.educational.star<4?'half':''%>"></span>
+                  <span class="inblock star <%=shuju.educational.star>=5?'all':''%> <%=shuju.educational.star>=4.5 && shuju.educational.star<5?'half':''%>"></span>
+                  <span class="inblock lineh_normal font12 mar_l5"><%=$imports.num1(shuju.educational.star)%></span>
+                </div>
+              </div>
+              <div class="txt_right col-xs-4">
+                <img src="img/twoqi/huo.png" class="inblock" height="12" alt="">
+                <span class="colorzt inblock font12"><%=shuju.educational.view_num%></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="font12 color999 pad_t10 pad_b10">
+          <!-- 下面这个是固定的 点击这个并不需要跳转到认证信息页面，下面的图片都在形象展示里面-->
+          <span class="zz_icon mar_r5 inblock">身份认证</span>
+          <span class="zz_icon mar_r5 inblock">资质荣誉</span>
+          <span class="zz_icon mar_r5 inblock">健康证</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- 删掉了-->
+  <!--<div class="bgcolorfff">-->
+    <!--<a class="block pad10 mar_b5 font14" href="javascript:;" onclick="daohang()">-->
+      <!--<div class="tableblock">-->
+        <!--<div>-->
+          <!--<%=shuju.educational.address%>-->
+        <!--</div>-->
+        <!--<div class="txt_right" style="width: 50px;">-->
+          <!--<div class="border_l">-->
+            <!--<img src="img/daohang.png" width="40">-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</a>-->
+  <!--</div>-->
+  <!-- 机构信息end-->
+
+  <div class="mar_t5">
+    <div class="bgcolorfff pad_r10 pad_l10 border_b">
+      <div class="tuoguandetTab tableblock bgcolorfff border_b txt_center color666 font14" style="height: 46px;">
+        <a class="posra block <%=tabIndex==0?'on':''%>" onclick="tabClick(0)" href="javascript:;">
+          <span class="tuoguanTabBdr"></span>
+          <div>课程介绍</div>
+        </a>
+        <a onclick="tabClick(1)" href="javascript:;" class="block <%=tabIndex==1?'on':''%>">
+          <div>课程评价</div>
+        </a>
+      </div>
+    </div>
+    <%if(tabIndex==0){%>
+    <div class="bgcolorfff">
+      <%if(shuju.content.length>0){%>
+      <div style="padding: 20px">
+        <div class="color666 font14" id="tab1con"><%-shuju.content%></div>
+      </div>
+      <%}else{%>
+      <div class="empty">暂无数据</div>
+      <%}%>
+    </div>
+    <%}else if(tabIndex==1){%>
+    <%if(shuju.assess.length==0){%>
+    <div class="empty bgcolorfff">暂无评价</div>
+    <%}%>
+    <ul>
+      <%for(var i=0;i<shuju.assess.length;i++){%>
+      <%var el=shuju.assess[i];%>
+      <li class="pad_l10 pad_r10 mar_b5 bgcolorfff">
+        <div class="border_b pad_t10 pad_b10">
+          <div class="tableblock">
+            <div style="width: 60px">
+              <%if(el.status==1){%>
+              <img src="<%=path_img+el.p_img%>" width="50" height="50" class="border_radius50" alt="">
+              <%}else if(el.status==2){%>
+              <img src="img/tx.png" width="50" height="50" class="border_radius50" alt="">
+              <%}%>
+            </div>
+            <div>
+              <div class="tableblock">
+                <div>
+                  <%if(el.child_sex==1){%>
+                  <img src="img/sex1.png" class="inblock" height="14" alt="">
+                  <%}%>
+                  <%if(el.child_sex==2){%>
+                  <img src="img/sex2.png" class="inblock" height="14" alt="">
+                  <%}%>
+                  <span class="font14 color333 inblock"><%=el.child_name%></span>
+                </div>
+                <div class="txt_right">
+                  <div class="pad_l5 mar_b5 colorzt font0">
+                    <span class="star <%=el.star>=1?'all':''%> <%=el.star>=0.5 && el.star<1?'half':''%>"></span>
+                    <span class="star <%=el.star>=2?'all':''%> <%=el.star>=1.5 && el.star<2?'half':''%>"></span>
+                    <span class="star <%=el.star>=3?'all':''%> <%=el.star>=2.5 && el.star<3?'half':''%>"></span>
+                    <span class="star <%=el.star>=4?'all':''%> <%=el.star>=3.5 && el.star<4?'half':''%>"></span>
+                    <span class="star <%=el.star>=5?'all':''%> <%=el.star>=4.5 && el.star<5?'half':''%>"></span>
+                    <span class="inblock lineh_normal font12 mar_l5"><%=$imports.num1(el.star)%></span>
+                  </div>
+                </div>
+              </div>
+              <!-- 年级和科目去掉了-->
+              <!--<div class="font10 color666">-->
+                <!--年级：<span class="color333">小学</span>-->
+                <!--科目：<span class="color333">科目</span>-->
+              <!--</div>-->
+            </div>
+          </div>
+        </div>
+        <div class="pad_t10 pad_b10">
+          <div class="font12 color666"><%-el.content%></div>
+          <div class="mar_t10">
+            <%if(el.img1){%>
+            <img src="<%=el.img1%>" style="width: 50px;height: 50px;border:1px solid #ddd" onclick="showbigtu(<%=el%>,this)" class="mar_r5 inblock" alt="">
+            <%}%>
+            <%if(el.img2){%>
+            <img src="<%=el.img2%>" style="width: 50px;height: 50px;border:1px solid #ddd" onclick="showbigtu(<%=el%>,this)" class="mar_r5 inblock" alt="">
+            <%}%>
+            <%if(el.img3){%>
+            <img src="<%=el.img3%>" style="width: 50px;height: 50px;border:1px solid #ddd" onclick="showbigtu(<%=el%>,this)" class="mar_r5 inblock" alt="">
+            <%}%>
+          </div>
+          <div class="txt_right font12 color999 mar_t10"><%=el.a_time%></div>
+        </div>
+      </li>
+      <%}%>
+    </ul>
+    <%}%>
+  </div>
+
+  <!-- 底部固定 start-->
+  <div class="footer">
+    <div class="tableblock h100">
+      <div class="col-xs-8">
+        <div class="pad_l10 pad_r10">
+          <div class="tableblock">
+            <div>
+              <div class="wrem4 inblock border_r" onclick="zixun()">
+                <img src="img/twoqi/contact.png" alt="" height="20" class="inblock">
+                <span class="font14 colorzt inblock">咨询</span>
+              </div>
+            </div>
+            <div class="txt_right">
+              <b class="font18 colorzt">￥<%=$imports.num2(shuju.price-yhqselectedobj.money)%></b>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 机构的立即购买没有弹窗 直接到确认订单页-->
+      <div class="col-xs-4 font15 colorfff bgcolorzt txt_center" onclick="lijibuy()">立即购买</div>
+    </div>
+  </div>
+  <!-- 底部固定 end-->
+
+
+
+
+  <!-- 底部弹出的选择框 start-->
+  <div class="box_shadow_one" style="display: none"></div>
+  <div class="findteaDetKuang bgcolorfff" style="height: 244px;">
+    <div class="bgcolorzt pad_t5 pad_b5 pad_l10 pad_r10">
+      <img src="img/icon3.png" width="18" class="mar_r5" alt=""/>
+      <span class="inblock colorfff font14" id="currDateobj"></span>
+      <div class="R">
+        <img src="img/x2.png" id="kclose" width="15" alt=""/>
+      </div>
+    </div>
+    <div class="neirong" style="height: 165px">
+      <div class="pad_l10 pad_r10 bgcolorfff">
+        <div class="pad_t10 pad_b10 border_b">
+          <img src="img/twoqi/dot3.png" width="12" class="inblock mar_r5" alt=""/>
+          <span class="colorzt font13 inblock">优惠券</span>
+        </div>
+      </div>
+      <div class="pad10 border_b" onclick="xuanquan()">
+        <div class="pad_l10 pad_r10">
+          <%if(yhqselectedobj.money==0){%>
+          <span class="color999">未选择优惠券</span>
+          <%}else{%>
+          <span class="color666">￥<%=yhqselectedobj.money%></span>
+          <%}%>
+        </div>
+      </div>
+      <div class="pad10 color666 font12">
+        <div class="pad_l10 pad_r10">
+          课程提示：单节退款费￥<%=shuju.tui_price%>，上够<%=shuju.no_class%>节课不予退款
+        </div>
+      </div>
+    </div>
+    <div class="tableblock" style="height: 46px">
+      <div class="col-xs-8 color666 border_t txt_right">
+        <div class="pad_r10">
+          <b class="font15 colorzt">￥<%=$imports.num2(shuju.price-yhqselectedobj.money)%></b>
+        </div>
+      </div>
+      <a class="col-xs-4 bgcolorzt colorfff font16 txt_center" href="javascript:lijibuy2();">立即购买</a>
+    </div>
+  </div>
+  <!-- 底部弹出的选择框 end-->
+
+
+</script>
+
+<script>
+  ioshistorygoback();
+
+  //初始加载
+  pre_loading(0);
+
+  var token=localStorage.getItem("user_token");
+
+  if(Getvariable('token')){
+    token=Getvariable('token');
+  }
+
+  var pid;
+  if (!Getvariable("pid")) {
+    pre_loading(404, "此课程不存在")
+  }else {
+    var data={
+      path_img:path_img,
+
+      currDate:'',
+
+      yhqselectedobj:{money:0},
+      yhq_id:'',
+
+      tabIndex:0,
+      shuju:{}
+    };
+    function renderhtml(){
+      document.getElementById('contain').innerHTML=template('tpl', data);
+    }
+
+
+
+    pid=Getvariable("pid");
+    //课程详情
+    hui.post(
+      path_inter+'/parents/Course/detail',
+      {
+        token: token, ec_id:pid
+      },
+      function(res){
+        res = JSON.parse(res);
+        pre_loading(100);
+        if (user_overdue(res.code,res.msg)) {
+          data.shuju=res.data;
+          renderhtml();
+
+          if(sessionStorage.getItem('yhqselected1')){
+            data.yhqselectedobj=JSON.parse(sessionStorage.getItem('yhqselected1'));
+            data.yhq_id=data.yhqselectedobj.crid;
+
+            renderhtml();
+
+            lijibuy();
+          }
+
+          pagedo();
+        }
+      },
+      function(){
+        //error
+        pre_loading(1);
+      }
+    );
+  }
+
+  function zixun(){
+    app_contact(data.shuju.accid);
+  }
+  function tabClick(zhi){
+    data.tabIndex = zhi;
+    renderhtml();
+  }
+  function xuanquan(){
+    location.href='yhq_select.html?type=3&money='+data.shuju.price;
+  }
+  function toTwo(num){
+    return num<10?'0'+num:num;
+  }
+  function lijibuy(){
+    //2018-04-09 星期一 09:18:33
+    var currtime=new Date();
+    var xingqiArr=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+    var datestr=currtime.getFullYear()+'-'+toTwo(currtime.getMonth()+1)+'-'+toTwo(currtime.getDate())+' '+xingqiArr[currtime.getDay()]+' '+toTwo(currtime.getHours())+':'+toTwo(currtime.getMinutes())+':'+toTwo(currtime.getSeconds());
+    $('#currDateobj').html(datestr);
+
+    $('.box_shadow_one').fadeIn();
+    $('.findteaDetKuang').css('bottom','244px');
+    $('.content_box').css('overflow-y','hidden');
+  }
+  function lijibuy2(){
+    //下单--课程订单
+    hui.post(
+      path_inter+'/parents/Course/addOrder',
+      {
+        token: token, ec_id:pid,cr_id:data.yhq_id
+      },
+      function(res){
+        res = JSON.parse(res);
+        if (user_overdue(res.code,res.msg)){
+          var sn=res.data.sn;
+          var title=res.data.title;
+          var grade=res.data.grade;
+          var class_num=res.data.class_num;
+          var o_time=res.data.o_time;
+          var subject=res.data.subject;
+
+          var price=data.shuju.price-data.yhqselectedobj.money;//商品价格-优惠券
+          appPayJigou(sn,o_time,'',price,title,2,subject,class_num);
+        }
+      },
+      function(){
+        //error
+        pre_loading(1);
+      }
+    );
+  }
+  function pagedo(){
+    //点击x 点击遮罩
+    $('#kclose,.box_shadow_one').click(function () {
+      $('.box_shadow_one').fadeOut();
+      $('.findteaDetKuang').css('bottom','0');
+      $('.content_box').css('overflow-y','auto');
+    });
+  }
+  function showbigtu(el,that){
+    //查看评价大图
+    var arr=[];
+    var index=$(that).index();
+    if(el.img1){
+      arr.push(el.img1);
+    }
+    if(el.img2){
+      arr.push(el.img2);
+    }
+    if(el.img3){
+      arr.push(el.img3);
+    }
+    var pb1 = $.photoBrowser({
+      items: arr,
+      initIndex:index
+    });
+    pb1.open();  //打开
+  }
+
+
+  function daohang(){
+    app_daohang(data.shuju.educational.address,data.shuju.educational.s_xy);
+  }
+  function jigoudet(){
+    appJigouDet(data.shuju.st_id);
+  }
+</script>
+</body>
+</html>

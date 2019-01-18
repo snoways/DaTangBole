@@ -1,0 +1,305 @@
+<!-- 活动详情 -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>我的分享-活动详情</title>
+    <script src="../js/ku/common_nojq.js"></script>
+    <link rel="stylesheet" href="../css/ku/hui.css">
+    <link rel="stylesheet" href="../css/ku/weui.min.css">
+    <link rel="stylesheet" href="../css/ku/jquery-weui.min.css">
+    <link rel="stylesheet" href="../css/ku/style.css">
+    <script src="../js/ku/hui.js"></script>
+    <script src="../js/ku/vue.min.js"></script>
+    <script src="../js/ku/jquery-1.12.4.min.js"></script>
+    <script src="../js/ku/jquery-weui.js"></script>
+    <script src="../js/ku/swiper_jqueryweui.js"></script>
+</head>
+<style>
+    .content * {
+        max-width: 100%!important;
+    	font-size: 100%!important;
+    	margin: auto!important;
+    }
+    hr{
+        border-bottom:1px solid; 
+    }
+</style>
+
+<body>
+
+    <div id="app" v-cloak>
+        <!-- 轮播图部分 -->
+        <div class="mar_b10">
+            <!-- Swiper -->
+            <div class="swiper-container w100" style="height:260px;">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide" v-for="(item,index) in shuju.imgs" @click="openApp(parentId)"><img :src="path_img+item.path"
+                            alt=""></div>
+                </div>
+            </div>
+            <div class="pad_t10 pad_b10 pad_l20 pad_r20 bgcolorfff">
+                <div class="activity_title mar_b10">
+                    <p class="color333 pad_r10" @click="openApp(parentId)">{{shuju.title}}</p>
+                    <span class="bgcolorccc" style="width:1px;height:15px;"></span>
+                    <span class="share_btn color999 pad_l10" @click="openApp(parentId)">分享</span>
+                </div>
+                <p class="color999 mar_b10" style="text-align: justify;" @click="openApp(parentId)">{{shuju.extra_title}}</p>
+                <p class="color999"><span class="font12 txt_ver_b">￥</span><span class="font14 colorzt">{{shuju.money}}</span><span
+                        class="font12 txt_ver_b">起</span>
+                    <!-- <del class="txt_ver_b color999 font10">￥3680</del> -->
+                </p>
+            </div>
+        </div>
+        <!-- 拼团部分 -->
+        <div class="bgcolorfff mar_b10" v-if="shuju.spell == 1 && shuju.spells.length > 0">
+            <div class="border_b pad_l20 pad_r20 pad_t10 pad_b10">
+                <span class="money_group pad5 pad_t2 pad_b2 font12 bgcolorpink colorfff inblock">返现团</span>
+                <span class="inblock">拼团玩法</span> <i class="inblock group_question"></i>
+            </div>
+            <div class="pad_l20 pad_r20 pad_t10 pad_b10 txt_center">
+                <p class="font12 color999">支付开团并邀请1家参团，拼团成功后所有家庭将收到返现￥100</p>
+                <ul class="group_people">
+                    <li @click="openApp(parentId)">
+                        <img :src="shuju.spells[0].users[0].avatar" alt=""><span class="font10 bgcolorpink colorfff">团长</span>
+                    </li>
+                    <li @click="openApp(parentId)"></li>
+                </ul>
+                <p class="font16 color333">仅剩下<span class="colorredq">1</span>个名额</p>
+                <button class="open_group_btn bgcoloryellow mar_t20 mar_b20 pad_t5 pad_b5 font16" @click="openApp(parentId)">我要参团</button>
+            </div>
+        </div>
+        <!-- 说明列表部分 -->
+        <div class="bgcolorfff mar_b10">
+            <ul>
+                <li class="pad_t10 pad_b10 pad_l20 pad_r20 border_b"><i class="icon-item1 inblock mar_r5"></i>{{shuju.age_instrument}}</li>
+                <li class="pad_t10 pad_b10 pad_l20 pad_r20 border_b"><i class="icon-item2 inblock mar_r5"></i>{{shuju.target}}</li>
+                <li class="pad_t10 pad_b10 pad_l20 pad_r20 border_b"><i class="icon-item3 inblock mar_r5"></i>
+                    {{shuju.customer_tel}}</li>
+                <li v-for="(item,index) in shuju.sing_times" class="pad_t10 pad_b10 pad_l20 pad_r20 border_b"><i class="icon-item4 inblock mar_r5"></i>{{item.start}}</li>
+            </ul>
+        </div>
+        <!-- 套餐 -->
+        <div class="bgcolorfff mar_b10">
+            <ul>
+                <li v-for="(item,index) in shuju.attrs" class="activity_title border_b pad_l20 pad_r20 pad_t10 pad_b10">
+                    <div>
+                        <p><span class="money_group pad5 pad_t2 pad_b2 font12 bgcolorpink colorfff inblock">返现团</span>
+                            <span class="inblock">{{item.title}}</span></p>
+                        <p class="color999">{{item.introduce}}</p>
+                        <p class="colorredq txt_xh" @click="openApp(parentId)">套餐说明</p>
+                    </div>
+                    <div class="txt_center">
+                        <p class="colorredq"><span class="color999">￥</span>{{item.price}}</p>
+                        <button class="bgcoloryellow  pad_l20 pad_r20 pad_t5 pad_b5 border_radiu4" @click="openApp(parentId)">发起拼团</button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <!-- 用户评论 -->
+        <div class="bgcolorfff mar_b10">
+            <div class="border_b pad_l20 pad_r20 pad_t10 pad_b10">
+
+                <span class="R">共{{shuju.commentsList.activity_count}}条评论</span>
+
+                <span class="L bgcoloryellow inblock border_radiu4 mar_r10" style="width:6px;height:20px;"></span>
+                <span class="inblock L">用户评论</span><span class="color999 font14 txt_ver_t">（{{shuju.commentsList.act_people_num}}人出游）</span>
+
+            </div>
+
+            <div class=" pad_l20 pad_r20 pad_t10 pad_b10" v-if="shuju.commentsList.activity_count != 0">
+                <div class="inblock">
+                    <p>{{shuju.commentsList.name}}</p>
+                    <p class="color999 font12">{{shuju.commentsList.create_time}}</p>
+                </div>
+                <img class="L border_radius50 bgcolorzt mar_r10" width="43" height="43" :src="path_img+shuju.commentsList.avatar"
+                    alt="">
+            </div>
+            <p class="pad_l20 pad_r20 pad_t10 pad_b10" style="text-align: justify;" v-if="shuju.commentsList.activity_count != 0">{{shuju.commentsList.content}}</p>
+            <div class="txt_center pad_b10" v-if="shuju.commentsList.activity_count != 0">
+                <button class="bgcoloryellow  pad_l20 pad_r20 pad_t5 pad_b5 border_radiu4" @click="openApp(parentId)">查看全部评论</button>
+            </div>
+        </div>
+        <!-- 活动主办方 -->
+        <div class="bgcolorfff mar_b10">
+            <div class="border_b pad_l20 pad_r20 pad_t10 pad_b10 clear">
+                <!-- <span class="R">共{{activity_count}}条评论</span> -->
+                <span class="L bgcoloryellow inblock border_radiu4 mar_r10" style="width:6px;height:20px;"></span>
+                <span class="inblock L">活动主办方</span>
+            </div>
+            <div class=" pad_l20 pad_r20 pad_t10 pad_b10" style="display:flex;justify-content: flex-start;">
+                <img class="border_radiu4 bgcolorzt mar_r10" width="50" height="45" :src="path_img+shuju.shop.s_img"
+                    alt="">
+                <div class="inblock" style="width:90%;">
+                    <span>{{shuju.shop.s_name}}</span>
+                    <p class="color999 font12">{{shuju.shop.introduction}}</p>
+                </div>
+            </div>
+            <p class="txt_oneline pad_b10" style="text-align: center;">报名人数：<span class="colorredq">{{shuju.shop.act_people_num}}</span>&nbsp;&nbsp;&nbsp;活动数量：<span
+                    class="colorredq">{{shuju.shop.activity_count}}</span></p>
+
+        </div>
+        <!-- tab -->
+        <div class="bgcolorfff pad_wei">
+            <div class="border_b pad_l20 pad_r20 pad_t10 pad_b10 activity_title txt_center activity_tab">
+                <p @click="tabclick(0)"><span class="pad_b10" :class="{'active':tabshow[0]}">产品特色</span></p>
+                <p @click="tabclick(3)"><span class="pad_b10" :class="{'active':tabshow[3]}">活动行程</span></p>
+                <p @click="tabclick(1)"><span class="pad_b10" :class="{'active':tabshow[1]}">费用说明</span></p>
+                <p @click="tabclick(2)"><span class="pad_b10" :class="{'active':tabshow[2]}">购买须知</span></p>
+            </div>
+            <!--  -->
+            <div class="content mar_l20 mar_r20 mar_t10 mar_b10" style="text-align: justify;" v-if="tabshow[0]" v-html="shuju.content"></div>
+            <div class="content mar_l20 mar_r20 mar_t10 mar_b10" style="text-align: justify;" v-if="tabshow[1]" v-html="shuju.fee_description"></div>
+            <div class="content mar_l20 mar_r20 mar_t10 mar_b10" style="text-align: justify;" v-if="tabshow[2]" v-html="shuju.purchase_instructions"></div>
+            <div class="content mar_l20 mar_r20 mar_t10 mar_b10" style="text-align: justify;" v-if="tabshow[3]" v-html="shuju.itinerary_description"></div>
+
+        </div>
+        <div class="footer">
+            <ul class="activity_title bgcolorfff txt_center" @click="openApp(parentId)">
+                <li class="bgcolorfff w100 pad_t10 pad_b10">
+                    <ul class="activity_title txt_center">
+                        <li class="w100">
+                            <p class="icon1"></p>客服
+                        </li>
+                        <li class="w100">
+                            <p class="icon2"></p>收藏
+                        </li>
+                    </ul>
+                </li>
+                <li class="bgcoloryellow w100 pad_t10 pad_b10">￥{{shuju.money}}<br />直接购买</li>
+                <li v-if="shuju.spell == 1" class="colorfff w100  colorfff pad_t10 pad_b10" style="background-color: #653624;">成团返￥{{shuju.spell_refund}}<br />{{shuju.spell_max}}人团</li>
+            </ul>
+        </div>
+        <!-- 微信弹出 -->
+        <div v-if="weixinshow" @click="weixinshow = false" class="L_box_shadow colorfff"><img class="w100" src="../img/shareweixin.png" alt=""></div>
+    </div>
+    <script>
+        pre_loading(0);
+        var parentId = "";
+        if (!Getvariable('parent_id')) {
+            parentId = "";
+        } else {
+            parentId = Getvariable('parent_id');
+        }
+
+
+
+        var aid; //活动id
+        if (!Getvariable('pid')) {
+            $.toast('少pid', 'text');
+        } else {
+            aid = Getvariable('pid');
+            vueinit();
+        }
+        // 轮播图
+        var swiper = new Swiper('.swiper-container');
+        var vm;
+
+        function vueinit() {
+            vm = new Vue({
+                el: '#app',
+                data: {
+                    path_img: path_img,
+                    shuju: {},
+                    tabshow: [1, 0, 0, 0],
+                    parent_id: parentId,
+                    weixinshow: false
+                },
+                methods: {
+                    itemclick: function (index) {
+                        pb1.open(index);
+                    },
+                    tabclick: function (i) {
+                        this.tabshow = [0, 0, 0, 0]
+                        this.tabshow[i] = 1;
+                    },
+                    openApp: function (a) {
+
+
+                       var spellId = (vm.shuju.spell_id == undefined ? " " : vm.shuju.spell_id);
+                        
+                        var open_IOS = 'shareparent://?business_type=1&pid='+aid+"&spell_id="+spellId; // ios
+                        var open_Adr = 'shareparents://project.com?business_type=1&pid='+aid+"&spell_id="+spellId; // android
+                        console.log(open_Adr)
+                        console.log(open_IOS)
+                        if(/android/i.test(navigator.userAgent)){
+                            window.location.href = open_Adr;
+                            window.setTimeout(function () {
+                                window.location.href = '/fzh_teacherweb/twoqi/sign.html?parent_id=' + a;
+                            }, 6000);
+                        }
+                        if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)){
+                            window.location.href = open_IOS;
+                            window.setTimeout(function () {
+                                window.location.href = '/fzh_teacherweb/twoqi/sign.html?parent_id=' + a;
+                            }, 6000);
+                        }
+                        if (navigator.userAgent.toLowerCase().indexOf("micromessenger") > -1) {
+                            vm.weixinshow = true;
+                        }
+                    }
+                },
+                created: function () {
+                    var that = this;
+                    $.ajax({
+                        // parents/Share/activity
+                        url: path_inter + "client/activity/details",
+                        dataType: 'json',
+                        type: 'post',
+                        data: {
+                            id: aid,
+                            request: "web"
+                        },
+                        success: function (res) {
+                            if (user_overdue(res.code, res.msg)) {
+                                vm.shuju = res.data;
+                                pre_loading(100);
+
+                                that.$nextTick(function () {
+                                    pagedo();
+                                });
+                            }
+                        },
+                        error: function () {
+                            pre_loading(1);
+                        }
+                    });
+                }
+            });
+        }
+
+
+        function pagedo() {
+            //确定下载链接
+            if (/android/i.test(navigator.userAgent)) {
+                //安卓
+                $('#download').attr('href', familylink_adr);
+            }
+            if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
+                //苹果
+                $('#download').attr('href', familylink_ios);
+            }
+
+            $('#ioslink').attr('href', familylink_ios);
+            $('#adrlink').attr('href', familylink_adr);
+            $('#iosimg').attr('src', familyma_ios);
+            $('#adrimg').attr('src', familyma_adr);
+        }
+
+        function imginit(index) {
+            var pb1 = $.photoBrowser({
+                items: [
+                    $('#iosimg').attr('src'),
+                    $('#adrimg').attr('src')
+                ],
+                initIndex: index
+            });
+            pb1.open();
+        }
+    </script>
+
+</body>
+
+</html>

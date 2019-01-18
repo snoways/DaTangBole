@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>编辑托管</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- bootstrap -->
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap.css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+
+  <!-- libraries -->
+  <link href="__PUBLIC__/Shopadmin/css/lib/uniform.default.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/select2.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/font-awesome.css" type="text/css" rel="stylesheet"/>
+
+  <!-- global styles -->
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/layout.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/elements.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/icons.css">
+
+  <!-- this page specific styles -->
+  <link rel="stylesheet" href="__PUBLIC__/Shopadmin/css/compiled/form-showcase.css" type="text/css" media="screen"/>
+
+  <!-- open sans font -->
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <script type="text/html" id="photos-item-wrapper">
+    <li id="savedimage{id}">
+      <input id="photo-{id}" type="hidden" name="photos_url[]" value="{filepath}">
+      <input id="photo-{id}-name" type="text" name="photos_alt[]" value="{name}" style="width: 160px;" title="图片名称">
+      <img id="photo-{id}-preview" src="{url}" style="height:250px;width: 250px;" onclick="parent.image_preview_dialog(this.src);">
+      <a href="javascript:upload_one_image('图片上传','#photo-{id}');">替换</a>
+      <a href="javascript:(function(){$('#savedimage{id}').remove();})();">移除</a>
+    </li>
+  </script>
+  <link href="__PUBLIC__/js/artDialog/skins/default.css" rel="stylesheet" />
+
+  <script type="text/javascript">
+      //全局变量
+      var GV = {
+          ROOT: "__ROOT__/",
+          WEB_ROOT: "__WEB_ROOT__/",
+          JS_ROOT: "public/js/",
+          APP:'{$Think.MODULE_NAME}'/*当前应用名*/
+      };
+  </script>
+  <script src="__PUBLIC__/js/wind.js"></script>
+</head>
+<body>
+
+<include file="common/menu" />
+
+
+<!-- main container -->
+<div class="content">
+
+  <div id="pad-wrapper" class="form-page">
+    <div class="row header">
+      <div class="col-md-12">
+        <h3>编辑托管</h3>
+      </div>
+    </div>
+    <form method="post" class="form-horizontal js-ajax-form" action="{:U('Hosting/edit')}">
+      <input type="hidden" name="id" value="{$rs.id}" />
+    <div class="row form-wrapper">
+      <div class="col-md-8 column">
+
+        <fieldset>
+          <div class="field-box">
+            <label class="inputlh">标题</label>
+            <div class="col-md-8">
+              <input type="text" name="title" value="{$rs.title}" class="form-control" required>
+            </div>
+          </div>
+          <div class="field-box">
+            <label class="inputlh">总资费（月度）</label>
+            <div class="col-md-8">
+              <input type="text" name="month_price" value="{$rs.month_price}" class="form-control" required>
+            </div>
+          </div>
+          <div class="field-box">
+            <label class="inputlh">每天资费（元）</label>
+            <div class="col-md-8">
+              <input type="text" name="day_price" value="{$rs.day_price}" class="form-control" required>
+            </div>
+          </div>
+          <div class="field-box">
+            <label class="inputlh">退款资费（天）</label>
+            <div class="col-md-8">
+              <input type="text" name="tui_price" value="{$rs.tui_price}" class="form-control" required>
+            </div>
+          </div>
+          <div class="field-box">
+            <label class="inputlh">不能退款天数</label>
+            <div class="col-md-8">
+              <input type="text" name="no_days" value="{$rs.no_days}" class="form-control" required>
+            </div>
+          </div>
+          <div class="field-box">
+            <label class="inputlh">服务详情介绍</label>
+            <div class="col-md-8">
+              <!--<textarea class="form-control" name="content" required style="height: 140px;" placeholder="{$placeholder}">{$rs.content}</textarea>-->
+              <script type="text/plain" id="content" name="content" style="width: 80%; min-height: 400px;">{$rs.content}</script>
+              <p style="color: red;">注：{$placeholder}</p>
+            </div>
+          </div>
+          <div class="field-box">
+            <label class="inputlh">退款说明</label>
+            <div class="col-md-8">
+              <textarea class="form-control" required style="height: 140px;" placeholder="请输入退款说明，以及使用优惠券情况下的退款说明" name="refunds">{$rs.refunds}</textarea>
+            </div>
+          </div>
+        </fieldset>
+        <div class="field-box">
+          <label class="inputlh"></label>
+          <div class="col-md-8">
+            <button type="submit" class="btn btn-primary mar_r5 js-ajax-submit">保存</button>
+            <a class="btn btn-default" href="{:U('Hosting/index')}">返回</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 column pull-right">
+        <div class="field-box">
+          <label class="inputlh">缩略图（上传尺寸为16:9）</label>
+          <div class="col-md-8">
+            <div>
+              <input type="hidden" name="img" id="thumb" value="">
+              <a href="javascript:upload_one_image('图片上传','#thumb');" class="inb">
+                <img src="{$rs.img}" id="thumb-preview" style="width: 135px;height: 135px;">
+              </a>
+            </div>
+            <div class="mar_t10">
+              <input type="button" class="btn btn-default" onclick="$('#thumb-preview').attr('src','/admin/themes/simplebootx/Public/assets/images/default-thumbnail.png');$('#thumb').val('');return false;" value="取消图片">
+            </div>
+          </div>
+        </div>
+        <div class="field-box">
+          <label class="inputlh">发布时间</label>
+          <div class="col-md-8">
+            <input type="text" name="add_time" value="{:date('Y-m-d H:i:s',time())}" class="form-control" required>
+          </div>
+        </div>
+      </div>
+    </div>
+    </form>
+  </div>
+</div>
+<!-- end main container -->
+
+<!-- scripts for this page -->
+<script src="__PUBLIC__/Shopadmin/js/wysihtml5-0.3.0.js"></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/jquery.uniform.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/theme.js"></script>
+<!--laydate-->
+<script src="__PUBLIC__/Shopadmin/laydate/laydate.js"></script>
+<!--laryer-->
+<script src="__PUBLIC__/Shopadmin/layer/layer.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/common.js"></script>
+<script type="text/javascript">
+    //编辑器路径定义
+    var editorURL = GV.WEB_ROOT;
+</script>
+<script type="text/javascript" src="__PUBLIC__/js/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript">
+    $(function() {
+        //编辑器
+        editorcontent = new baidu.editor.ui.Editor();
+        editorcontent.render('content');
+        try {
+            editorcontent.sync();
+        } catch (err) {
+        }
+
+
+        $(".js-ajax-close-btn").on('click', function(e) {
+            e.preventDefault();
+            Wind.use("artDialog", function() {
+                art.dialog({
+                    id : "question",
+                    icon : "question",
+                    fixed : true,
+                    lock : true,
+                    background : "#CCCCCC",
+                    opacity : 0,
+                    content : "您确定需要关闭当前页面嘛？",
+                    ok : function() {
+                        setCookie("refersh_time", 1);
+                        window.close();
+                        return true;
+                    }
+                });
+            });
+        });
+        /////---------------------
+        Wind.use('validate', 'ajaxForm', 'artDialog', function() {
+            //javascript
+
+            //增加编辑器验证规则
+            jQuery.validator.addMethod('editorcontent', function() {
+                try {
+                    editorcontent.sync();
+                } catch (err) {
+                }
+                return editorcontent.hasContents();
+            });
+            var form = $('form.js-ajax-forms');
+            //ie处理placeholder提交问题
+            if ($.browser && $.browser.msie) {
+                form.find('[placeholder]').each(function() {
+                    var input = $(this);
+                    if (input.val() == input.attr('placeholder')) {
+                        input.val('');
+                    }
+                });
+            }
+
+            var formloading = false;
+            //表单验证开始
+            form.validate({
+                //是否在获取焦点时验证
+                onfocusout : false,
+                //是否在敲击键盘时验证
+                onkeyup : false,
+                //当鼠标掉级时验证
+                onclick : false,
+                //验证错误
+                showErrors : function(errorMap, errorArr) {
+                    //errorMap {'name':'错误信息'}
+                    //errorArr [{'message':'错误信息',element:({})}]
+                    try {
+                        $(errorArr[0].element).focus();
+                        art.dialog({
+                            id : 'error',
+                            icon : 'error',
+                            lock : true,
+                            fixed : true,
+                            background : "#CCCCCC",
+                            opacity : 0,
+                            content : errorArr[0].message,
+                            cancelVal : '确定',
+                            cancel : function() {
+                                $(errorArr[0].element).focus();
+                            }
+                        });
+                    } catch (err) {
+                    }
+                },
+                //验证规则
+                rules : {
+                    'post[post_title]' : {
+                        required : 1
+                    },
+                    'post[post_content]' : {
+                        editorcontent : true
+                    }
+                },
+                //验证未通过提示消息
+                messages : {
+                    'title' : {
+                        required : '请输入标题'
+                    },
+                    'people_num' : {
+                        required : '请输入活动人数'
+                    },
+                    'end_time' : {
+                        required : '请输入截止时间'
+                    },
+                    'money' : {
+                        required : '请输入报名费'
+                    },
+                    'content' : {
+                        required : '请输入详情说明'
+                    }
+                },
+                //给未通过验证的元素加效果,闪烁等
+                highlight : false,
+                //是否在获取焦点时验证
+                onfocusout : false,
+                //验证通过，提交表单
+                submitHandler : function(forms) {
+                    if (formloading)
+                        return;
+                    $(forms).ajaxSubmit({
+                        url : form.attr('action'), //按钮上是否自定义提交地址(多按钮情况)
+                        dataType : 'json',
+                        beforeSubmit : function(arr, $form, options) {
+                            formloading = true;
+                        },
+                        success : function(data, statusText, xhr, $form) {
+                            formloading = false;
+                            if (data.status) {
+                                setCookie("refersh_time", 1);
+                                //添加成功
+                                Wind.use("artDialog", function() {
+                                    art.dialog({
+                                        id : "succeed",
+                                        icon : "succeed",
+                                        fixed : true,
+                                        lock : true,
+                                        background : "#CCCCCC",
+                                        opacity : 0,
+                                        content : data.info,
+                                        button : [ {
+                                            name : '继续添加？',
+                                            callback : function() {
+                                                reloadPage(window);
+                                                return true;
+                                            },
+                                            focus : true
+                                        }, {
+                                            name : '返回列表页',
+                                            callback : function() {
+                                                location = "{:U('Activity/index')}";
+                                                return true;
+                                            }
+                                        } ]
+                                    });
+                                });
+                            } else {
+                                artdialog_alert(data.info);
+                            }
+                        }
+                    });
+                }
+            });
+        });
+        ////-------------------------
+    });
+</script>
+
+
+
+</body>
+</html>

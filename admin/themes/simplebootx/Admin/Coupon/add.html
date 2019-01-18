@@ -1,0 +1,82 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('coupon/index')}">优惠券管理</a></li>
+        <li class="active"><a href="{:U('coupon/add')}">添加优惠券</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form" action="{:U('coupon/add')}">
+        <fieldset>
+            <div class="control-group">
+                <label class="control-label">标题</label>
+                <div class="controls">
+                    <input type="text" name="title" required>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">使用位置</label>
+                <div class="controls">
+                    <select name="pp_id">
+                        <foreach name="terms" item="cate">
+                            <option value="{$cate.id}">{$cate.name}</option>
+                        </foreach>
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-group dis">
+                <label class="control-label">消费金额</label>
+                <div class="controls">
+                    <input type="text" name="min_consumption" required>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">满减金额</label>
+                <div class="controls">
+                    <input type="text" name="money" required>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">有效日期</label>
+                <div class="controls">
+                    <input type="text" class="js-date" name="start_date" value="{$formget.start_date|default=''}" autocomplete="off" required>
+                    至  <input type="text" class="js-date" name="expire_date" value="{$formget.expire_date|default=''}" autocomplete="off" required>
+                </div>
+
+            </div>
+
+        </fieldset>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary js-ajax-submit" id="btn">{:L('ADD')}</button>
+            <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+        </div>
+    </form>
+</div>
+<script type="text/javascript" src="http://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+
+<script>
+    $("#btn").click(function(){
+
+        var money = $("input[name=money]").val();   //金额
+        var min_consumption = $("input[name=min_consumption]").val();       //数量
+        if(isNaN(money)) {
+            layer.msg("金钱只允许输入数字！");
+            return false;
+        }
+        if(money < 0){
+            layer.msg("优惠券最低金额为0元！");
+            return false;
+        }
+        if(min_consumption < 0){
+            layer.msg("消费金额最低为0元！");
+            return false;
+        }
+        return true;
+    })
+
+
+</script>
+</body>
+</html>

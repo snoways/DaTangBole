@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>授课地址</title>
+  <script src="../js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="../css/ku/hui.css">
+  <link rel="stylesheet" href="../css/ku/style.css">
+  <script src="../js/ku/hui.js"></script>
+  <script src="../js/ku/template-web.js"></script>
+</head>
+<body>
+
+<div class="content_box bgcolorf3f3">
+  <div class="content_scroll pad_wei">
+    <div id="contain"></div>
+  </div>
+</div>
+
+<script type="text/html" id="tpl">
+  <%if(list.length==0){%>
+  <div class="L_notice">
+    暂无地址~
+  </div>
+  <%}%>
+  <ul class="pad_b10">
+    <%for(var i=0;i<list.length;i++){%>
+    <%var el=list[i];%>
+    <li class="mar_t10 bgcolorfff">
+      <div class="pad10 pad_r5">
+        <div class="tableblock font14">
+          <%if(select){%>
+          <a href="javascript:;" style="width: 26px;" onclick="select_addr(<%=el.a_id%>)">
+            <span class="inblock L_radio <%=moren_id==el.a_id?'cur':''%>">&nbsp;</span>
+          </a>
+          <%}%>
+          <a href="javascript:;" onclick="select_addr(<%=el.a_id%>)">
+            <div class="tableblock">
+              <div class="font14">联系人: <%=el.name%></div>
+              <div class="txt_right font14"><%=el.tel%></div>
+            </div>
+            <div class="font12 color666 pad_t5">
+              授课地址: <%=el.addresses%>
+            </div>
+          </a>
+          <div class="txt_center colorzt font11 wrem3">
+            <a href="javascript:;" onclick="edit(<%=el%>)" class="block <%=!select?'border_r':''%>">
+              <span class="inblock L_edit L_icon">&nbsp;</span> <br>
+              <i class="noh colorzt font11">编辑</i>
+            </a>
+          </div>
+          <%if(!select){%>
+          <div class="txt_center color666 font11 wrem3">
+            <a href="javascript:;" class="block" onclick="cancel(<%=el%>,<%=i%>)">
+              <span class="inblock L_delete L_icon">&nbsp;</span> <br>
+              <span class="color666 font11">删除</span>
+            </a>
+          </div>
+          <%}%>
+        </div>
+      </div>
+    </li>
+    <%}%>
+  </ul>
+</script>
+
+<!--footer-->
+<div class="footer pad_l10 pad_r10 font14 txt_center" style="background: #F3F3F3; border: none; padding-top: 3px;">
+  <a href="address_add.html" class="block pad10 border_radiu20 colorfff bgcolorzt">新增常用地址</a>
+</div>
+
+<script>
+  ioshistorygoback();
+  
+  //初始加载
+  pre_loading(0);
+
+  var token=localStorage.getItem('user_token');
+
+  if(Getvariable('token')){
+    token=Getvariable('token');
+  }
+
+  var data={
+    list: [],
+    select: false,
+    moren_id: ""
+  };
+  function renderhtml(){
+    document.getElementById('contain').innerHTML=template('tpl', data);
+  }
+  if (Getvariable("xz_addr")) {
+    data.select = true;
+    data.moren_id = Getvariable("xz_addr");
+  }
+
+  //请求收地址
+  hui.post(
+    path_inter+'/parents/teacher/addressList',
+    {
+      token: token
+    },
+    function(res){
+      res = JSON.parse(res);
+      pre_loading(100);
+      if (user_overdue(res.code,res.msg)) {
+        for(var i=0;i<res.data.length;i++){
+          res.data[i].addresses = res.data[i].province + res.data[i].city + res.data[i].area + res.data[i].address + res.data[i].other;
+        }
+        data.list=res.data;
+        renderhtml();
+      }
+    },
+    function(){
+      //error
+      pre_loading(1);
+    }
+  );
+
+  function select_addr(aid) {
+    if (data.select) {
+      data.moren_id = aid;
+      location.href = path_js+"/find_teacher_yuyue.html?pid=yuyue&aid=" + aid;
+    }
+  }
+  function edit(el) {
+    //修改地址
+    localStorage.setItem("edit_addr", JSON.stringify(el));
+    location.href = path_js+"/member/address_add.html?pid=edit_addr";
+  }
+  function cancel(elem,index) {
+    hui.confirm('确认删除?','',function(){
+      //删除地址
+      hui.post(
+        path_inter+'/parents/teacher/delAddress',
+        {
+          token:token, a_id: elem.a_id
+        },
+        function(res){
+          res = JSON.parse(res);
+          if (user_overdue(res.code,res.msg)){
+            if (res.code == 1) {
+              data.list.splice(index,1);
+              renderhtml();
+              hui.toast("已删除");
+            }
+          }
+        },
+        function(){
+          //error
+          hui.toast("删除失败");
+        }
+      );
+    });
+  }
+</script>
+</body>
+</html>

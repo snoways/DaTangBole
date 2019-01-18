@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>活动报名</title>
+  <script src="js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="css/ku/hui.css">
+  <link rel="stylesheet" href="css/ku/weui.min.css">
+  <link rel="stylesheet" href="css/ku/jquery-weui.min.css">
+  <link rel="stylesheet" href="css/ku/style.css">
+  <script src="js/ku/hui.js"></script>
+  <script src="js/ku/vue.min.js"></script>
+  <script src="js/ku/jquery-1.12.4.min.js"></script>
+  <script src="js/ku/jquery-weui.js"></script>
+</head>
+<body>
+
+<div id="app" v-cloak>
+
+  <div class="content_box pad_wei">
+    <div class="content_scroll">
+
+      <!-- 正文-->
+      <div v-if="!showyhq">
+        <!--内容开始-->
+        <div class="bgcolorztq" style="padding: 8px">
+          <div class="bgcolorfff pad_l10 pad_r10">
+            <div class="pad10 border_b">
+              <div class="font16 color333 mar_b5">{{shuju.title}}</div>
+              <div class="font12 color666">活动时间：{{shuju.start}}-{{shuju.end}}</div>
+            </div>
+            <div class="pad10">
+              <div class="tableblock">
+                <div class="wrem6">
+                  <div class="border_r">
+                    <b class="font16 colorzt">￥{{shuju.money}}</b><span class="font12 color666">/人</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="pad_l10 pad_r10 font12 color666">客服会在您提交报名成功后2个工作日内与您联系，请保持电话畅通，多谢您的支持与配合！</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bgcolorfff pad_l10 pad_r10 mar_t5">
+          <div class="font12 bgcolorfff colorfff" style="background: url(img/twoqi/actbaoming_titlebg.png) no-repeat top left;background-size: auto 18px;height: 18px;line-height: 18px;text-indent: 15px;border-top:2px solid #ff6000;box-sizing: content-box">总负责人</div>
+          <div class="font14 color333 pad_t10 pad_b10">
+            <img src="img/tx.png" v-if="meinfo.p_img==''" width="34" height="34" class="border_radius50 inblock mar_r5" alt="">
+            <!-- 上传头像-->
+            <img :src="path_img+meinfo.p_img" v-if="meinfo.p_img!='' && meinfo.p_img.indexOf('http')==-1" width="34" height="34" class="border_radius50 inblock mar_r5" alt="">
+            <!-- 微信头像-->
+            <img :src="p_img" v-if="meinfo.p_img!='' && meinfo.p_img.indexOf('http')!=-1" width="34" height="34" class="border_radius50 inblock mar_r5" alt="">
+
+            <span class="inblock mar_r5">{{meinfo.parent_name}}</span>
+            <span class="inblock">{{meinfo.phone}}</span>
+          </div>
+        </div>
+
+        <div class="pad_l10 pad_r10 mar_t5 bgcolorfff">
+          <ul>
+            <li class="pad_t10 pad_b10 border_b" v-for="(el,i) in baominglist">
+              <div class="tableblock">
+                <div class="col-xs-4">
+                  <div class="tableblock">
+                    <div style="width: 20px">
+                      <img src="img/twoqi/actbaoming_people.png" height="13" class="inblock" alt="">
+                    </div>
+                    <div>
+                      <input type="text" placeholder="报名人姓名" v-model="el.name" class="w100">
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div class="pad_l10 border_l">
+                    <div class="tableblock">
+                      <div style="width: 20px">
+                        <img src="img/twoqi/actbaoming_phone.png" height="13" class="inblock" alt="">
+                      </div>
+                      <div>
+                        <input type="text" placeholder="报名人联系电话" v-model="el.phone" class="w100">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="txt_right" style="width: 20px">
+                  <img src="img/twoqi/actbaoming_del.png" @click="del(el,i)" height="14" alt="">
+                </div>
+              </div>
+            </li>
+            <li class="pad_t10 pad_b10 border_b">
+              <div class="tableblock">
+                <div class="col-xs-4">
+                  <div class="tableblock">
+                    <div style="width: 20px">
+                      <img src="img/twoqi/actbaoming_people.png" height="13" class="inblock" alt="">
+                    </div>
+                    <div>
+                      <input type="text" placeholder="报名人姓名" class="w100" v-model="name">
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div class="pad_l10 border_l">
+                    <div class="tableblock">
+                      <div style="width: 20px">
+                        <img src="img/twoqi/actbaoming_phone.png" height="13" class="inblock" alt="">
+                      </div>
+                      <div>
+                        <input type="text" placeholder="报名人联系电话" class="w100" v-model="phone">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="txt_right" style="width: 20px">
+                  <img src="img/twoqi/actbaoming_add.png" @click="add" height="14" alt="">
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="pad10 bgcolorfff mar_t5" @click="xuanquan">
+          <div class="tableblock">
+            <div class="wrem5">优惠券</div>
+            <div class="txt_right">
+              <span class="color999" v-if="yhq_selectedobj.money==''">未选择优惠券</span>
+              <span class="color666" v-if="yhq_selectedobj.money!=''">￥{{yhq_selectedobj.money}}</span>
+            </div>
+          </div>
+        </div>
+        <!--内容end-->
+      </div>
+
+
+
+
+      <!-- 选择优惠券，页面同yhq_select.html，因为那个页面点击返回本页的话，相当于重新加载了，所以本地存储信息就没有了，为了记住之前输入的信息，只能是把选择优惠券写在本页-->
+      <div v-if="showyhq">
+        <div class="empty" v-if="list.length==0">暂无优惠券</div>
+        <!--内容开始-->
+        <ul class="youhuiquan">
+          <li class="pad10" v-for="(el,i) in list" :class="{grayli:el.can==-1}" @click="itemclick(el,i)">
+            <div class="pad_t10 pad_b10 bgcolorfff border_radiu4">
+              <div class="tableblock">
+                <div class="txt_center" style="width: 120px">
+                  <div class="colorzt mar_b5 gray" style="line-height: 1">
+                    <span class="font15">￥</span>
+                    <span class="font28">{{el.money}}</span>
+                  </div>
+                  <div class="font12 color666 gray">满{{el.min_consumption}}元可用</div>
+                </div>
+                <div>
+                  <div class="font14 color333 gray">{{el.title}}</div>
+                  <div class="font12 color999 gray">限{{el.expire_date}}前使用</div>
+                </div>
+                <div style="width: 80px" class="txt_center">
+                  <span class="font14 colorfff bgcolorzt inblock border_radiu4 goshiyong" style="padding: 4px 6px">去使用</span>
+                </div>
+              </div>
+            </div>
+            <div class="color666 font12 pad10 rela" style="background:#fafafa;border-top: 1px solid #eee;">
+              <span class="border_radius50 abso" style="background: #f5f5f5;width: 12px;height: 12px;top: -6px;left: -6px;"></span>
+              <span class="border_radius50 abso" style="background: #f5f5f5;width: 12px;height: 12px;top: -6px;right: -6px;"></span>
+              限：{{el.name}}
+            </div>
+          </li>
+        </ul>
+        <!--内容end-->
+      </div>
+
+
+
+
+    </div>
+  </div>
+
+
+
+
+
+  <div v-if="showyhq">
+    <div class="footer">
+      <div class="tableblock h100">
+        <div class="txt_center">
+          <span class="inblock bgcolorzt colorfff font12 border_radiu20 pad_t5 pad_b5 txt_center" style="width: 40%" @click="backzhengwen">返回</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div v-if="!showyhq">
+    <div class="footer">
+      <div class="tableblock h100">
+        <div>
+          <div class="pad_l10 font12 color999">
+            <b class="font18 colorzt">￥{{(summoney-yhq_selectedobj.money)|number2}}</b>
+            (共{{sumnumber}}人)
+          </div>
+        </div>
+        <div onclick="gopay();" class="wrem7">
+          <div class="bgcolorzt w100 h100 txt_center colorfff font16" style="line-height: 3.4375rem">去付款</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="L_box_shadow" style="display: none"></div>
+    <div class="xuzhi bgcolorfff">
+      <div class="pad10 border_b txt_center font16">支付报名费</div>
+      <div class="pad10 font30 colorzt txt_center">
+        <b>￥{{(summoney-yhq_selectedobj.money)|number2}}</b>
+      </div>
+      <div class="pad_l10 pad_r10 font14 color666">
+        <div class="pad10 border_b">
+          <span class="inblock wrem5">活动名称</span>
+          <span class="color333 inblock">{{shuju.title}}</span>
+        </div>
+        <div class="pad10 border_b">
+          <span class="inblock wrem5">报名人数</span>
+          <span class="color333 inblock">{{sumnumber}}</span>
+        </div>
+        <div class="pad10 border_b">
+          <span class="inblock wrem5">单价</span>
+          <span class="color333 inblock">￥{{shuju.money}}</span>
+        </div>
+        <div style="padding: 30px 0" class="tableblock font15 color333 txt_center">
+          <div onclick="pay1()">
+            <div class="border_r">
+              <div class="mar_b10">
+                <img src="img/twoqi/pay1.png" width="50" alt="">
+              </div>
+              <div>支付宝支付</div>
+            </div>
+          </div>
+          <div onclick="pay2();">
+            <div class="mar_b10">
+              <img src="img/twoqi/pay2.png" width="50" alt="">
+            </div>
+            <div>微信支付</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+</div>
+
+<script>
+  pre_loading(0);
+
+  var token=localStorage.getItem('user_token');
+
+  if(Getvariable('token')){
+    token=Getvariable('token');
+  }
+
+  var aid;
+  if(!Getvariable('pid')){
+    pre_loading(3);
+  }else{
+    aid=Getvariable('pid');
+  }
+
+  var vm = new Vue({
+    el: '#app',
+    data: {
+      path_img:path_img,
+      shuju:{},
+      meinfo:{
+        p_img:''
+      },
+      baominglist:[],
+      name:'',
+      phone:'',
+
+      yhq_selectedobj:{money:0},
+      showyhq:false,
+
+      list:[],//优惠券的list
+
+      sn:'',//下单后得到的订单编号
+      oprate:true
+    },
+    methods:{
+      backzhengwen:function(){
+        vm.showyhq=false;
+      },
+      itemclick:function(el,index){
+        //选中优惠券
+        if(el.can==1){
+          vm.yhq_selectedobj=el;
+          vm.showyhq=false;
+        }
+      },
+      xuanquan:function(){
+        if(vm.baominglist.length>0){
+          //在这里判断，是不是报名的人数超了
+          if(vm.name!='' && vm.phone!='' && checktel(vm.phone)){
+            //输入框中填了
+            if((parseInt(vm.baominglist.length)+1)>(vm.shuju.people_num-vm.shuju.now_num)){
+              $.toast('该活动还可报名'+(vm.shuju.people_num-vm.shuju.now_num)+'人','text');
+              return false;
+            }
+          }
+          if(vm.name=='' && vm.phone==''){
+            //输入框中没填
+            if(vm.baominglist.length>(vm.shuju.people_num-vm.shuju.now_num)){
+              $.toast('该活动还可报名'+(vm.shuju.people_num-vm.shuju.now_num)+'人','text');
+              return false;
+            }
+          }
+          //只要输入框填写了，就要判断
+          if((vm.name=='' && vm.phone!='') || (vm.name!='' && vm.phone=='')){
+            $.toast('请完善报名信息','text');
+            return false;
+          }
+          if(vm.name!='' && vm.phone!='' && !checktel(vm.phone)){
+            $.toast('手机号码不正确','text');
+            return false;
+          }
+        }else if(vm.baominglist.length==0){
+          //输入框中 填写的那一个也算 也要判断
+          //只要能进入本页，说明至少能报名一个人
+          if(vm.name==''){
+            $.toast('请填写报名信息','text');
+            return false;
+          }
+          if(vm.phone==''){
+            $.toast('请填写报名信息','text');
+            return false;
+          }
+          if(!checktel(vm.phone)){
+            $.toast('手机号码不正确','text');
+            return false;
+          }
+        }
+
+
+        //web-优惠券列表
+        $.ajax({
+          url:path_inter+"parents/coupon/findCoupon",
+          dataType:'json',
+          type:'post',
+          data:{
+            token: token,
+            type:4,
+            money:this.summoney
+          },
+          success:function(res){
+            if(user_overdue(res.code,res.msg)){
+              vm.list=res.data;
+              vm.showyhq=true;
+            }
+          },
+          error:function(){
+            pre_loading(1);
+          }
+        });
+      },
+      add:function(){
+        if(this.name==''){
+          $.toast('请填写报名人姓名','text');
+          return false;
+        }
+        if(this.phone==''){
+          $.toast('请填写报名人联系电话','text');
+          return false;
+        }
+        if(!checktel(this.phone)){
+          $.toast('手机号码不正确','text');
+          return false;
+        }
+        vm.baominglist.push({name:this.name,phone:this.phone});
+        this.name='';
+        this.phone='';
+      },
+      del:function(el,index){
+        if(!vm.oprate){
+          return false;
+        }
+        vm.baominglist.splice(index,1);
+
+        if(vm.yhq_selectedobj.money>0){
+          vm.oprate=false;
+          //web-优惠券列表
+          $.ajax({
+            url:path_inter+"parents/coupon/findCoupon",
+            dataType:'json',
+            type:'post',
+            data:{
+              token: token,
+              type:4,
+              money:this.summoney
+            },
+            success:function(res){
+              vm.oprate=true;
+              if(user_overdue(res.code,res.msg)){
+                if(res.data.length==0){
+                  //没有可用的优惠券了，需要重新选择优惠券
+                  $.toast("请重新选择优惠券",'text');
+                  vm.yhq_selectedobj={money:0};
+                }else{
+                  var canselectedquan=false;
+                  for(var i=0;i<res.data.length;i++){
+                    if(res.data[i].can==1 && vm.yhq_selectedobj.crid==res.data[i].crid){
+                      //说明之前选的优惠券还可以用
+                      canselectedquan=true;
+                      break;
+                    }
+                  }
+                  if(!canselectedquan){
+                    //需要重新选择优惠券
+                    $.toast("请重新选择优惠券",'text');
+                    vm.yhq_selectedobj={money:0};
+                  }
+                }
+              }
+            },
+            error:function(){
+              vm.oprate=true;
+              pre_loading(1);
+            }
+          });
+        }
+      }
+    },
+    computed:{
+      summoney:function(){
+        var summoney=0;
+        if(this.baominglist.length>0){
+          //在这里判断，是不是报名的人数超了
+          if(this.name!='' && this.phone!='' && checktel(this.phone)){
+            //输入框中填了
+            if((parseInt(this.baominglist.length)+1)>(this.shuju.people_num-this.shuju.now_num)){
+              return 0;
+            }
+            summoney=this.shuju.money*(parseInt(this.baominglist.length)+1);
+          }
+          if(this.name=='' && this.phone==''){
+            //输入框中没填
+            if(this.baominglist.length>(this.shuju.people_num-this.shuju.now_num)){
+              return 0;
+            }
+            summoney=this.shuju.money*this.baominglist.length;
+          }
+          //只要输入框填写了，就要判断
+          if((this.name=='' && this.phone!='') || (this.name!='' && this.phone=='')){
+            return 0;
+          }
+          if(this.name!='' && this.phone!='' && !checktel(this.phone)){
+            return 0;
+          }
+        }else if(this.baominglist.length==0){
+          //输入框中 填写的那一个也算 也要判断
+          //只要能进入本页，说明至少能报名一个人
+          if(this.name==''){
+            return 0;
+          }
+          if(this.phone==''){
+            return 0;
+          }
+          if(!checktel(this.phone)){
+            return 0;
+          }
+          summoney=this.shuju.money*1;
+        }
+        return Number(summoney).toFixed(2);
+      },
+      sumnumber:function(){
+        var sumnumber=0;
+        if(this.baominglist.length>0){
+          //在这里判断，是不是报名的人数超了
+          if(this.name!='' && this.phone!='' && checktel(this.phone)){
+            //输入框中填了
+            if((parseInt(this.baominglist.length)+1)>(this.shuju.people_num-this.shuju.now_num)){
+              return 0;
+            }
+            sumnumber=parseInt(this.baominglist.length)+1;
+          }
+          if(this.name=='' && this.phone==''){
+            //输入框中没填
+            if(this.baominglist.length>(this.shuju.people_num-this.shuju.now_num)){
+              return 0;
+            }
+            sumnumber=this.baominglist.length;
+          }
+          //只要输入框填写了，就要判断
+          if((this.name=='' && this.phone!='') || (this.name!='' && this.phone=='')){
+            return 0;
+          }
+          if(this.name!='' && this.phone!='' && !checktel(this.phone)){
+            return 0;
+          }
+        }else if(this.baominglist.length==0){
+          //输入框中 填写的那一个也算 也要判断
+          //只要能进入本页，说明至少能报名一个人
+          if(this.name==''){
+            return 0;
+          }
+          if(this.phone==''){
+            return 0;
+          }
+          if(!checktel(this.phone)){
+            return 0;
+          }
+          sumnumber=1;
+        }
+        return sumnumber;
+      }
+    },
+    created:function(){
+      //线下活动 详情
+      $.ajax({
+        url:path_inter+"parents/Activity/detail",
+        dataType:'json',
+        type:'post',
+        data:{
+          token:token,
+          aid:aid
+        },
+        success:function(res){
+          if(user_overdue(res.code,res.msg)){
+            vm.shuju=res.data;
+
+            //个人中心
+            $.ajax({
+              url:path_inter+"parents/UserCenter/info",
+              dataType:'json',
+              type:'post',
+              data:{
+                token: token
+              },
+              success:function(res){
+                pre_loading(100);
+                if(user_overdue(res.code,res.msg)){
+                  vm.meinfo=res.data;
+
+                  checkinputfocus();
+                }
+              },
+              error:function(){
+                pre_loading(1);
+              }
+            });
+          }
+        },
+        error:function(){
+          pre_loading(1);
+        }
+      });
+
+    }
+  });
+
+  //去付款
+  function gopay(){
+    if(vm.baominglist.length>0){
+      //在这里判断，是不是报名的人数超了
+      if(vm.name!='' && vm.phone!='' && checktel(vm.phone)){
+        //输入框中填了
+        if((parseInt(vm.baominglist.length)+1)>(vm.shuju.people_num-vm.shuju.now_num)){
+          $.toast('该活动还可报名'+(vm.shuju.people_num-vm.shuju.now_num)+'人','text');
+          return false;
+        }
+      }
+      if(vm.name=='' && vm.phone==''){
+        //输入框中没填
+        if(vm.baominglist.length>(vm.shuju.people_num-vm.shuju.now_num)){
+          $.toast('该活动还可报名'+(vm.shuju.people_num-vm.shuju.now_num)+'人','text');
+          return false;
+        }
+      }
+      //只要输入框填写了，就要判断
+      if((vm.name=='' && vm.phone!='') || (vm.name!='' && vm.phone=='')){
+        $.toast('请完善报名信息','text');
+        return false;
+      }
+      if(vm.name!='' && vm.phone!='' && !checktel(vm.phone)){
+        $.toast('手机号码不正确','text');
+        return false;
+      }
+    }else if(vm.baominglist.length==0){
+      //输入框中 填写的那一个也算 也要判断
+      //只要能进入本页，说明至少能报名一个人
+      if(vm.name==''){
+        $.toast('请填写报名信息','text');
+        return false;
+      }
+      if(vm.phone==''){
+        $.toast('请填写报名信息','text');
+        return false;
+      }
+      if(!checktel(vm.phone)){
+        $.toast('手机号码不正确','text');
+        return false;
+      }
+    }
+
+    //让list里面的数据和baominglist一致，必须这么写，否则点击付款的时候，baominglist会多一条数据
+    var list=[];
+    for(var a=0;a<vm.baominglist.length;a++){
+      list.push(vm.baominglist[a]);
+    }
+    if(vm.name!='' && vm.phone!='' && checktel(vm.phone)){
+      list.push({name:vm.name,phone:vm.phone});
+    }
+    list=JSON.stringify(list);
+    //下单
+    $.ajax({
+      url:path_inter+"parents/Activity/addOrder",
+      dataType:'json',
+      type:'post',
+      data:{
+        token: token,
+        aid:aid,
+        list:list,
+        cr_id:vm.yhq_selectedobj.crid
+      },
+      success:function(res){
+        if(user_overdue(res.code,res.msg)){
+          $('.L_box_shadow').fadeIn();
+          $('.xuzhi').css({'bottom':0,'visibility':'visible'});
+          vm.sn=res.data.sn;//订单编号
+        }
+      },
+      error:function(){
+        pre_loading(1);
+      }
+    });
+  }
+  //不让点没，因为点击去付款的时候，就下单了
+//  $('.L_box_shadow').click(function(){
+//    $('.L_box_shadow').fadeOut();
+//    $('.xuzhi').css('bottom','-100%');
+//  });
+
+  function pay1(){
+    //支付宝
+    pay_zfb(vm.sn);
+  }
+  function pay2(){
+    //微信
+    pay_wx(vm.sn);
+  }
+
+  var yuanheight,currheight;
+  function checkinputfocus(){
+    //检测focus和blur 不太好使，所以用这个
+    yuanheight=window.innerHeight;
+    $(window).resize(function(){
+      currheight=window.innerHeight;
+      if(currheight<yuanheight){
+        var div=$('.content_box')[0];
+        div.scrollTop = div.scrollHeight;
+      }else{
+        var div=$('.content_box')[0];
+        div.scrollTop = 0;
+      }
+    });
+  }
+</script>
+</body>
+</html>

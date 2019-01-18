@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>notitle</title>
+  <script src="../js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="../css/ku/hui.css">
+  <link rel="stylesheet" href="../css/ku/weui.min.css">
+  <link rel="stylesheet" href="../css/ku/jquery-weui.min.css">
+  <link rel="stylesheet" href="../css/ku/style.css">
+  <script src="../js/ku/hui.js"></script>
+  <script src="../js/ku/jquery-1.12.4.min.js"></script>
+  <script src="../js/ku/jquery-weui.js"></script>
+  <script src="../js/ku/vue.min.js"></script>
+  <style>
+    #header1 .on{background: #fff;color:#ff6000;border-radius: 50px;}
+    .weui-pull-to-refresh__layer{height: 5.625rem;padding-top: 2.8125rem;}
+  </style>
+</head>
+<body>
+
+<div id="app" v-cloak>
+
+  <div class="header bgcolorzt" id="header1">
+    <div class="tableblock h100">
+      <div style="width: 40px">
+        <img src="../img/back_white.png" @click="back" style="width: 9px;height: 18px;" class="mar_l10" alt="">
+      </div>
+      <div>
+        <div class="tableblock colorfff txt_center" style="border:1px solid #fff;border-radius: 50px;height: 34px;">
+          <!-- <div :class="{on:header1tabindex==0}" @click="header1tabclick(0)">老师</div> -->
+          <div :class="{on:header1tabindex==1}" @click="header1tabclick(1)">机构课程</div>
+          <div :class="{on:header1tabindex==2}" @click="header1tabclick(2)">托管课程</div>
+        </div>
+      </div>
+      <div style="width: 40px">&nbsp;</div>
+    </div>
+  </div>
+
+
+
+
+  <!-- 老师-->
+  <!-- <div v-if="header1tabindex==0">
+    <div class="content_box bgcolorf3f3">
+      <div class="content_scroll">
+
+        <div class="L_notice" v-if="list1.length==0">暂无相关评论~</div> -->
+        <!--内容开始-->
+        <!-- <ul class="pad_b10">
+          <li class="mar_t5 bgcolorfff" v-for="(el,i) in list1">
+            <div class="pad10 pad_r5">
+              <div class="tableblock font16 pad_b10 border_b">
+                <div class="col-xs-14">
+                  <div class="img_box img100">
+                    <div class="img_content border_radius50">
+                      <img :src="path_img+el.t_img" class="imgone">
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div class="pad_l10 tableblock">
+                    <div>
+                      <span :class="{cur:el.sex==2}" class="L_sex inblock mar_r5">&nbsp;</span>
+                      <span class="inblock mar_r5 font14 color333">{{el.teacher_name}}</span>
+                    </div>
+                    <div class="txt_right font0 mar_t5">
+                      <span v-for="(elel,ii) in score1" :class="{all:parseInt(el.star/elel)>0,half:parseInt(el.star/elel)==0 && el.star-0.5>elel-1}" class="L_star small inblock mar_r5">&nbsp;</span>
+                      <span class="inblock font12 colorzt">{{el.star}}</span>
+                    </div>
+                  </div>
+                  <div class="txt_oneline font12 pad_l10 pad_t5 color666">
+                    <span class="inblock mar_r10">年级：<span class="color333">{{el.grade}}</span></span>
+                    <span class="inblock"><i class="noh">科目：</i><i class="noh color333">{{el.subject}}</i></span>
+                  </div>
+                </div>
+              </div>
+              <div class="pad_t10 font12 color666">{{el.content}}</div> -->
+              <!-- 后台设置了 最多三个评论图片-->
+              <!-- <div class="mar_t10">
+                <img :src="path_img+el.img1" v-if="el.img1!=null && el.img1!=''" width="50" height="50" class="mar_r5" alt="">
+                <img :src="path_img+el.img2" v-if="el.img2!=null && el.img2!=''" width="50" height="50" class="mar_r5" alt="">
+                <img :src="path_img+el.img3" v-if="el.img3!=null && el.img3!=''" width="50" height="50" class="mar_r5" alt="">
+              </div>
+              <div class="pad_t10 txt_right font12 color999">
+                <span class="inblock mar_l5">{{el.a_time}}</span><span class="inblock mar_l5">{{el.class}}已授课</span>
+              </div>
+            </div>
+          </li>
+        </ul>
+
+      </div>
+    </div>
+  </div> -->
+
+
+
+  <!-- 机构课程-->
+  <div v-if="header1tabindex==1">
+    <div class="content_box bgcolorf3f3">
+      <div class="content_scroll">
+
+        <div class="L_notice" v-if="list2.length==0">暂无相关评论~</div>
+        <ul>
+          <li class="mar_t5 bgcolorfff pad_l10 pad_r10" v-for="(el,i) in list2">
+            <div class="tableblock font16 pad_b10 border_b pad_t10">
+              <div style="width: 76px">
+                <img :src="path_img+el.img" width="66" height="44">
+              </div>
+              <div>
+                <div class="tableblock">
+                  <div class="font12 color333 txt_oneline">{{el.title}}</div>
+                  <div class="txt_right font0 mar_t5">
+                    <span v-for="(elel,ii) in score2" :class="{all:parseInt(el.star/elel)>0,half:parseInt(el.star/elel)==0 && el.star-0.5>elel-1}" class="L_star small inblock mar_r5">&nbsp;</span>
+                    <span class="inblock font12 colorzt">{{el.star}}</span>
+                  </div>
+                </div>
+                <div class="font12 coloraaa tableblock">
+                  <div class="col-xs-8">
+                    <span>{{el.grade}} {{el.sub1}} {{el.sub2}}</span>
+                    <span class="colorzt mar_l10">{{el.class}}</span>
+                    <span>课时</span>
+                  </div>
+                  <div class="txt_right color666 font13 col-xs-4">
+                    ￥{{el.total_money}}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="pad_t10 font12 color666">{{el.content}}</div>
+            <!-- 后台设置了 最多三个评论图片-->
+            <div class="mar_t10">
+              <img :src="path_img+el.img1" v-if="el.img1!=null && el.img1!=''" width="50" height="50" class="mar_r5" alt="">
+              <img :src="path_img+el.img2" v-if="el.img2!=null && el.img2!=''" width="50" height="50" class="mar_r5" alt="">
+              <img :src="path_img+el.img3" v-if="el.img3!=null && el.img3!=''" width="50" height="50" class="mar_r5" alt="">
+            </div>
+            <div class="pad_t10 txt_right font12 color999 pad_b10">
+              {{el.a_time}}
+            </div>
+          </li>
+        </ul>
+
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <!-- 托管课程-->
+  <div v-if="header1tabindex==2">
+    <div class="content_box bgcolorf3f3">
+      <div class="content_scroll">
+
+        <div class="L_notice" v-if="list3.length==0">暂无相关评论~</div>
+        <!--内容开始-->
+        <ul>
+          <li class="mar_t5 bgcolorfff pad_l10 pad_r10" v-for="(el,i) in list3">
+            <div class="tableblock font16 pad_b10 border_b pad_t10">
+              <div style="width: 76px">
+                <img :src="path_img+el.img" width="66" height="44">
+              </div>
+              <div>
+                <div class="tableblock">
+                  <div class="font12 color333 txt_oneline">{{el.title}}</div>
+                  <div class="txt_right font0 mar_t5">
+                    <span v-for="(elel,ii) in score3" :class="{all:parseInt(el.star/elel)>0,half:parseInt(el.star/elel)==0 && el.star-0.5>elel-1}" class="L_star small inblock mar_r5">&nbsp;</span>
+                    <span class="inblock font12 colorzt">{{el.star}}</span>
+                  </div>
+                </div>
+                <div class="font12 coloraaa tableblock">
+                  <div class="col-xs-8">
+                    托管时间：{{el.date_period}}
+                  </div>
+                  <div class="txt_right color666 font13 col-xs-4">
+                    ￥{{el.total_money}}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="pad_t10 font12 color666">{{el.content}}</div>
+            <!-- 后台设置了 最多三个评论图片-->
+            <div class="mar_t10">
+              <img :src="path_img+el.img1" v-if="el.img1!=null && el.img1!=''" width="50" height="50" class="mar_r5" alt="">
+              <img :src="path_img+el.img2" v-if="el.img2!=null && el.img2!=''" width="50" height="50" class="mar_r5" alt="">
+              <img :src="path_img+el.img3" v-if="el.img3!=null && el.img3!=''" width="50" height="50" class="mar_r5" alt="">
+            </div>
+            <div class="pad_t10 txt_right font12 color999 pad_b10">
+              {{el.a_time}}
+            </div>
+          </li>
+        </ul>
+
+      </div>
+    </div>
+  </div>
+
+
+
+
+</div>
+
+
+
+
+
+
+<script>
+  var token=localStorage.getItem("user_token");
+  if(Getvariable('token')){
+    token=Getvariable('token');
+  }
+
+  var vm = new Vue({
+    el: '#app',
+    data: {
+      path_img:path_img,
+      oprate: true,
+
+      header1tabindex:1,
+
+      //老师
+      // score1: [1, 2, 3, 4, 5],
+      // list1: [],
+      // page1:2,
+      // loading1:false,
+
+      //机构课程
+      score2: [1, 2, 3, 4, 5],
+      list2: [],
+      page2:2,
+      loading2:false,
+
+      //托管课程
+      score3: [1, 2, 3, 4, 5],
+      list3: [],
+      page3:2,
+      loading3:false
+    },
+    created:function(){
+      this.initdata();
+    },
+    mounted:function(){
+      this.$nextTick(function(){
+        pagedo();
+      });
+    },
+    methods:{
+      back:function(){
+        //返回app页面
+        appbackToApp();
+      },
+      header1tabclick:function(index){
+        vm.header1tabindex=index;
+        this.initdata();
+      },
+      initdata:function(){
+        pre_loading(0);
+        var that=this;
+
+        this.oprate=false;
+        // if(this.header1tabindex==0){
+        //   //我的评价-老师
+        //   $.ajax({
+        //     url:path_inter+'/parents/UserCenter/myAssess',
+        //     dataType:'json',
+        //     type:'post',
+        //     data:{token: token,type:1},
+        //     success:function(res){
+        //       that.oprate=true;
+        //       pre_loading(100);
+        //       if (user_overdue(res.code,res.msg)){
+        //         for(var i=0;i<res.data.length;i++){
+        //           res.data[i].subject=res.data[i].subject.substring(0,res.data[i].subject.lastIndexOf(','));//去掉最后的逗号
+        //         }
+        //         vm.list1=res.data;
+
+        //         load_closeanimation("load_animation",1);//去掉已经加载完成
+        //       }
+        //     },
+        //     error:function(){
+        //       that.oprate=true;
+        //       pre_loading(1);
+        //     }
+        //   });
+        // }else 
+        if(this.header1tabindex==1){
+          //我的评价-机构课程
+          $.ajax({
+            url:path_inter+'/parents/UserCenter/myAssess',
+            dataType:'json',
+            type:'post',
+            data:{token: token,type:2},
+            success:function(res){
+              that.oprate=true;
+              pre_loading(100);
+              if (user_overdue(res.code,res.msg)){
+                vm.list2=res.data;
+
+                load_closeanimation("load_animation",1);//去掉已经加载完成
+              }
+            },
+            error:function(){
+              that.oprate=true;
+              pre_loading(1);
+            }
+          });
+        }else if(this.header1tabindex==2){
+          //我的评价-托管课程
+          $.ajax({
+            url:path_inter+'/parents/UserCenter/myAssess',
+            dataType:'json',
+            type:'post',
+            data:{token:token,type:3},
+            success:function(res){
+              that.oprate=true;
+              pre_loading(100);
+              if (user_overdue(res.code,res.msg)){
+                vm.list3=res.data;
+
+                load_closeanimation("load_animation",1);//去掉已经加载完成
+              }
+            },
+            error:function(){
+              that.oprate=true;
+              pre_loading(1);
+            }
+          });
+        }
+      }
+    }
+  });
+
+
+
+
+
+  function pagedo(){
+    //下拉刷新
+    xiala_reload($(".content_box"));
+    $(".content_box").pullToRefresh().on("pull-to-refresh", function () {
+      if (!vm.oprate) {
+        $(".content_box").pullToRefreshDone();
+        return false;
+      }
+      vm.oprate = false;
+
+      // if(vm.header1tabindex==0){
+      //   //老师
+      //   vm.list1=[];
+      //   vm.page1=2;
+      //   vm.loading1=false;
+      //   load_closeanimation("load_animation" , 1);
+      //   $.ajax({
+      //     url:path_inter+'/parents/UserCenter/myAssess',
+      //     dataType:'json',
+      //     type:'post',
+      //     data:{token:token,type:1},
+      //     success:function(res){
+      //       vm.oprate = true;
+      //       $(".content_box").pullToRefreshDone();
+      //       if (user_overdue(res.code,res.msg)){
+      //         for(var i=0;i<res.data.length;i++){
+      //           res.data[i].subject=res.data[i].subject.substring(0,res.data[i].subject.lastIndexOf(','));//去掉最后的逗号
+      //         }
+      //         vm.list1=res.data;
+      //       }
+      //     },
+      //     error:function(){
+      //       vm.oprate = true;
+      //       $.toast("刷新失败", "text");
+      //     }
+      //   });
+      // }else 
+      if(vm.header1tabindex==1){
+        //机构
+        vm.list2=[];
+        vm.page2=2;
+        vm.loading2=false;
+        load_closeanimation("load_animation" , 1);
+        $.ajax({
+          url:path_inter+'/parents/UserCenter/myAssess',
+          dataType:'json',
+          type:'post',
+          data:{token:token,type:2},
+          success:function(res){
+            vm.oprate = true;
+            $(".content_box").pullToRefreshDone();
+            if (user_overdue(res.code,res.msg)){
+              vm.list2=res.data;
+            }
+          },
+          error:function(){
+            vm.oprate = true;
+            $.toast("刷新失败", "text");
+            $(".content_box").pullToRefreshDone();
+          }
+        });
+      }else if(vm.header1tabindex==2){
+        //托管
+        vm.list3=[];
+        vm.page3=2;
+        vm.loading3=false;
+        load_closeanimation("load_animation" , 1);
+        $.ajax({
+          url:path_inter+'/parents/UserCenter/myAssess',
+          dataType:'json',
+          type:'post',
+          data:{token:token,type:3},
+          success:function(res){
+            vm.oprate = true;
+            $(".content_box").pullToRefreshDone();
+            if (user_overdue(res.code,res.msg)){
+              vm.list3=res.data;
+            }
+          },
+          error:function(){
+            vm.oprate = true;
+            $.toast("刷新失败", "text");
+            $(".content_box").pullToRefreshDone();
+          }
+        });
+      }
+    });
+
+    //上拉加载
+    $(".content_box").infinite().on("infinite", function(){
+      // if(vm.header1tabindex==0){
+      //   //老师
+      //   if(vm.list1.length==0||vm.loading1||!vm.oprate){
+      //     return false;
+      //   }
+      // }else 
+      if(vm.header1tabindex==1){
+        //机构
+        if(vm.list2.length==0||vm.loading2||!vm.oprate){
+          return false;
+        }
+      }else if(vm.header1tabindex==2){
+        //托管
+        if(vm.list3.length==0||vm.loading3||!vm.oprate){
+          return false;
+        }
+      }
+
+      vm.oprate=false;
+      var obj=$(this);
+      load_addanimation("load_animation",obj);
+
+      vm.oprate=false;
+      if(vm.header1tabindex==0){
+        //老师
+        vm.loading1= true;//关闭下拉加载
+        $.ajax({
+          url:path_inter+"/parents/UserCenter/myAssess",
+          dataType:'json',
+          type:'post',
+          data:{
+            token:token,
+            type:1,
+            page:vm.page1
+          },
+          success:function(res){
+            vm.oprate=true;
+            if(user_overdue(res.code,res.msg))
+            {
+              for(var i=0;i<res.data.length;i++){
+                res.data[i].subject=res.data[i].subject.substring(0,res.data[i].subject.lastIndexOf(','));//去掉最后的逗号
+              }
+              vm.list1=vm.list1.concat(res.data);
+
+              if(res.data.length>0)
+              {
+                vm.page1++;
+                vm.loading1 = false;
+                load_closeanimation("load_animation",1);
+              }
+              else
+              {
+                load_closeanimation("load_animation",0);
+              }
+            }
+          },
+          error:function(){
+            vm.oprate=true;
+          }
+        });
+      }else if(vm.header1tabindex==1){
+        //机构
+        vm.loading2= true;//关闭下拉加载
+        $.ajax({
+          url:path_inter+"/parents/UserCenter/myAssess",
+          dataType:'json',
+          type:'post',
+          data:{
+            token:token,
+            type:2,
+            page:vm.page2
+          },
+          success:function(res){
+            vm.oprate=true;
+            if(user_overdue(res.code,res.msg))
+            {
+              vm.list2=vm.list2.concat(res.data);
+
+              if(res.data.length>0)
+              {
+                vm.page2++;
+                vm.loading2 = false;
+                load_closeanimation("load_animation",1);
+              }
+              else
+              {
+                load_closeanimation("load_animation",0);
+              }
+            }
+          },
+          error:function(){
+            vm.oprate=true;
+          }
+        });
+      }else if(vm.header1tabindex==2){
+        //托管
+        vm.loading3= true;//关闭下拉加载
+        $.ajax({
+          url:path_inter+"/parents/UserCenter/myAssess",
+          dataType:'json',
+          type:'post',
+          data:{
+            token: token,
+            type:3,
+            page:vm.page3
+          },
+          success:function(res){
+            vm.oprate=true;
+            if(user_overdue(res.code,res.msg))
+            {
+              vm.list3=vm.list3.concat(res.data);
+
+              if(res.data.length>0)
+              {
+                vm.page3++;
+                vm.loading3 = false;
+                load_closeanimation("load_animation",1);
+              }
+              else
+              {
+                load_closeanimation("load_animation",0);
+              }
+            }
+          },
+          error:function(){
+            vm.oprate=true;
+          }
+        });
+      }
+    });
+  }
+</script>
+</body>
+</html>

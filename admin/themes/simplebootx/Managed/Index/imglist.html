@@ -1,0 +1,63 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap js-check-wrap">
+		<ul class="nav nav-tabs">
+			<li><a href="{:U('index/index')}">{$info.s_name}的个人中心</a></li>
+			<li><a href="{:U('index/small_pass',array('id'=>$info['id']))}">修改密码</a></li>
+			<li class="active"><a href="{:U('index/imglist',array('id'=>$info['id']))}">图集管理</a></li>
+			<li style="float: right;"><a href="{:U('auth/login')}">退出登录</a></li>
+		</ul>
+
+		<form class="js-ajax-form" action="" method="post">
+			<div class="table-actions">
+				<button type="submit" class="btn btn-primary btn-small js-ajax-submit" data-action="{:U('Index/sort')}">排序</button>
+				<a href="{:U('Index/imgadd',array('id'=>$_GET['id']))}" class="btn btn-primary btn-small">批量添加</a>
+				<button class="btn btn-danger btn-small js-ajax-submit" type="submit" data-action="{:U('Index/del_batch_url')}" data-subcheck="true" data-msg="您确定删除吗？">批量删除</button>
+
+			</div>
+			<table class="table table-hover table-bordered table-list">
+				<thead>
+					<tr>
+						<th width="50">序号</th>
+						<th width="15"><label><input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x"></label></th>
+						<th width="50">ID</th>
+						<th>图片</th>
+						<th width="70">操作</th>
+					</tr>
+				</thead>
+				<foreach name="image" key="key" item="u">
+				<tr>
+					<th><input name='sort[]' type='text' value='{$u.sort}' class='input input-order'> <input type="hidden" name="imgid[]" value="{$u.id}"/></th>
+					<td><input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x" name="ids[]" value="{$u.id}" title="ID:{$u.id}"></td>
+                    <td><b>{$key+1}</b></td>
+					<td>
+						<img src="__ROOT__{$u['url']}" width="300">
+					</td>
+
+					<td>
+						<a href="{:U('Index/delurl',array('id'=>$u['id']))}" class="js-ajax-delete">删除</a>
+					</td>
+				</tr>
+				</foreach>
+				<tfoot>
+					<tr>
+						<th width="50">序号</th>
+						<th width="15"><label><input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x"></label></th>
+						<th width="50">ID</th>
+						<th>图片</th>
+						<th width="70">操作</th>
+					</tr>
+				</tfoot>
+			</table>
+			<div class="table-actions">
+				<button type="submit" class="btn btn-primary btn-small js-ajax-submit" data-action="{:U('Index/sort')}">排序</button>
+				<a href="{:U('Index/imgadd',array('id'=>$u['st_id']))}" class="btn btn-primary btn-small">批量添加</a>
+				<button class="btn btn-danger btn-small js-ajax-submit" type="submit" data-action="{:U('Index/del_batch_url')}" data-subcheck="true" data-msg="您确定删除吗？">批量删除</button>
+			</div>
+			<div class="pagination">{$page}</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

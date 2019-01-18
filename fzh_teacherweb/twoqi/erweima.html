@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title>注册</title>
+		<script src="../js/com.js" ></script>
+		<link rel="stylesheet" href="../css/weui.min.css" />
+		<link rel="stylesheet" href="../css/jquery-weui.css" />
+		<link rel="stylesheet" href="../css/stylea.css" />
+		<script src="../js/jquery.min.js" ></script>
+		<script src="../js/jquery-weui.js"></script>
+		<script src="../js/md5.js"></script>
+		<script src="../js/city-picker.js"></script>
+		<script src="../js/swiper_jqueryweui.js"></script>
+	</head>
+	<body>
+					<div class="clear" style="padding: 50px 0 20px 0;">
+						<div class="col-xs-6 L">
+							<div class="pad_l10 pad_r10">
+								<div>
+									<div style="width: 80%;margin:0 auto">
+										<div class="img_box img100">
+											<div class="img_content">
+												<img src='../img/alpha.png' class="imgone" id="iosimg" onclick="imginit(0)" style="background: red">
+											</div>
+										</div>
+									</div>
+								</div>
+								<a class="font13 colorzt txt_center pad_t5 pad_b5 mar_t10 block" style="border:2px solid #ff6000;border-radius: 100px;" href="#" id="ioslink">
+									<img src="../img/ios.png" height="17" class="mar_r5" alt="">
+									<span class="inblock">IOS客户端下载</span>
+								</a>
+							</div>
+						</div>
+						<div class="col-xs-6 L">
+							<div class="pad_l10 pad_r10">
+								<div>
+									<div style="width: 80%;margin:0 auto">
+										<div class="img_box img100">
+											<div class="img_content">
+												<img src='../img/alpha.png' class="imgone" id="adrimg" onclick="imginit(1)" style="background: red">
+											</div>
+										</div>
+									</div>
+								</div>
+								<a class="font13 colorzt txt_center pad_t5 pad_b5 mar_t10 block" style="border:2px solid #ff6000;border-radius: 100px;" href="#" id="adrlink">
+									<img src="../img/adr.png" height="17" class="mar_r5" alt="">
+									<span class="inblock">Andriod客户端</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					 <div class="txt_center color999 font12 pad_b10">请点击二维码放大后识别</div>
+
+
+		<script>
+
+
+
+			//一开始 初始化为 家长端二维码和链接
+			$('#ioslink').attr('href',familylink_ios);
+			$('#adrlink').attr('href',familylink_adr);
+			$('#iosimg').attr('src',familyma_ios);
+			$('#adrimg').attr('src',familyma_adr);
+            // var tabindex=0;
+			function tabitemclick(index){
+				$('.tabitem').removeClass('colorzt border_bzt2');
+				$('.tabitem').eq(index).addClass('colorzt border_bzt2');
+				tabindex=index;
+
+				//获取二维码和链接
+				var adrimg,adrlink,iosimg,ioslink;
+				if(index==0){
+					//家长端
+					adrimg=familyma_adr;
+					iosimg=familyma_ios;
+					adrlink=familylink_adr;
+					ioslink=familylink_ios;
+					$('#tab2content').hide();
+					$('#tab3content').hide();
+				}else if(index==1){
+					//老师端
+					adrimg=teacherma_adr;
+					iosimg=teacherma_ios;
+					adrlink=teacherlink_adr;
+					ioslink=teacherlink_ios;
+					$('#tab2content').show();
+					$('#tab3content').hide();
+
+					cityinit();
+				}else if(index==2){
+					//商家端
+					adrimg=shangjiama_adr;
+					iosimg=shangjiama_ios;
+					adrlink=shangjialink_adr;
+					ioslink=shangjialink_ios;
+					$('#tab2content').hide();
+					$('#tab3content').show();
+				}
+				$('#adrimg').attr('src',adrimg);
+				$('#adrlink').attr('href',adrlink);
+				$('#iosimg').attr('src',iosimg);
+				$('#ioslink').attr('href',ioslink);
+			}
+			function imginit(index){
+				var pb1 = $.photoBrowser({
+					items: [
+						$('#iosimg').attr('src'),
+						$('#adrimg').attr('src')
+					],
+					initIndex:index
+				});
+				pb1.open();
+			}
+		</script>
+	</body>
+</html>

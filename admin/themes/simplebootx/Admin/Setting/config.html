@@ -1,0 +1,117 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li  class="active"><a href="{:U('Setting/Config')}">财务设置</a></li>
+		</ul>
+		<form method="post" class="form-horizontal js-ajax-form" action="">
+			<div class="control-group">
+				<label class="control"><h3>提现设置</h3></label>
+			</div>
+			<fieldset>
+				<div class="control-group">
+					<label class="control-label">提现额度设置</label>
+					<div class="controls">
+						<input name="quota" value="{$config.quota}">元
+					</div>
+				</div>
+			</fieldset>
+			<div class="control-group">
+				<label class="control"><h3>平台分润比例设置</h3></label>
+			</div>
+			<fieldset>
+				<div class="control-group">
+					<label class="control-label">老师约课</label>
+					<div class="controls">
+						<input name="radio" value="{$config.radio}">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">教育机构课程</label>
+					<div class="controls">
+						<input name="course_radio" value="{$config.course_radio}">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">托管班课程</label>
+					<div class="controls">
+						<input name="hosting_radio" value="{$config.hosting_radio}">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">线上课程</label>
+					<div class="controls">
+						<input name="online_class_radio" value="{$config.online_class_radio}">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">线下活动</label>
+					<div class="controls">
+						<input name="activity_radio" value="{$config.activity_radio}">
+					</div>
+				</div>
+			</fieldset>
+			<div class="control-group">
+				<label class="control"><h3>会员折扣设置</h3></label>
+			</div>
+			<fieldset>
+				<div class="control-group">
+					<label class="control-label">线上课堂会员折扣设置</label>
+					<div class="controls">
+						<input name="vip_radio" value="{$config['vip_radio']*100}">折
+					</div>
+				</div>
+			</fieldset>
+			<div class="control-group">
+				<label class="control"><h3>平台名称设置</h3></label>
+			</div>
+			<fieldset>
+				<div class="control-group">
+					<label class="control-label">亲子圈/教学圈 平台名称</label>
+					<div class="controls">
+						<input name="circle_name" value="{$config['circle_name']}">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">线上课堂 平台名称</label>
+					<div class="controls">
+						<input name="class_name" value="{$config['class_name']}">
+					</div>
+				</div>
+			</fieldset>
+			<div class="control-group">
+				<label class="control"><h3>会员功能开关设置</h3></label>
+			</div>
+			<fieldset>
+				<div class="control-group">
+					<label class="control-label">用户端会员</label>
+					<div class="controls">
+						<input type="radio" name="pvip_option" value="1" <if condition="$config['pvip_option'] eq 1">checked</if> >开启
+						<input type="radio" name="pvip_option" value="0" <if condition="$config['pvip_option'] eq 0">checked</if> >关闭
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">教师端会员</label>
+					<div class="controls">
+						<input type="radio" name="tvip_option" value="1" <if condition="$config['svip_option'] eq 1">checked</if> >开启
+						<input type="radio" name="tvip_option" value="0" <if condition="$config['tvip_option'] eq 0">checked</if> >关闭
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">商户端会员</label>
+					<div class="controls">
+						<input type="radio" name="svip_option" value="1" <if condition="$config['svip_option'] eq 1">checked</if> >开启
+						<input type="radio" name="svip_option" value="0" <if condition="$config['svip_option'] eq 0">checked</if> >关闭
+					</div>
+				</div>
+			</fieldset>
+			<div class="form-actions">
+				<button type="submit" class="btn btn-primary js-ajax-submit">{:L('SAVE')}</button>
+				<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+			</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

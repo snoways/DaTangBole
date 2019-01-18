@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title>活动订单</title>
+		<script type="text/javascript" src="js/com.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/stylea.css">
+		<link rel="stylesheet" type="text/css" href="css/weui.min.css">
+		<link rel="stylesheet" type="text/css" href="css/jquery-weui.css">
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery-weui.js"></script>
+		<script type="text/javascript" src="js/template-native.js"></script>
+		<style type="text/css">
+			.content_box .weui-pull-to-refresh .refreshing{margin-top: 45px;}
+			.numstyle{padding: 0 3px;}
+			.active .numstyle{height:1.5em;background: #FF9253;margin-left: 4px;color:#fff}
+		</style>
+	</head>
+	<body>
+
+		<div id="box"></div>
+		<script type="text/html" id="tpl">
+			<div style="background: #EFEFEF;height:50px;position:fixed;top:0;left:0;z-index: 222;" class="pad_b5 w100">
+				<div class="tableblock txt_center bgcolorfff w100 h100">
+					<div class="font13 col-xs-4">
+						<div onclick="tabChange(0)" class="inblock <%=tabIndex==0?'active':''%>">未付款<span class="color666 inblock R numstyle"><%=tabnum[0]%>人</span></div>
+					</div>
+					<div class="font13 col-xs-4">
+						<div onclick="tabChange(1)" class="inblock <%=tabIndex==1?'active':''%>">已付款<span class="color666 inblock R numstyle"><%=tabnum[1]%>人</span></div>
+					</div>
+					<div class="font13 col-xs-4">
+						<div onclick="tabChange(2)" class="inblock <%=tabIndex==2?'active':''%>">申请退款<span class="color666 inblock R numstyle"><%=tabnum[2]%>人</span></div>
+					</div>
+				</div>
+			</div>
+		</script>
+
+		<div ontouchstart class="content_box">
+			<div class="content_scroll">
+				<div id="box1"></div>
+			</div>
+		</div>
+
+		<script type="text/html" id="tpl1">
+			
+			<%if(da.length==0){%>
+			<div class="empty">暂无订单</div>
+			<%}%>
+			<!-- 退款 -->
+			<%for(var i = 0; i < da.length;i++){%>
+			<%var el = da[i];%>
+				<div class="bgcolorfff" style="padding:10px;margin-top:5px;">
+					<div style="width:100%;height:20px;position:relative;">
+						<img style="width:100%;height:20px;" src="img/huoBar.png">
+						<span class="font12 colorfff" style="position:absolute;top:4px;left:6px;">总负责人</span>
+					</div>
+					<div onclick="slide($(this))" class="tableblock" style="padding:12px 0;">
+						<div style="width:12%;">
+							<img style="width:30px;height:30px;" src="img/huohd.png">
+						</div>
+						<div style="width:48%;">
+							<div class="inblock font13 color333"><%=el.parent_name%></div><span class="inblock font13 color333" style="margin-left:5%;"><%=el.phone%></span>
+						</div>
+						<div class="txt_right font12 color666" style="width:40%;">
+							<div class="inblock">报名人数: <span class="inblock colorf6"><%=el.count%></span> 人</div>
+							<img class="inblock" style="width:16px;height:16px;" src="img/arrow_down.png">
+						</div>
+					</div>
+
+					<div>
+						<%for(var j = 0; j < el.list.length; j++){%>
+						<%var elel = el.list[j];%>
+							<div class="tableblock color666" style="padding: 8px 0;margin-top:5px;border:1px solid #f3f2f2;">
+								<div style="width:12%;"></div>
+								<div style="width:23%;">
+									<img class="inblock" style="width:12px;height:16px;margin-right:6px;" src="img/huoM_hd.png">
+									<div class="inblock font12"><%=elel.member_name%></div>
+								</div>
+								<div style="width:45%;">
+									<div class="font12" style="padding-top: 4px;"><%=elel.member_phone%></div>
+								</div>
+								<div style="width:10%;">
+									<div class="font12" style="padding-top: 4px;">
+										<%if(elel.status==2){%>
+										退款审核中
+										<%}else if(elel.status==3){%>
+										已退款
+										<%}%>
+									</div>
+								</div>
+							</div>
+						<%}%>
+
+						<div style="padding-top:12px;">
+							<div class="tableblock font12" style="padding:5px 0;">
+								<div class="color333" style="width:20%;">订单编号</div>
+								<div class="color666 txt_right" style="width:80%;"><%=el.sn%></div>
+							</div>
+							<div class="tableblock font12" style="padding:5px 0;">
+								<div class="color333" style="width:20%;">下单时间</div>
+								<div class="color666 txt_right" style="width:80%;"><%=el.sign_time%></div>
+							</div>
+							<div class="tableblock font12" style="padding:5px 0;">
+								<div class="color333" style="width:20%;">订单状态</div>
+								<%if(el.status == 1){%>
+									<div class="color666 txt_right" style="width:80%;">未付款</div>
+								<%}%>
+								<%if(el.status == 2 || el.status == 3){%>
+									<div class="color666 txt_right" style="width:80%;">已付款</div>
+								<%}%>
+							</div>
+							<div class="tableblock font12" style="padding:5px 0;">
+								<div class="color333" style="width:20%;">订单总额</div>
+								<div class="color666 txt_right colorf6" style="width:80%;">￥<%=$imports.num2(el.pay_money)%></div>
+							</div>
+						</div>
+
+						<%if(el.status == 3){%>
+						<div class="bgcolorfff" style="padding:0;border-bottom: 1px solid #ebeaea;border-top: 1px solid #ebeaea;">
+							<div style="padding:10px 0;">
+								<div class="tableblock font12" style="padding:5px 0;">
+									<div class="color333" style="width:50%;">申请退款人数</div>
+									<div class=" txt_right colorf6" style="width:50%;"><%=el.tui_count%>人</div>
+								</div>
+								<div class="tableblock font12" style="padding:5px 0;">
+									<div class="color333" style="width:20%;">退款原因</div>
+									<div class="color666 txt_right" style="width:80%;"><%=el.t_reason%></div>
+								</div>
+								<div class="tableblock font12" style="padding:5px 0;">
+									<div class="color333" style="width:50%;">预计退款金额</div>
+									<div class="colorf6 txt_right" style="width:50%;">￥<%=$imports.num2(el.tui_money)%></div>
+								</div>
+								
+							</div>
+						</div>
+						<%}%>
+						<%if(el.status == 3){%>
+							<%if(el.refund_status==2){%>
+							<div class="clear bgcolorfff pad_l10 pad_t10">
+								<div onclick="ok(<%=i%>)" class="font12 R txt_center colorfff bgcolorzt" style="width:52px;height:20px;line-height:20px;border-radius:20px;">同意</div>
+								<!--<div onclick="jujue(<%=i%>)" class="font12 R txt_center color666 bgcolorddd mar_r10" style="width:52px;height:20px;line-height:20px;border-radius:20px;">拒绝</div>-->
+							</div>
+							<%}%>
+							<%if(el.refund_status==3){%>
+							<div class="pad_l10 pad_t10 font12 color666 txt_right">等待后台退款</div>
+							<%}%>
+							<%if(el.refund_status==4){%>
+							<div class="pad_l10 pad_t10 font12 color666 txt_right">已退款</div>
+							<%}%>
+						<%}%>
+					</div>
+
+				</div>
+			<%}%>
+		</script>
+
+		<script type="text/javascript">
+			var token=localStorage.getItem('user_token');
+
+			if(Getvariable('token')){
+				token=Getvariable('token');
+			}
+
+			var data = {
+				path_img:path_img,
+
+				da: '',
+				tabIndex:0,
+				tabnum:[0,0,0],
+
+				oprate: true,
+				loading:false,
+				page:2
+			};
+			function renderhtml() {
+				document.getElementById('box').innerHTML = template('tpl',data);
+				document.getElementById('box1').innerHTML = template('tpl1',data);
+			}
+
+			var pid;
+			if(!Getvariable('pid')){
+				$.toast('少参数pid','text');
+				pre_loading(3);
+			}else{
+				pid=Getvariable('pid');
+				init();
+			}
+
+			function init(){
+				// 初始化加载
+				pre_loading(0);
+				//未支付
+				$.ajax({
+					url:path_inter+"ManagedClient/Activity/orderList",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						aid:pid,
+						status:1
+					},
+					success:function(res){
+						if(user_overdue(res)){
+							pre_loading(100);
+							data.tabnum[0]=res.data.count1;
+							data.tabnum[1]=res.data.count2;
+							data.tabnum[2]=res.data.count3;
+							data.da = res.data.list;
+							renderhtml();
+						}
+					},
+					error:function(){
+						$.toast('获取数据失败','text');
+					}
+				});
+			}
+
+
+
+
+
+
+			
+			// 滑动特效
+			function slide(obj){
+				if(obj.children().eq(2).children().eq(1).attr('src') == "img/arrow_down.png"){
+					obj.children().eq(2).children().eq(1).attr('src','img/arrow_up.png')
+				} else {
+					obj.children().eq(2).children().eq(1).attr('src','img/arrow_down.png')
+				}
+				obj.siblings().eq(1).slideToggle();
+			}
+			// tab切换
+			function tabChange(num){
+				data.tabIndex = num;
+				var status;
+				if(data.tabIndex == 0){
+					status = 1;
+				}else if(data.tabIndex == 1){
+					status = 2;
+				}else if(data.tabIndex == 2){
+					status = 3;
+				}
+
+				data.loading=false;
+				data.page=2;
+				load_closeanimation('load_animation',1);
+
+				pre_loading(0);
+				$.ajax({
+					url:path_inter+"ManagedClient/Activity/orderList",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						aid:pid,
+						status:status
+					},
+					success:function(res){
+						if(user_overdue(res)){
+							pre_loading(100);
+							data.tabnum[0]=res.data.count1;
+							data.tabnum[1]=res.data.count2;
+							data.tabnum[2]=res.data.count3;
+							data.da = res.data.list;
+
+							load_closeanimation('load_animation',1);
+							renderhtml();
+						}
+					},
+					error:function(){
+						$.toast('获取数据失败','text');
+					}
+				});
+			}
+			// 同意退款
+			function ok(i){
+				if(!data.oprate){
+					return false;
+				}
+
+				$.confirm("确认同意退款？",'', function() {
+					data.oprate=false;
+					$.ajax({
+						url:path_inter+"ManagedClient/Activity/refund",
+						dataType:'json',
+						type:'post',
+						data:{
+							token:token,
+							oid:data.da[i].oid
+						},
+						success:function(res){
+							data.oprate=true;
+							if(user_overdue(res)){
+								data.da[i].refund_status=3;  //商家同意退款
+								$.toast('已同意退款','text');
+								renderhtml();
+							}
+						},
+						error:function(){
+							data.oprate=true;
+							pre_loading(1);
+						}
+					});
+				},function(){
+
+				});
+			}
+			//拒绝退款
+			function jujue(i){
+				$.toast('暂无接口','text');
+			}
+
+
+
+
+
+			// 下拉刷新
+			xiala_reload($(".content_box"));
+			$(".content_box").pullToRefresh().on("pull-to-refresh", function() {
+				if(!data.oprate){
+					return false;
+				}
+
+				var status;
+				if(data.tabIndex == 0){
+					status = 1;
+				}else if(data.tabIndex == 1){
+					status = 2;
+				}else if(data.tabIndex == 2){
+					status = 3;
+				}
+
+				data.loading=false;
+				data.page=2;
+				load_closeanimation('load_animation',1);
+
+				data.oprate=false;
+				$.ajax({
+					url:path_inter+"ManagedClient/Activity/orderList",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						aid:pid,
+						status:status
+					},
+					success:function(res){
+						data.oprate=true;
+						$(".content_box").pullToRefreshDone();
+
+						if(user_overdue(res)){
+							data.tabnum[0]=res.data.count1;
+							data.tabnum[1]=res.data.count2;
+							data.tabnum[2]=res.data.count3;
+							data.da = res.data.list;
+							renderhtml();
+						}
+					},
+					error:function(){
+						data.oprate=true;
+						pre_loading(1);
+						$.toast('刷新失败','text');
+					}
+				});
+			});
+
+			// 上拉加载
+			$(".content_box").infinite().on("infinite", function() {
+				if(data.da.length==0 || data.loading || !data.oprate)
+				{
+					return false;
+				}
+				
+				var obj=$(this);
+				load_addanimation("load_animation",obj);
+				data.loading = true;//关闭下拉加载
+
+				var status;
+				if(data.tabIndex == 0){
+					status = 1;
+				}else if(data.tabIndex == 1){
+					status = 2;
+				}else if(data.tabIndex == 2){
+					status = 3;
+				}
+				data.oprate=false;
+				$.ajax({
+					url:path_inter+"ManagedClient/Activity/orderList",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						aid:pid,
+						status:status,
+						page:data.page
+					},
+					success:function(res){
+						data.oprate=true;
+						if(user_overdue(res)){
+							if(res.data.length>0){
+								data.da=data.da.concat(res.data.list);
+								data.loading=false;
+								data.page++;
+								load_closeanimation('load_animation',1);
+								renderhtml();
+							}else{
+								load_closeanimation('load_animation',0);
+							}
+						}
+					},
+					error:function(){
+						data.oprate=true;
+					}
+				});
+			});
+		</script>
+	</body>
+</html>

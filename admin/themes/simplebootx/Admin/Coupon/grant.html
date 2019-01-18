@@ -1,0 +1,130 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('coupon/index')}">满减</a></li>
+        <li><a href="{:U('coupon/arrived')}">抵现</a></li>
+        <li><a href="{:U('coupon/add')}">添加优惠券</a></li>
+        <li class="active"><a href="{:U('coupon/grant',array('id'=>$id))}">发放优惠券</a></li>
+    </ul>
+    <div class="well form-search">
+        关键字：<input type="text" name="keyword" placeholder="请输入用户名称/手机号">
+        <input type="submit" class="btn btn-primary" value="筛选"  id="btn"/>
+        <a class="btn btn-danger" href="{:U('coupon/grant',array('id'=>$id))}">清空</a>
+    </div>
+    <div id="caonima">
+
+    </div>
+
+    <div class="form-actions" style="display: none" id="save">
+        <button type="submit" class="btn btn-primary ">{:L('SAVE')}</button>
+        <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+    </div>
+
+
+</div>
+<input type="hidden" id="url" value="{:U('Coupon/btn')}">
+<input type="hidden" id="dizhi" value="{:U('Coupon/coupon_num')}">
+<script src="__PUBLIC__/js/common.js"></script>
+
+<script>
+    var url = $("#url").val();
+    $("#btn").click(function(){
+        var keyword = $("input[name=keyword]").val();
+        if(keyword == ''){
+            layer.msg('请按规定方式操作！填写内容');
+            return false;
+        }
+        $.post(url,{
+            keyword:keyword,
+        },function(data){
+            $('#caonima').html('');
+            var data = JSON.parse(data);
+            if(data.length == 0){
+                layer.msg('您所搜索的信息暂无,请重新输入！');
+                return false;
+            }
+
+            var str = '<table class="table table-hover table-bordered">\
+							<thead>\
+							<tr>\
+							<th>选择</th>\
+							<th width="100">手机号</th>\
+							<th width="150">姓名</th>\
+							<th width="120">性别</th>\
+							<th width="120">头像</th>\
+							<th width="120">注册时间</th>\
+							</tr>\
+							</thead><tbody>';
+
+            for(var i=0 ;i<data.length;i++){
+                str +='<tr><td width="50"><input id="user_id" type="radio" name="id" value="'+data[i].id+'"</td><td>'+data[i].phone+'</td>\
+                        <td>'+data[i].user_name+'</td>';
+                if(data[i].sex == 1){
+                    str += '<td>男</td>';
+                }else if(data[i].sex == 2){
+                    str += '<td>女</td>';
+                }else{
+                    str += '<td>未设置</td>';
+                }
+                str += '<td><img style="width:40px;height:40px;" src="__ROOT__'+data[i].avatar+'"/></td>\
+                        <td>'+data[i].register_time+'</td>\
+                        </tr>';
+            }
+            str +='</tbody></table>';
+            $('#caonima').append(str);
+            $("#save").show();
+            return false;
+        })
+    })
+    $("#save").click(function(){
+        var person =  $("input[name=id]:checked").val();
+        if(person == undefined){
+            layer.msg('请选择发放对象，不可以为空！');
+            return false;
+        }
+        var dizhi = $("#dizhi").val();
+        var id = {$_GET['id']};             //优惠券id
+        var user_id = $("#user_id").val();
+        //prompt层
+        layer.prompt({title: '请输入发放数量，并确认', formType: 2}, function(text, index){
+            if(isNaN(text)) {
+                layer.msg('只允许输入数字');
+                return false;
+            }
+            if(text <= 0){
+                layer.msg('数量不可以小于等于0！');
+                return false;
+            }
+            if(!(parseInt(text)==text)){
+                layer.msg('请输入整数，不识别小数！');
+                return false;
+            }
+            $.post(dizhi,{
+                id:id,num:text,user_id:user_id,
+            },function(data){
+                console.log(data)
+                var data = JSON.parse(data);
+                if(data.code == -1){
+                    layer.msg('库存不足，请重新输入！');
+                    return false;
+                }else if(data.code == 2){
+                    layer.msg('库存修改失败！');
+                    return false;
+                }else if(data.code == 3){
+                    layer.msg('网络错误！');
+                    return false;
+                }else{
+                    layer.close(index);
+                    layer.msg('发放成功！',function(){
+                        window.location.href = "{:U('coupon/arrived')}";
+                    });
+                }
+            })
+
+        });
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>添加图片</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- bootstrap -->
+    <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap.css" rel="stylesheet">
+    <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+
+    <!-- libraries -->
+    <link href="__PUBLIC__/Shopadmin/css/lib/uniform.default.css" type="text/css" rel="stylesheet">
+    <link href="__PUBLIC__/Shopadmin/css/lib/select2.css" type="text/css" rel="stylesheet">
+    <link href="__PUBLIC__/Shopadmin/css/lib/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+    <link href="__PUBLIC__/Shopadmin/css/lib/font-awesome.css" type="text/css" rel="stylesheet"/>
+
+    <!-- global styles -->
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/layout.css">
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/elements.css">
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/icons.css">
+
+    <!-- this page specific styles -->
+    <link rel="stylesheet" href="__PUBLIC__/Shopadmin/css/compiled/form-showcase.css" type="text/css" media="screen"/>
+
+    <!-- open sans font -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <script type="text/html" id="photos-item-wrapper">
+        <li id="savedimage{id}" style=" margin-bottom:10px;">
+            <input id="photo-{id}" type="hidden" name="photos_url[]" value="{filepath}">
+            <input id="photo-{id}-name" type="text" name="photos_alt[]" value="{name}" style="width: 160px;" title="图片名称">
+            <img id="photo-{id}-preview" src="{url}" style="max-height:40px;max-width: 50px;border:1px solid #DDDDDD; border-radius: 4px;" onclick="parent.image_preview_dialog(this.src);">
+            <a href="javascript:upload_one_image('图片上传','#photo-{id}');" style="background:#1BA491; padding:8px 16px; font-size:14px; color:#FFF; border-radius: 4px;margin-left:10px;white-space: nowrap;">替换</a>
+            <a href="javascript:(function(){$('#savedimage{id}').remove();})();" style="background:#FF6C60; padding:8px 16px; font-size:14px; color:#FFF; border-radius: 4px;margin-left:5px;white-space: nowrap;">移除</a>
+        </li>
+    </script>
+    <link href="__PUBLIC__/js/artDialog/skins/default.css" rel="stylesheet" />
+
+    <script type="text/javascript">
+        //全局变量
+        var GV = {
+            ROOT: "__ROOT__/",
+            WEB_ROOT: "__WEB_ROOT__/",
+            JS_ROOT: "public/js/",
+            APP:'{$Think.MODULE_NAME}'/*当前应用名*/
+        };
+    </script>
+    <script src="__PUBLIC__/js/wind.js"></script>
+    <style>
+        #pad-wrapper{
+            padding: 0px;
+            padding-left: 10px;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<include file="common/menu" />
+
+<!-- main container -->
+<div class="content">
+    <div id="pad-wrapper" class="form-page">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="__CONTROLLER__/index">活动评论</a></li>
+        </ul>
+        <form class="well form-search" method="post" action="{:U('Activitycomment/index')}">
+            评论人:
+            <input type="text" name="keyword" style="width: 200px;" value="{:I('request.keyword')}" placeholder="评论人姓名或电话号">
+            活动标题：
+            <input type="text" name="title" style="width: 200px;" value="{:I('request.title')}" placeholder="活动名称">
+            <input type="submit" class="btn btn-primary" value="搜索" />
+            <a class="btn btn-danger" href="{:U('Activitycomment/index')}">清空</a>
+        </form>
+
+        <form method="post" class="js-ajax-form" action="__CONTROLLER__/delete" >
+            <!--<div style="margin-bottom: 8px;">-->
+                <!--<button type="submit" class="btn btn-danger">一键删除</button>-->
+            <!--</div>-->
+            <table class="table table-hover table-bordered">
+                <thead>
+                <tr>
+                    <!--<th width="16"><label><input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x"></label></th>-->
+                    <th align="center">ID</th>
+                    <th>活动标题</th>
+                    <th>评论人</th>
+                    <th>评论时间</th>
+                    <th>内容</th>
+                    <!--<th align="center">{:L('ACTIONS')}</th>-->
+                </tr>
+                </thead>
+                <tbody>
+                <foreach name="list" key="k" item="vo">
+                    <tr>
+                        <!--<td><input type="checkbox" class="js-check"  name="ids[]" value="{$vo.id}"></td>-->
+                        <td> {$vo['id']} </td>
+                        <td>{$vo['title']}</td>
+                        <td>{$vo['user_name']}</td>
+                        <td>{$vo['create_time']}</td>
+                        <td>{$vo['content']} </td>
+                        <!--<td>-->
+                            <!--<a href="javascript:0;" data-id="{$vo['id']}" class="del"><i class="fa fa-close"></i></a>-->
+                        <!--</td>-->
+                    </tr>
+                </foreach>
+                </tbody>
+            </table>
+            <div class="pagination">{$page}</div>
+        </form>
+    </div>
+</div>
+<!-- end main container -->
+
+<!-- scripts for this page -->
+<script src="__PUBLIC__/Shopadmin/js/wysihtml5-0.3.0.js"></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/jquery.uniform.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/theme.js"></script>
+<!--laydate-->
+<script src="__PUBLIC__/Shopadmin/laydate/laydate.js"></script>
+<!--laryer-->
+<script src="__PUBLIC__/Shopadmin/layer/layer.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/common.js"></script>
+
+</body>
+</html>

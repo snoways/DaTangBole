@@ -1,0 +1,146 @@
+<admintpl file="header" />
+<style>
+    #text{
+        width: 640px;
+        height: 72px;
+        resize: none;
+    }
+    .controls input[type='radio']{
+        margin-right: 32px;
+        display: inline-block;
+        margin-top: 0px;
+    }
+    .none{
+        display: none;
+    }
+</style>
+<script src="__PUBLIC__/js/common.js"></script>
+<script type="text/html" id="photos-item-wrapper">
+    <li id="savedimage{id}">
+        <input id="photo-{id}" type="hidden" name="photos_url[]" value="{filepath}">
+        <input id="photo-{id}-name" type="text" name="photos_alt[]" value="{name}" style="width: 160px;" title="图片名称">
+        <img id="photo-{id}-preview" src="{url}" style="height:36px;width: 36px;" onclick="parent.image_preview_dialog(this.src);">
+        <a href="javascript:upload_one_image('图片上传','#photo-{id}');">替换</a>
+        <a href="javascript:(function(){$('#savedimage{id}').remove();})();">移除</a>
+    </li>
+</script>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('Circle/index')}">亲子圈列表</a></li>
+        <li class="active"><a href="{:U('Circle/edit')}">发布亲子圈</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form" action="{:U('Circle/edit')}">
+        <fieldset>
+            <input type="hidden" name="id" value="{$_GET['id']}">
+            <div class="control-group">
+                <label class="control-label">类型</label>
+                <div class="controls" style="overflow: hidden">
+                    文字
+                    <input type="radio" name="c_type" value="1" <if condition="$data['c_type'] == 1">checked</if> >
+                    图片
+                    <input type="radio" name="c_type" value="2"  <if condition="$data['c_type'] == 2">checked</if> >
+                    视频
+                    <input type="radio" name="c_type" value="3"  <if condition="$data['c_type'] == 3">checked</if>>
+                </div>
+            </div>
+
+            <div id="content">
+                <div class="control-group">
+                    <label class="control-label">文本内容</label>
+                    <div class="controls">
+                        <textarea id="text" name="content">{$data['content']}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div id="img" <if condition="$data['c_type'] neq 2">class="none"</if> >
+                <div class="control-group">
+                    <label class="control-label">{:L('相册图集')}</label>
+                    <div class="controls">
+                        <ul id="photos" class="pic-list unstyled">
+                            <notempty name="img_list">
+                                <foreach name="img_list" item="vo">
+                                    <php>$img_url=sp_get_image_preview_url($vo['url']);</php>
+                                    <li id="savedimage{$key}">
+                                        <input id="photo-{$key}" type="hidden" name="photos_url[]" value="{$img_url}">
+                                        <input id="photo-{$key}-name" type="text" name="photos_alt[]" value="{$vo.alt}" style="width: 200px;" title="图片名称">
+                                        <img id="photo-{$key}-preview" src="{:sp_get_image_preview_url($vo['url'])}" style="height:36px;width: 36px;" onclick="parent.image_preview_dialog(this.src);">
+                                        <a href="javascript:upload_one_image('图片上传','#photo-{$key}');">替换</a>
+                                        <a href="javascript:(function(){ $('#savedimage{$key}').remove();})();">移除</a>
+                                    </li>
+                                </foreach>
+                            </notempty>
+                        </ul>
+                        <a href="javascript:upload_multi_image('图片上传','#photos','photos-item-wrapper');" class="btn btn-small">选择图片</a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="video" <if condition="$data['c_type'] neq 3">class="none"</if>>
+
+                <div class="control-group">
+                    <label class="control-label">{:L('封面图')}</label>
+                    <div class="controls">
+                        <input type="text" readonly name="video_cover" id="js-link-image">
+                        <a href="javascript:upload_one_image('图片上传','#js-link-image');">上传图片</a>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">上传视频</label>
+                    <div class="controls">
+                        <input type="text" readonly name="video" id="js-link-video">
+                        <a href="javascript:upload_one('视频上传','#js-link-video','video');">上传视频</a>
+                    </div>
+                </div>
+            </div>
+
+        </fieldset>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary js-ajax-submit">{:L('SAVE')}</button>
+            <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+        </div>
+    </form>
+</div>
+<script>
+
+    var index = 0;
+    $("input[type='radio']").click(function () {
+        index = $(this).index();
+        if(index == 2){
+            $("#img").slideUp()
+            $("#video").slideDown();
+        }else if(index == 1){
+            $("#img").slideDown();
+            $("#video").slideUp();
+        }else{
+            $("#img").slideUp();
+            $("#video").slideUp();
+        }
+    })
+
+    $('form').submit(function () {
+        var text = $("#text").val();
+        var photos = $('#photos').children().length;
+        /*  cover */
+        var img = $("#js-link-image").val();
+        var video = $("#js-link-video").val();
+
+        if(index == 2 && (!text || !img || !video)){
+            layer.msg('您好，请上传视频和封面图并填写文字内容！');
+            return false;
+        }else if(index == 1 && (!text || parseInt(photos) == 0)){
+            layer.msg('您好，请上传图片并填写文字内容！');
+            return false;
+        }else if(index == 0 && !text){
+            layer.msg('您好，请填写文字内容！');
+            return false;
+        }
+        return true;
+    })
+
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li><a href="{:U('Question/index')}">测试题库列表</a></li>
+			<li  class="active"><a href="{:U('Question/add')}">测试题库添加</a></li>
+		</ul>
+		<form method="post" class="form-horizontal js-ajax-form" action="">
+			<input type="hidden" name="id" value="{$id}">
+			<fieldset>
+				<div class="control-group">
+					<label class="control-label">题目</label>
+					<div class="controls" style="border: 2px solid #dce4ec;width: 500px;padding: 6px 6px;">
+						{$rs.question}
+					</div>
+				</div>
+				<!--<foreach name="answer" key="k" item="an">
+					<div class="control-group">
+						<label class="control-label">答案{$k+1}</label>
+						<div class="controls" style="border: 2px solid #dce4ec;width: 500px;padding: 6px 6px;">
+							{$an.answer}
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">答案{$k+1}描述</label>
+						<div class="controls" style="border: 2px solid #dce4ec;width: 500px;padding: 6px 6px;">
+							{$an.desc}
+						</div>
+					</div>
+				</foreach>-->
+				<div class="control-group">
+					<label class="control-label">答案</label>
+					<div class="controls">
+						<textarea type="text" name="answer" style="height: 100px;width: 500px" required></textarea>
+					</div>
+				</div>
+				<!--<div class="control-group">
+					<label class="control-label">答案描述</label>
+					<div class="controls">
+						<textarea type="text" name="desc" style="height: 100px;width: 500px" required></textarea>
+					</div>
+				</div>-->
+				<div class="control-group">
+					<label class="control-label">分数</label>
+					<div class="controls">
+						<input type="text" name="score" required>
+					</div>
+				</div>
+
+			</fieldset>
+			<div class="form-actions">
+				<input type="hidden" name="id" value="1" />
+				<button type="submit" class="btn btn-primary js-ajax-submit">保存&再添加一个</button>
+				<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+			</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

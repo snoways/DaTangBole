@@ -1,0 +1,50 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="{:U('Employee/index')}">返回</a></li>
+		</ul>
+		<form method="post" class="js-ajax-form">
+			<table class="table table-hover table-bordered">
+				<thead>
+					<tr>
+						<th align="center">序号</th>
+						<th align="center">ID</th>
+						<th>手机号</th>
+						<th>孩子姓名</th>
+						<th>孩子性别</th>
+						<th>孩子学校</th>
+						<th>孩子年级</th>
+						<!--<th>地址</th>-->
+						<th>头像</th>
+						<th>会员等级</th>
+						<th>注册时间</th>
+						<th>{:L('STATUS')}</th>
+					</tr>
+				</thead>
+				<tbody>
+					<foreach name="list" key="k" item="vo">
+					<tr>
+						<td align="center">{$k+1}</td>
+						<td align="center">{$vo.id}</td>
+						<td>{$vo['phone']}</td>
+						<td>{$vo['child_name']}</td>
+						<td>{$vo['child_sex']==1?男:女}</td>
+						<td>{$vo.child_school}</td>
+						<td>{$vo.child_grade}</td>
+						<!--<td>{$vo.province} {$vo.city} {$vo.area} {$vo.address} </td>-->
+						<td><img width="50" height="50" src="{$vo.p_img}" /></td>
+						<td>{$vo.level_name}</td>
+						<td>{$vo.p_time}</td>
+						<td>{$vo['status']==1?正常:禁用}</td>
+					</tr>
+					</foreach>
+				</tbody>
+			</table>
+			<div class="pagination">{$page}</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

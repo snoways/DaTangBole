@@ -1,0 +1,31 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('Information/placeholder')}">商家课程/托管说明</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form" action="{:U('Information/placeholder')}">
+        <fieldset>
+            <div class="control-group">
+                <label class="control-label">商家课程说明</label>
+                <div class="controls">
+                    <textarea type="text" name="placeholder" style="width: 500px;height: 100px" required>{$find.placeholder}</textarea>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">商家托管说明</label>
+                <div class="controls">
+                    <textarea type="text" name="placeholder2" style="width: 500px;height: 100px" required>{$find.placeholder2}</textarea>
+                </div>
+            </div>
+        </fieldset>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary js-ajax-submit">{:L('SAVE')}</button>
+            <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

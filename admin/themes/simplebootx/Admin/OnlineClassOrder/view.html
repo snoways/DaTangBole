@@ -1,0 +1,83 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a>订单列表</a></li>
+    </ul>
+
+    <div style="margin-bottom: 20px">
+        <table style="width: 40%">
+            <tr>
+                <th align="left"> 订单编号 </th>
+                <td>{$data['sn']}</td>
+            </tr>
+            <tr>
+                <th align="left"> 下单时间 </th>
+                <td>{$data['sign_time']}</td>
+            </tr>
+            <tr>
+                <th align="left"> 报名人姓名 </th>
+                <td>{$data['user_name']}</td>
+            </tr>
+            <tr>
+                <th align="left"> 报名人电话 </th>
+                <td>{$data['user_phone']}</td>
+            </tr>
+            <tr>
+                <th align="left"> 订单总金额 </th>
+                <td>{$data['pay_money']}</td>
+            </tr>
+            <tr>
+                <th align="left"> 订单状态 </th>
+                <td>
+                    {$status[$data['status']]}
+                    <if condition="$data['status'] eq 3">
+                        -->
+                        <if condition="$data['refund_status'] eq 2">
+                            买家申请退款
+                            <elseif condition="$data['refund_status'] eq 3" />
+                            商户已同意
+                            <elseif condition="$data['refund_status'] eq 4" />
+                            已退款
+                        </if>
+                    </if>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <h3> 报名人信息 </h3>
+    <table class="table"  style="width: 80%;margin-top: 12px">
+            <tr>
+                <th>姓名人</th>
+                <th>手机号</th>
+                <th>价格额</th>
+                <th>{:L('STATUS')}</th>
+            </tr>
+            <foreach name="data['list']" key="k" item="vo">
+                <tr>
+                    <td>{$vo['member_name']}</td>
+                    <td>{$vo['member_phone']}</td>
+                    <td>{$vo.price}</td>
+                    <td>
+                        <if condition="$vo['status'] eq 1">
+                            正常
+                            <elseif condition="$vo['status'] eq 2" />
+                            申请退款了
+                        </if>
+                    </td>
+                </tr>
+            </foreach>
+    </table>
+
+    <if condition="$data['status'] eq 3">
+        <div>
+            <a href="{:U('ActivityOrder/refund')}" class="btn btn-primary pay" data-id="{$vo['sn']}"> 退款 </a>
+        </div>
+    </if>
+
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

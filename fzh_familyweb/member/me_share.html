@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>我的分享</title>
+  <script src="../js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="../css/ku/hui.css">
+  <link rel="stylesheet" href="../css/ku/style.css">
+  <script src="../js/ku/hui.js"></script>
+</head>
+<body>
+
+<div class="content_box" style="background: url(../img/twoqi/mesharebg.jpg) no-repeat top center;background-size: cover">
+  <div class="content_scroll">
+    
+    <div class="txt_center" style="padding-top: 17%">
+      <div class="imgp border_radius50 inblock" style="width: 23%;padding-bottom: 23%;border:2px solid #fff;box-shadow: 0 0 10px rgba(0,0,0,0.3)">
+        <img src="../img/tx.png" alt="" id="tx">
+      </div>
+      <div class="mar_t5 font20 color000" id="nickname">Sophia</div>
+    </div>
+    
+    <div class="txt_center" style="padding: 0 13.86%;margin-top: 12.26%">
+      <div class="bgcolorfff border_radiu6">
+        <div class="imgp inblock padb100per w100">
+          <img id="ema" src="" alt="">
+        </div>
+      </div>
+    </div>
+
+    <div class="mar_t20" style="padding: 0 13.86%;">
+      <span class="font16 colorfff bgcolorzt border_radiu4 w100 txt_center pad_t5 pad_b5 block" onclick="appshare2()">分享到微信好友或朋友圈</span>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  //初始加载
+  pre_loading(0);
+
+  var token=localStorage.getItem('user_token');
+
+  if(Getvariable('token')){
+    token=Getvariable('token');
+  }
+
+  //获取头像和昵称
+  hui.post(
+    path_inter+'/parents/UserCenter/info',
+    {
+      token: token
+    },
+    function(res){
+      res = JSON.parse(res);
+      pre_loading(100);
+      if (user_overdue(res.code,res.msg)) {
+        if(res.data.p_img!=''){
+          if(res.data.p_img.indexOf('http')!=-1){
+            //微信头像
+            document.getElementById('tx').setAttribute('src',res.data.p_img);
+          }else{
+            //上传头像
+            document.getElementById('tx').setAttribute('src',path_img+res.data.p_img);
+          }
+        }
+
+        document.getElementById('nickname').innerHTML=res.data.parent_name;
+
+        //获取二维码
+        hui.post(
+          path_inter+'/parents/UserCenter/inviteCode',
+          {
+            token:token
+          },
+          function(res){
+            res = JSON.parse(res);
+            pre_loading(100);
+            if (user_overdue(res.code,res.msg)) {
+              document.getElementById('ema').setAttribute('src',path_img+res.data.image);
+            }
+          },
+          function(){
+            //error
+            pre_loading(1);
+          }
+        );
+
+      }
+    },
+    function(){
+      //error
+      pre_loading(1);
+    }
+  );
+
+
+
+</script>
+</body>
+</html>

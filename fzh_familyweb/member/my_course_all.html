@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>notitle</title>
+  <script src="../js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="../css/ku/hui.css">
+  <link rel="stylesheet" href="../css/ku/weui.min.css">
+  <link rel="stylesheet" href="../css/ku/jquery-weui.min.css">
+  <link rel="stylesheet" href="../css/ku/style.css">
+  <script src="../js/ku/hui.js"></script>
+  <script src="../js/ku/jquery-1.12.4.min.js"></script>
+  <script src="../js/ku/jquery-weui.js"></script>
+  <script src="../js/ku/vue.min.js"></script>
+  <style>
+    .btns a{padding:4px 20px}
+    #header1 .on{background: #fff;color:#ff6000;border-radius: 50px;}
+    .L_order .weui-pull-to-refresh__layer{height: 5.625rem;padding-top: 2.8125rem;}
+  </style>
+</head>
+<body class="L_order">
+
+<div id="app" v-cloak>
+  <div class="header bgcolorzt" id="header1">
+    <div class="tableblock h100">
+      <div style="width: 40px">
+        <img src="../img/back_white.png" @click="back" style="width: 9px;height: 18px;" class="mar_l10" alt="">
+      </div>
+      <div>
+        <div class="tableblock colorfff txt_center" style="border:1px solid #fff;border-radius: 50px;height: 34px;">
+          <!-- <div :class="{on:header1tabindex==0}" @click="header1tabclick(0)">预约</div> -->
+          <div :class="{on:header1tabindex==0}" @click="header1tabclick(0)">机构</div>
+          <div :class="{on:header1tabindex==2}" @click="header1tabclick(2)">托管</div>
+          <div :class="{on:header1tabindex==3}" @click="header1tabclick(3)">活动</div>
+        </div>
+      </div>
+      <div style="width: 40px">&nbsp;</div>
+    </div>
+  </div>
+
+  <!-- 预约-->
+  <!-- <div v-show="header1tabindex==0"> -->
+    <!--tab-->
+    <!-- <div class="header txt_center font13  color666 bgcolorf5" style="top: 2.8125rem">
+      <div class="tableblock bgcolorfff" style="height: 2.5rem;">
+        <div v-for="(el,index) in order_tab1" class="pad_l5 pad_r5" :class="{colorfff:tab_index1==index}">
+          <a href="javascript:;" @click="tab_click1(index)" class="block border_radiu20 pad_t2" :class="{bgcolorzt:tab_index1==index}">{{el}}</a>
+        </div>
+      </div>
+    </div>
+    <div class="content_box bgcolorf3f3" v-for="(el,index) in order_tab1" :class="{Hide:tab_index1!=index,no_scroll:list1[index].length==0}">
+      <div class="content_scroll"> -->
+        <!--没有信息提示-->
+        <!-- <div class="L_notice" v-if="list1[index].length==0">暂无相关课程~</div> -->
+        <!--内容开始-->
+        <!-- <ul>
+          <li v-for="(elem,indexs) in list1[index]" class="mar_b5 bgcolorfff">
+            <div class="pad10 pad_b10">
+              <a class="pad_b10 border_b tableblock font12 color666" @click="godetyuyue(elem)" href="javascript:;">
+                <div>订单编号{{elem.order_sn}}</div>
+                <div class="wrem6 txt_right color999">
+                  <span v-if="elem.status==-1" class="colorzt">等待老师确认</span>
+                  <span v-if="elem.status==1" class="colorzt">待付款</span>
+                  <span v-if="elem.status==2">进行中</span>
+                  <span v-if="elem.status==5 && elem.tui_status==1">售后处理中</span>
+                  <span v-if="elem.status==5 && elem.tui_status==2">已退款</span>
+                  <span v-if="elem.status==5 && elem.tui_status==3">被驳回</span>
+                  <span v-if="elem.status==3">已完成</span>
+                  <span v-if="elem.status==4">已取消</span>
+                </div>
+              </a>
+              <div class="pad_t10">
+                <div class="tableblock pad_b10 dash_border_b font14">
+                  <div class="col-xs-14 rela" @click="goteacherdet(elem)">
+                    <div class="img_box img100">
+                      <div class="img_content border_radius50">
+                        <img :src="elem.t_img" class="imgone">
+                      </div>
+                    </div>
+                    <span v-if="elem.t_type==1" class="abso bgcolorzt colorfff inblock font12 lh1" style="bottom: 0;right: 0;padding: 2px 3px;border-radius: 8px;">家教</span>
+                    <span v-if="elem.t_type==2" class="abso bgcolorzt colorfff inblock font12 lh1" style="bottom: 0;right: 0;padding: 2px 3px;border-radius: 8px;">老师</span>
+                    <span v-if="elem.t_type==3" class="abso bgcolorzt colorfff inblock font12 lh1" style="bottom: 0;right: 0;padding: 2px 3px;border-radius: 8px;">外教</span>
+                  </div>
+                  <a href="javascript:;" @click="godetyuyue(elem)" class="block">
+                    <div class="pad_l10 font12 color333">
+                      <span class="inblock">{{elem.subject}}</span>
+                    </div>
+                  </a>
+                  <a class="font12 color666 wrem8 block" href="javascript:;" @click="godetyuyue(elem)">
+                    <div>
+                      <span class="inblock">{{elem.o_price}}/课时</span>
+                      <span class="inblock">x{{elem.class_num}}</span>
+                    </div>
+                  </a>
+                  <a class="txt_right colorzt wrem5 block font13" href="javascript:;" @click="godetyuyue(elem)">
+                    <b>￥{{elem.total_money_int}}.{{elem.total_money_num}}</b>
+                  </a>
+                </div>
+              </div>
+              <div class="pad_t10 font12 color999 lineh_normal clear">
+                <div class="L">
+                  <span class="inblock mar_r5">共{{elem.class_num}}节</span>
+                  <span class="inblock L_c_step" v-if="elem.status==2">第{{elem.now_num | number0}}节/待确认</span>
+                  <span class="inblock L_c_step cur" v-if="elem.status==3">已全部完成</span>
+                </div>
+                <div class="R btns">
+                  <a href="javascript:;" v-if="elem.status<2" class="inblock border_radiu20 bgcoloreee color999" @click="cancel1(elem)">取消订单</a>
+                  <a href="javascript:;" v-if="elem.status==1" class="inblock mar_l5 border_radiu20 bgcolorzt colorfff" @click="go_pay1(elem)">去支付</a>
+                  <a href="javascript:;" v-if="elem.status==2" class="inblock border_radiu20 bgcoloreee color999" @click="apply_after1(elem)">申请售后</a>
+                  <a href="javascript:;" v-if="elem.status==3 && elem.assess==-1" class="inblock border_radiu20 bgcolorzt colorfff" @click="apply_evalua1(elem)">评价</a>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div> -->
+
+
+
+
+
+
+
+
+  <!-- 机构-->
+  <div v-show="header1tabindex==0">
+    <!--tab-->
+    <div class="header txt_center font13 bgcolorf5 color666 border_b" style="top: 2.8125rem">
+      <div class="tableblock bgcolorfff" style="height: 2.5rem;">
+        <div v-for="(el,index) in order_tab2" class="pad_l5 pad_r5" :class="{colorfff:tab_index2==index}">
+          <a href="javascript:;" @click="tab_click2(index)" class="block border_radiu20 pad_t2" :class="{bgcolorzt:tab_index2==index}">{{el}}</a>
+        </div>
+      </div>
+    </div>
+    <div class="content_box bgcolorf3f3" v-for="(el,index) in order_tab2" :class="{Hide:tab_index2!=index,no_scroll:list2[index].length==0}">
+      <div class="content_scroll">
+        <!--没有信息提示-->
+        <div class="L_notice" v-if="list2[index].length==0">暂无相关课程~</div>
+        <!--内容开始-->
+        <ul>
+          <li v-for="(elem,indexs) in list2[index]" class="mar_b5 bgcolorfff">
+            <div class="pad_t10 pad_l10 pad_r10">
+              <div class="pad_b10 border_b tableblock font12 color666" @click="godetjigou(elem)">
+                <div>订单编号{{elem.order_sn}}</div>
+                <div class="wrem6 txt_right color999">
+                  <span v-if="elem.status==1" class="colorzt">待支付</span>
+                  <span v-if="elem.status==2">授课中</span>
+                  <span v-if="elem.status==5 && elem.tui_status==1">售后处理中</span>
+                  <span v-if="elem.status==5 && elem.tui_status==2">已线下协商退款</span>
+                  <!--<span v-if="elem.status==5 && elem.tui_status==3">被驳回</span>-->
+                  <span v-if="elem.status==3">已完成</span>
+                  <span v-if="elem.status==4">已取消</span>
+                </div>
+              </div>
+              <div class="pad_t10">
+                <div class="tableblock pad_b10 font14">
+                  <div style="width: 75px" @click="gojigoucoursedet(elem)">
+                    <img :src="path_img+elem.img" width="65" height="40">
+                  </div>
+                  <div @click="godetjigou(elem)">
+                    <div class="font12 color333">{{elem.title}}</div>
+                    <div class="tableblock">
+                      <div class="coloraaa font12">
+                        <span class="inblock mar_r10">{{elem.subject}}</span>
+                        <span class="inblock colorzt">{{elem.class_num}}</span>
+                        <span class="inblock">课时</span>
+                      </div>
+                      <div class="txt_right wrem6 font13 colorzt"><b>￥{{elem.total_money}}</b></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="font12 color999 lineh_normal btns txt_right pad_t10 pad_b10 dash_border_t" v-if="elem.status==1">
+                <a href="javascript:;" class="inblock border_radiu20 bgcoloreee color999" @click="cancel2(elem)">取消订单</a>
+                <a href="javascript:;" class="inblock mar_l5 border_radiu20 bgcolorzt colorfff" @click="go_pay2(elem)">去支付</a>
+              </div>
+              <div class="font12 color999 lineh_normal btns txt_right pad_t10 pad_b10 dash_border_t" v-if="elem.status==2">
+                <a href="javascript:;" class="inblock border_radiu20 bgcoloreee color999" @click="apply_after2(elem)">申请售后</a>
+                <a href="javascript:;" class="inblock mar_l5 border_radiu20 bgcolorzt colorfff" @click="go_complete2(elem)">确认完成</a>
+              </div>
+              <div class="font12 color999 lineh_normal btns txt_right pad_t10 pad_b10 dash_border_t" v-if="elem.status==3 && elem.assess==-1">
+                <a href="javascript:;" class="inblock border_radiu20 bgcolorzt colorfff" @click="apply_evalua2(elem)">评价</a>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+  <!-- 托管-->
+  <div v-show="header1tabindex==2">
+    <!--tab-->
+    <div class="header txt_center font13 bgcolorf5 color666 border_b" style="top: 2.8125rem">
+      <div class="tableblock bgcolorfff" style="height: 2.5rem;">
+        <div v-for="(el,index) in order_tab3" class="pad_l5 pad_r5" :class="{colorfff:tab_index3==index}">
+          <a href="javascript:;" @click="tab_click3(index)" class="block border_radiu20 pad_t2" :class="{bgcolorzt:tab_index3==index}">{{el}}</a>
+        </div>
+      </div>
+    </div>
+    <div class="content_box bgcolorf3f3" v-for="(el,index) in order_tab3" :class="{Hide:tab_index3!=index,no_scroll:list3[index].length==0}">
+      <div class="content_scroll">
+        <!--没有信息提示-->
+        <div class="L_notice" v-if="list3[index].length==0">暂无相关课程~</div>
+        <!--内容开始-->
+        <ul>
+          <li v-for="(elem,indexs) in list3[index]" class="mar_b5 bgcolorfff">
+            <div class="pad_t10 pad_l10 pad_r10">
+              <div class="pad_b10 border_b tableblock font12 color666" @click="godettuoguan(elem)">
+                <div>订单编号{{elem.order_sn}}</div>
+                <div class="wrem6 txt_right color999">
+                  <span v-if="elem.status==1" class="colorzt">待支付</span>
+                  <span v-if="elem.status==2">授课中</span>
+                  <span v-if="elem.status==5 && elem.tui_status==1">售后处理中</span>
+                  <span v-if="elem.status==5 && elem.tui_status==2">已线下协商退款</span>
+                  <!--<span v-if="elem.status==5 && elem.tui_status==3">被驳回</span>-->
+                  <span v-if="elem.status==3">已完成</span>
+                  <span v-if="elem.status==4">已取消</span>
+                </div>
+              </div>
+              <div class="pad_t10">
+                <div class="tableblock pad_b10 font14">
+                  <div style="width: 75px" @click="gotuoguancoursedet(elem)">
+                    <img :src="path_img+elem.img" width="65" height="40">
+                  </div>
+                  <div @click="godettuoguan(elem)">
+                    <div class="font12 color333">{{elem.hc_title}}</div>
+                    <div class="tableblock">
+                      <div class="coloraaa font12">
+                        <!-- 去掉 ￥20.00/天-->
+                        <!--<span class="inblock mar_r10">￥20.00/天</span>-->
+                        <span class="inblock colorzt">{{elem.time_length}}</span>
+                        <span class="inblock">{{elem.type==1?'天':'个月'}}</span>
+                      </div>
+                      <div class="txt_right wrem6 font13 colorzt"><b>￥{{elem.total_money}}</b></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="font12 color999 lineh_normal btns txt_right pad_t10 pad_b10 dash_border_t" v-if="elem.status==1">
+                <a href="javascript:;" class="inblock border_radiu20 bgcoloreee color999" @click="cancel3(elem)">取消订单</a>
+                <a href="javascript:;" class="inblock mar_l5 border_radiu20 bgcolorzt colorfff" @click="go_pay3(elem)">去支付</a>
+              </div>
+              <div class="font12 color999 lineh_normal btns txt_right pad_t10 pad_b10 dash_border_t" v-if="elem.status==2">
+                <a href="javascript:;" class="inblock border_radiu20 bgcoloreee color999" @click="apply_after3(elem)">申请售后</a>
+                <a href="javascript:;" class="inblock mar_l5 border_radiu20 bgcolorzt colorfff" @click="go_complete3(elem)">确认完成</a>
+              </div>
+              <div class="font12 color999 lineh_normal btns txt_right pad_t10 pad_b10 dash_border_t" v-if="elem.status==3 && elem.assess==-1">
+                <a href="javascript:;" class="inblock border_radiu20 bgcolorzt colorfff" @click="apply_evalua3(elem)">评价</a>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+  <!-- 活动-->
+  <div v-show="header1tabindex==3">
+    <!--tab-->
+    <div class="header txt_center font13 bgcolorf5 color666 border_b" style="top: 2.8125rem">
+      <div class="tableblock bgcolorfff" style="height: 2.5rem;">
+        <div v-for="(el,index) in order_tab4" class="pad_l5 pad_r5" :class="{colorfff:tab_index4==index}">
+          <a href="javascript:;" @click="tab_click4(index)" class="block border_radiu20 pad_t2" :class="{bgcolorzt:tab_index4==index}">{{el}}</a>
+        </div>
+      </div>
+    </div>
+    <div class="content_box bgcolorf3f3" v-for="(el,index) in order_tab4" :class="{Hide:tab_index4!=index,no_scroll:list4[index].length==0}">
+      <div class="content_scroll">
+        <!--没有信息提示-->
+        <div class="L_notice" v-if="list4[index].length==0">暂无相关课程~</div>
+        <!--内容开始-->
+        <ul>
+          <li v-for="(elem,indexs) in list4[index]" class="mar_b5 bgcolorfff">
+            <div class="pad_t10 pad_l10 pad_r10">
+              <div class="pad_b10 border_b tableblock font12 color666" @click="godetactivity(elem)">
+                <div>报名时间：{{elem.sign_time}}</div>
+                <div class="wrem7 txt_right color999">
+                  <span v-if="elem.status==1" class="colorzt">待支付</span>
+                  <span v-if="elem.status==2">报名成功</span>
+                  <span v-if="elem.status==3 && elem.refund_status==2">售后处理中</span>
+                  <span v-if="elem.status==3 && elem.refund_status==3">商家已同意退款</span>
+                  <span v-if="elem.status==4">已退款</span>
+                  <span v-if="elem.status==5">已取消</span>
+                </div>
+              </div>
+              <div class="pad_t10">
+                <div class="tableblock pad_b10 font14">
+                  <div style="width: 75px" @click="goactivitydet(elem)">
+                    <img :src="path_img+elem.img" width="65" height="40">
+                  </div>
+                  <div @click="godetactivity(elem)">
+                    <div class="font12 color333">{{elem.title}}</div>
+                    <div class="coloraaa font12">
+                      <div>活动时间：{{elem.start_date}}</div>
+                    </div>
+                    <div class="tableblock">
+                      <!-- 活动时间和活动地点 删除-->
+                      <!--<div class="coloraaa font10">-->
+                      <!--<div>活动时间：2018.03.25-2018.03.31</div>-->
+                      <!--<div>活动地点：线上活动</div>-->
+                      <!--</div>-->
+                      <div class="txt_right wrem6 font13 colorzt"><b>￥{{elem.pay_money}}</b></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="pad_t10 font12 color999 lineh_normal dash_border_t clear pad_b10">
+                <div class="L" style="line-height: 24px">
+                  已报名：<b class="colorzt">{{elem.baomin}}</b>
+                </div>
+                <div class="R btns">
+                  <a href="javascript:;" v-if="elem.status==1" class="inblock border_radiu20 bgcoloreee color999" @click="cancel4(elem)">取消订单</a>
+                  <a href="javascript:;" v-if="elem.status==1" class="inblock mar_l5 border_radiu20 bgcolorzt colorfff" @click="go_pay4(elem)">去支付</a>
+                  <a href="javascript:;" v-if="elem.status==2 && elem.tui==1" class="inblock border_radiu20 bgcolorzt colorfff" @click="apply_after4(elem)">申请售后</a>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+</div>
+
+
+
+<script>
+  // parents/activity/getOrder 订单活动列表
+  ioshistorygoback();
+  
+  var token=localStorage.getItem("user_token");
+
+  if(Getvariable('token')){
+    token=Getvariable('token');
+  }
+
+  var vm = new Vue({
+    el: '#app',
+    data: {
+      path_img:path_img,
+      oprate: true,
+
+      header1tabindex:0,
+
+      //预约
+      // order_tab1:["全部","待确认","待付款","进行中","售后中"],
+      // ozt1:["",-1,1,2,5],
+      // list1: [[],[],[],[],[]],
+      // tab_index1: 0,
+      // loading1: [false, false, false, false, false],
+      // page1: [1, 1, 1, 1, 1],
+
+      //机构
+      order_tab2:["全部","待支付","进行中","已完成",'售后'],
+      ozt2:[0,1,2,3,5],
+      list2: [[],[],[],[],[]],
+      tab_index2: 0,
+      loading2: [false, false, false, false, false],
+      page2: [1, 1, 1, 1, 1],
+
+      //托管
+      order_tab3:["全部","待支付","进行中","已完成","售后"],
+      ozt3:[0,1,2,3,5],
+      list3: [[],[],[],[],[]],
+      tab_index3: 0,
+      loading3: [false, false, false, false, false],
+      page3: [1, 1, 1, 1, 1],
+
+      //活动
+      order_tab4:["全部","待支付","报名成功"],
+      ozt4:[0,1,3,2],
+      list4: [[],[],[],[]],
+      tab_index4: 0,
+      loading4: [false, false, false, false],
+      page4: [1, 1, 1, 1]
+    },
+    created:function(){
+      this.initdata();
+    },
+    mounted:function(){
+      this.$nextTick(function () {
+        pagedo();
+      });
+    },
+    methods:{
+      back:function(){
+        //返回app页面
+        appbackToApp();
+      },
+      header1tabclick:function(index){
+        vm.header1tabindex=index;
+        this.initdata();
+      },
+      initdata:function(){
+        //初始加载
+        pre_loading(0);
+
+        // if(this.header1tabindex==0){
+        //   this.tab_index1=0;
+        //   //预约
+        //   $.ajax({
+        //     url: path_inter + "/parents/UserCenter/orders",
+        //     dataType: 'json',
+        //     type: 'post',
+        //     data: {token: token, status: this.ozt1[this.tab_index1]},
+        //     success: function (data) {
+        //       pre_loading(100);
+        //       if (user_overdue(data.code,data.msg)) {
+        //         for(var i=0;i<data.data.length;i++){
+        //           data.data[i].href ="my_courseyuyuedet.html?pid=" + data.data[i].order_sn;
+        //           data.data[i].t_img = path_img + data.data[i].t_img;
+        //           var str = inter_price(data.data[i].total_money);
+        //           data.data[i].total_money_int = str.num_int;
+        //           data.data[i].total_money_num = str.num_num;
+        //         }
+        //         vm.list1.splice(vm.tab_index1, 1, data.data);
+        //         vm.page1[vm.tab_index1]++;
+        //       }
+        //     },
+        //     error: function () {
+        //       pre_loading(1);
+        //     }
+        //   });
+        // }else 
+        if(this.header1tabindex==0){
+          //机构
+          this.tab_index2=0;
+          //教育机构订单
+          $.ajax({
+            url: path_inter + "/parents/Educational/getOrder",
+            dataType: 'json',
+            type: 'post',
+            data: {token: token,status:this.ozt2[this.tab_index2]},
+            success: function (data) {
+              pre_loading(100);
+              if (user_overdue(data.code,data.msg)) {
+                for(var i=0;i<data.data.length;i++){
+                  data.data[i].href ="my_coursejigoudet.html?pid=" + data.data[i].oid;
+                }
+                vm.list2.splice(vm.tab_index2, 1, data.data);
+                vm.page2[vm.tab_index2]++;
+              }
+            },
+            error: function () {
+              pre_loading(1);
+            }
+          });
+        }else if(this.header1tabindex==2){
+          //托管
+          this.tab_index3=0;
+          //请求数据
+          $.ajax({
+            url: path_inter + "/parents/Hosting/getOrder",
+            dataType: 'json',
+            type: 'post',
+            data: {token: token, status: this.ozt3[this.tab_index3]},
+            success: function (data) {
+              pre_loading(100);
+              if (user_overdue(data.code,data.msg)) {
+                for(var i=0;i<data.data.length;i++){
+                  data.data[i].href ="my_coursetuoguandet.html?pid=" + data.data[i].oid;
+                }
+                vm.list3.splice(vm.tab_index3, 1, data.data);
+                vm.page3[vm.tab_index3]++;
+              }
+            },
+            error: function () {
+              pre_loading(1);
+            }
+          });
+        }else if(this.header1tabindex==3){
+          //活动
+          this.tab_index4=0;
+
+          //请求数据
+          $.ajax({
+            url: path_inter + "/client/activityorder/index",
+            dataType: 'json',
+            type: 'post',
+            data: {token:token, status: this.ozt4[this.tab_index4]},
+            success: function (data) {
+              pre_loading(100);
+              if (user_overdue(data.code,data.msg)) {
+                for(var i=0;i<data.data.length;i++){
+                  data.data[i].href ="my_courseactivitydet.html?pid=" + data.data[i].oid;
+                }
+                vm.list4.splice(vm.tab_index4, 1, data.data);
+                vm.page4[vm.tab_index4]++;
+              }
+            },
+            error: function () {
+              pre_loading(1);
+            }
+          });
+        }
+      },
+
+
+
+      //预约
+      // goteacherdet:function(elem){
+      //   appTeacherDet(elem.teacher_id);
+      // },
+      // godetyuyue:function(elem){
+      //   appOrderdetYuyue(elem.order_sn);
+      // },
+      // tab_click1: function (index) {
+      //   if (!vm.oprate) {
+      //     return false;
+      //   }
+      //   if (index != vm.tab_index1) {
+      //     vm.tab_index1 = index;
+      //   }
+      //   if (vm.page1[vm.tab_index1] < 2) {
+      //     vm.oprate = false;
+      //     $.ajax({
+      //       url: path_inter + "/parents/UserCenter/orders",
+      //       dataType: 'json',
+      //       type: 'post',
+      //       data: {token: token, status: vm.ozt1[vm.tab_index1], page: vm.page1[vm.tab_index1]},
+      //       success: function (data) {
+      //         vm.oprate = true;
+      //         if (user_overdue(data.code,data.msg)) {
+      //           for(var i=0;i<data.data.length;i++){
+      //             data.data[i].href = "my_courseyuyuedet.html?pid=" + data.data[i].order_sn;
+      //             data.data[i].t_img = path_img + data.data[i].t_img;
+      //             var str = inter_price(data.data[i].total_money);
+      //             data.data[i].total_money_int = str.num_int;
+      //             data.data[i].total_money_num = str.num_num;
+      //           }
+      //           vm.list1.splice(vm.tab_index1,1, data.data);
+      //           vm.page1[vm.tab_index1]++;
+      //         }
+      //       },
+      //       error: function () {
+      //         vm.oprate = true;
+      //         $.toast("请求失败", "text");
+      //       }
+      //     });
+      //   }
+      // },
+      cancel1: function (elem) {
+        //取消订单
+        $.confirm("", "确认取消?", function () {
+          $.ajax({
+            url: path_inter + "/parents/UserCenter/cancleOrder",
+            dataType: 'json',
+            type: 'post',
+            data: {token:token, order_sn: elem.order_sn},
+            success: function (data) {
+              if (user_overdue(data.code,data.msg)) {
+                if (data.code == 1) {
+                  elem.status = 4;
+                  $.toast("订单已取消", "text");
+                }
+              }
+            },
+            error: function () {
+              $.toast("订单取消失败", "text");
+            }
+          });
+        }, function () {
+
+        });
+      },
+      go_pay1: function (elem) {
+        //支付订单
+        appPayYuyue(elem.order_sn,elem.start_time,elem.total_money,elem.subject,1);
+      },
+      apply_after1: function (elem) {
+        //申请售后
+        location.href = "my_courseyuyue_applyservice.html?hasback=true&pid=" + elem.order_sn;
+      },
+      apply_evalua1: function (elem){
+        //评价老师
+        appgotoPingjiaCourse(3,elem.oid,elem.order_sn);
+      },
+
+
+
+      //机构
+      gojigoucoursedet:function(elem){
+        appJigouCourseDet(elem.ec_id);
+      },
+      godetjigou:function(elem){
+        appOrderdetJigou(elem.oid);
+      },
+      tab_click2: function (index) {
+        if (!vm.oprate) {
+          return false;
+        }
+        if (index != vm.tab_index2) {
+          vm.tab_index2 = index;
+        }
+        if (vm.page2[vm.tab_index2] < 2) {
+          vm.oprate = false;
+          $.ajax({
+            url: path_inter + "/parents/Educational/getOrder",
+            dataType: 'json',
+            type: 'post',
+            data: {token: token, status: vm.ozt2[vm.tab_index2]},
+            success: function (data) {
+              vm.oprate = true;
+              if (user_overdue(data.code,data.msg)) {
+                for(var i=0;i<data.data.length;i++){
+                  data.data[i].href = "my_coursejigoudet.html?pid=" + data.data[i].oid;
+                }
+                vm.list2.splice(vm.tab_index2,1, data.data);
+                vm.page2[vm.tab_index2]++;
+              }
+            },
+            error: function () {
+              vm.oprate = true;
+              $.toast("请求失败", "text");
+            }
+          });
+        }
+      },
+      cancel2: function (elem) {
+        if (!vm.oprate) {
+          return false;
+        }
+        //取消订单
+        $.confirm("", "确认取消?", function () {
+          vm.oprate=false;
+          $.ajax({
+            url: path_inter + "/parents/Educational/cancelOrder",
+            dataType: 'json',
+            type: 'post',
+            data: {token: token, oid: elem.oid},
+            success: function (data) {
+              vm.oprate=true;
+              if (user_overdue(data.code,data.msg)){
+                if (data.code == 1) {
+                  elem.status = 4;
+                  $.toast("订单已取消", "text");
+                }
+              }
+            },
+            error: function () {
+              vm.oprate=true;
+              $.toast("订单取消失败", "text");
+            }
+          });
+        }, function () {
+
+        });
+      },
+      go_pay2: function (elem) {
+        //支付订单
+        appPayJigou(elem.order_sn,elem.o_time,elem.usertype_name,elem.total_money,elem.title,2,elem.subject,elem.class_num);
+      },
+      apply_after2: function (elem) {
+        //申请售后
+        location.href = "my_coursejigou_applyservice.html?hasback=true&pid=" + elem.oid;
+      },
+      go_complete2:function(elem){
+        //确认完成
+        if (!vm.oprate) {
+          return false;
+        }
+        $.confirm("", "确认完成?", function () {
+          vm.oprate=false;
+          $.ajax({
+            url: path_inter + "/parents/Educational/finishOrder",
+            dataType: 'json',
+            type: 'post',
+            data: {token: token, oid: elem.oid},
+            success: function (data) {
+              vm.oprate=true;
+              if (user_overdue(data.code,data.msg)){
+                if (data.code == 1) {
+                  elem.status = 3;
+                  $.toast("订单已完成", "text");
+                }
+              }
+            },
+            error: function () {
+              vm.oprate=true;
+              $.toast("订单完成失败", "text");
+            }
+          });
+        }, function () {
+
+        });
+      },
+      apply_evalua2: function (elem) {
+        //评价
+        appgotoPingjiaCourse(1,elem.oid,elem.order_sn);
+      },
+
+
+
+      //托管
+      gotuoguancoursedet:function(elem){
+        appTuoguanCourseDet(elem.hc_id);
+      },
+      godettuoguan:function(elem){
+        appOrderdetTuoguan(elem.oid);
+      },
+      tab_click3: function (index) {
+        if (!vm.oprate) {
+          return false;
+        }
+        if (index != vm.tab_index3) {
+          vm.tab_index3 = index;
+        }
+        if (vm.page3[vm.tab_index3] < 2) {
+          vm.oprate = false;
+          $.ajax({
+            url: path_inter + "/parents/Hosting/getOrder",
+            dataType: 'json',
+            type: 'post',
+            data: {token: token, status: vm.ozt3[vm.tab_index3]},
+            success: function (data) {
+              vm.oprate = true;
+              if (user_overdue(data.code,data.msg)) {
+                for(var i=0;i<data.data.length;i++){
+                  data.data[i].href = "my_coursetuoguandet.html?pid=" + data.data[i].oid;
+                }
+                vm.list3.splice(vm.tab_index3,1, data.data);
+                vm.page3[vm.tab_index3]++;
+              }
+            },
+            error: function () {
+              vm.oprate = true;
+              $.toast("请求失败", "text");
+            }
+          });
+        }
+      },
+      cancel3: function (elem) {
+        if(!vm.oprate){
+          return false;
+        }
+        //取消订单
+        $.confirm("", "确认取消?", function () {
+          vm.oprate=false;
+          $.ajax({
+            url: path_inter + "/parents/Hosting/cancelOrder",
+            dataType: 'json',
+            type: 'post',
+            data: {token:token, oid: elem.oid},
+            success: function (data) {
+              vm.oprate=true;
+              if (user_overdue(data.code,data.msg)) {
+                if (data.code == 1) {
+                  elem.status = 4;
+                  $.toast("订单已取消", "text");
+                }
+              }
+            },
+            error: function () {
+              vm.oprate=true;
+              $.toast("订单取消失败", "text");
+            }
+          });
+        }, function () {
+
+        });
+      },
+      go_pay3: function (elem) {
+        //支付订单
+        appPayTuoguan(elem.order_sn,elem.o_time,elem.usertype_name,elem.total_money,elem.hc_title,3);
+      },
+      apply_after3: function (elem) {
+        //申请售后
+        location.href = "my_coursetuoguan_applyservice.html?hasback=true&pid=" + elem.oid;
+      },
+      go_complete3:function(elem){
+        if(!vm.oprate){
+          return false;
+        }
+        //确认完成
+        $.confirm("", "确认完成?", function () {
+          vm.oprate=false;
+          $.ajax({
+            url: path_inter + "/parents/Hosting/finishOrder",
+            dataType: 'json',
+            type: 'post',
+            data: {token: token, oid: elem.oid},
+            success: function (data) {
+              vm.oprate=true;
+              if (user_overdue(data.code,data.msg)) {
+                if (data.code == 1) {
+                  elem.status = 3;
+                  $.toast("订单已完成", "text");
+                }
+              }
+            },
+            error: function () {
+              vm.oprate=true;
+              $.toast("订单完成失败", "text");
+            }
+          });
+        }, function () {
+
+        });
+      },
+      apply_evalua3: function (elem) {
+        //评价
+        appgotoPingjiaCourse(2,elem.oid,elem.order_sn);
+      },
+
+
+      //活动
+      goactivitydet:function(elem){
+        console.log(elem)
+        appActivitydet(elem.act_id);
+      },
+      godetactivity:function(elem){
+        appOrderdetActivity(elem.id);
+      },
+      tab_click4: function (index) {
+        if (!vm.oprate) {
+          return false;
+        }
+        if (index != vm.tab_index4) {
+          vm.tab_index4 = index;
+        }
+        if (vm.page4[vm.tab_index4] < 2) {
+          vm.oprate = false;
+          $.ajax({
+            url: path_inter + "/client/activityorder/index",
+            dataType: 'json',
+            type: 'post',
+            data: {token:token, status: vm.ozt4[vm.tab_index4]},
+            success: function (data) {
+              vm.oprate = true;
+              if (user_overdue(data.code,data.msg)) {
+                for(var i=0;i<data.data.length;i++){
+                  data.data[i].href = "my_courseactivitydet.html?pid=" + data.data[i].oid;
+                }
+                vm.list4.splice(vm.tab_index4,1, data.data);
+                vm.page4[vm.tab_index4]++;
+              }
+            },
+            error: function () {
+              vm.oprate = true;
+              $.toast("请求失败", "text");
+            }
+          });
+        }
+      },
+      cancel4: function (elem) {
+        if(!vm.oprate){
+          return false;
+        }
+        console.log(elem);
+
+        //取消订单
+        $.confirm("", "确认取消?", function () {
+          vm.oprate=false;
+          $.ajax({
+            url: path_inter + "parents/Activity/cancelOrder",
+            dataType: 'json',
+            type: 'post',
+            data: {token: token, oid: elem.id},
+            success: function (data) {
+              vm.oprate=true;
+              if (user_overdue(data.code,data.msg)) {
+                if (data.code == 1) {
+                  elem.status = 5;
+                  $.toast("订单已取消", "text");
+                }
+              }
+            },
+            error: function (res) {
+              vm.oprate=true;
+              alert(JSON.stringify(res.responseText));
+              $.toast("订单取消失败", "text");
+            }
+          });
+        }, function (){
+
+        });
+      },
+      go_pay4: function (elem) {
+        //支付订单
+        // appPayActivity(elem.order_sn,elem.sign_time,elem.usertype_name,elem.pay_money,elem.title,4);
+        appPayActivity(elem.attr_title,elem.baomin,elem.id,elem.pay_money,elem.start_date,elem.title,elem.order_money,elem.spell_id);
+      
+      },
+      apply_after4: function (elem) {
+        //申请售后
+        location.href = "my_courseactivity_applyservice.html?hasback=true&pid=" + elem.oid;
+      }
+    }
+  });
+
+
+
+
+
+  function pagedo(){
+    //下拉刷新
+    xiala_reload($(".content_box"));
+    $(".content_box").pullToRefresh().on("pull-to-refresh", function () {
+      if (!vm.oprate) {
+        $(".content_box").pullToRefreshDone();
+        return false;
+      }
+
+      vm.oprate = false;
+      // if(vm.header1tabindex==0){
+      //   // 预约
+      //   vm.list1.splice(vm.tab_index1, 1, []);
+      //   vm.page1[vm.tab_index1] = 1;
+      //   vm.loading1[vm.tab_index1] = false;
+      //   load_closeanimation("load_animation" + vm.tab_index1, 1);
+      //   $.ajax({
+      //     url: path_inter + "/parents/UserCenter/orders",
+      //     dataType: 'json',
+      //     type: 'post',
+      //     data: {token: token, status: vm.ozt1[vm.tab_index1], page: vm.page1[vm.tab_index1]},
+      //     success: function (data) {
+      //       vm.oprate = true;
+      //       $(".content_box").pullToRefreshDone();
+      //       if (user_overdue(data.code,data.msg)) {
+      //         for(var i=0;i<data.data.length;i++){
+      //           data.data[i].href = "my_courseyuyuedet.html?pid=" + data.data[i].order_sn;
+      //           data.data[i].t_img = path_img + data.data[i].t_img;
+      //           var str = inter_price(data.data[i].total_money);
+      //           data.data[i].total_money_int = str.num_int;
+      //           data.data[i].total_money_num = str.num_num;
+      //         }
+      //         vm.list1.splice(vm.tab_index1, 1, data.data);
+      //         vm.page1[vm.tab_index1]++;
+      //       }
+      //     },
+      //     error: function () {
+      //       vm.oprate = true;
+      //       $.toast("刷新失败", "text");
+      //       $(".content_box").pullToRefreshDone();
+      //     }
+      //   });
+      // }else 
+      if(vm.header1tabindex==0){
+        //机构
+        vm.list2.splice(vm.tab_index2, 1, []);
+        vm.page2[vm.tab_index2] = 1;
+        vm.loading2[vm.tab_index2] = false;
+        load_closeanimation("load_animation" + vm.tab_index2, 1);
+        $.ajax({
+          url: path_inter + "/parents/Educational/getOrder",
+          dataType: 'json',
+          type: 'post',
+          data: {token: token, status: vm.ozt2[vm.tab_index2]},
+          success: function (data) {
+            vm.oprate = true;
+            $(".content_box").pullToRefreshDone();
+            if (user_overdue(data.code,data.msg)) {
+              for(var i=0;i<data.data.length;i++){
+                data.data[i].href = "my_coursejigoudet.html?pid=" + data.data[i].oid;
+              }
+              vm.list2.splice(vm.tab_index2, 1, data.data);
+              vm.page2[vm.tab_index2]++;
+            }
+          },
+          error: function () {
+            vm.oprate = true;
+            $.toast("刷新失败", "text");
+            $(".content_box").pullToRefreshDone();
+          }
+        });
+      }else if(vm.header1tabindex==2){
+        //托管
+        vm.list3.splice(vm.tab_index3, 1, []);
+        vm.page3[vm.tab_index3] = 1;
+        vm.loading3[vm.tab_index3] = false;
+        load_closeanimation("load_animation" + vm.tab_index3, 1);
+        $.ajax({
+          url: path_inter + "/parents/Hosting/getOrder",
+          dataType: 'json',
+          type: 'post',
+          data: {token:token, status: vm.ozt3[vm.tab_index3]},
+          success: function (data) {
+            vm.oprate = true;
+            $(".content_box").pullToRefreshDone();
+            if (user_overdue(data.code,data.msg)) {
+              for(var i=0;i<data.data.length;i++){
+                data.data[i].href = "my_coursetuoguandet.html?pid=" + data.data[i].oid;
+              }
+              vm.list3.splice(vm.tab_index3, 1, data.data);
+              vm.page3[vm.tab_index3]++;
+            }
+          },
+          error: function () {
+            vm.oprate = true;
+            $.toast("刷新失败", "text");
+            $(".content_box").pullToRefreshDone();
+          }
+        });
+      }else if(vm.header1tabindex==3){
+        //活动
+        vm.list4.splice(vm.tab_index4, 1, []);
+        vm.page4[vm.tab_index4] = 1;
+        vm.loading4[vm.tab_index4] = false;
+        load_closeanimation("load_animation" + vm.tab_index4, 1);
+        $.ajax({
+          url: path_inter + "/client/activityorder/index",
+          dataType: 'json',
+          type: 'post',
+          data: {token: token, status: vm.ozt4[vm.tab_index4]},
+          success: function (data) {
+            vm.oprate = true;
+            $(".content_box").pullToRefreshDone();
+            if (user_overdue(data.code,data.msg)) {
+              for(var i=0;i<data.data.length;i++){
+                data.data[i].href = "my_courseactivitydet.html?pid=" + data.data[i].oid;
+              }
+              vm.list4.splice(vm.tab_index4, 1, data.data);
+              vm.page4[vm.tab_index4]++;
+            }
+          },
+          error: function () {
+            vm.oprate = true;
+            $.toast("刷新失败", "text");
+            $(".content_box").pullToRefreshDone();
+          }
+        });
+      }
+    });
+
+
+    //上拉加载
+    $(".content_box").infinite().on("infinite", function(){
+      // if(vm.header1tabindex==0){
+      //   //预约
+      //   if(vm.list1[vm.tab_index1].length==0||vm.loading1[vm.tab_index1]||!vm.oprate){
+      //     return false;
+      //   }
+      // }else 
+      if(vm.header1tabindex==0){
+        //机构
+        if(vm.list2[vm.tab_index2].length==0||vm.loading2[vm.tab_index2]||!vm.oprate){
+          return false;
+        }
+      }else if(vm.header1tabindex==2){
+        //托管
+        if(vm.list3[vm.tab_index3].length==0||vm.loading3[vm.tab_index3]||!vm.oprate){
+          return false;
+        }
+      }else if(vm.header1tabindex==3){
+        //活动
+        if(vm.list4[vm.tab_index4].length==0||vm.loading4[vm.tab_index4]||!vm.oprate){
+          return false;
+        }
+      }
+
+      vm.oprate=false;
+      var obj=$(this);
+      // if(vm.header1tabindex==0){
+      //   //预约
+      //   load_addanimation("load_animation"+vm.tab_index1,obj);
+      //   vm.loading1[vm.tab_index1] = true;//关闭下拉加载
+      //   $.ajax({
+      //     url:path_inter+"/parents/UserCenter/orders",
+      //     dataType:'json',
+      //     type:'post',
+      //     data:{token:token,status:vm.ozt1[vm.tab_index1],page:vm.page1[vm.tab_index1]},
+      //     success:function(data){
+      //       vm.oprate=true;
+      //       if(user_overdue(data.code,data.msg))
+      //       {
+      //         for(var i=0;i<data.data.length;i++){
+      //           data.data[i].href="my_courseyuyuedet.html?pid="+data.data[i].order_sn;
+      //           data.data[i].t_img=path_img+data.data[i].t_img;
+      //           var str=inter_price(data.data[i].total_money);
+      //           data.data[i].total_money_int=str.num_int;
+      //           data.data[i].total_money_num=str.num_num;
+      //         }
+      //         vm.list1.splice(vm.tab_index1, 1, vm.list1[vm.tab_index1].concat(data.data));
+      //         if(data.data.length>0)
+      //         {
+      //           vm.page1[vm.tab_index1]++;
+      //           vm.loading1[vm.tab_index1] = false;
+      //           load_closeanimation("load_animation"+vm.tab_index1,1);
+      //         }
+      //         else
+      //         {
+      //           load_closeanimation("load_animation"+vm.tab_index1,0);
+      //         }
+      //       }
+      //     },
+      //     error:function(){
+      //       vm.oprate=true;
+      //     }
+      //   });
+      // }else 
+      if(vm.header1tabindex==0){
+        //机构
+        load_addanimation("load_animation"+vm.tab_index2,obj);
+        vm.loading2[vm.tab_index2] = true;//关闭下拉加载
+        $.ajax({
+          url:path_inter+"/parents/Educational/getOrder",
+          dataType:'json',
+          type:'post',
+          data:{token:token,status:vm.ozt2[vm.tab_index2],page:vm.page2[vm.tab_index2]},
+          success:function(data){
+            vm.oprate=true;
+            if(user_overdue(data.code,data.msg))
+            {
+              for(var i=0;i<data.data.length;i++){
+                data.data[i].href="my_coursejigoudet.html?pid="+data.data[i].oid;
+              }
+              vm.list2.splice(vm.tab_index2, 1, vm.list2[vm.tab_index2].concat(data.data));
+              if(data.data.length>0)
+              {
+                vm.page2[vm.tab_index2]++;
+                vm.loading2[vm.tab_index2] = false;
+                load_closeanimation("load_animation"+vm.tab_index2,1);
+              }
+              else
+              {
+                load_closeanimation("load_animation"+vm.tab_index2,0);
+              }
+            }
+          },
+          error:function(){
+            vm.oprate=true;
+          }
+        });
+      }else if(vm.header1tabindex==2){
+        //托管
+        load_addanimation("load_animation"+vm.tab_index3,obj);
+        vm.loading3[vm.tab_index3] = true;//关闭下拉加载
+        $.ajax({
+          url:path_inter+"/parents/Hosting/getOrder",
+          dataType:'json',
+          type:'post',
+          data:{token:token,status:vm.ozt3[vm.tab_index3],page:vm.page3[vm.tab_index3]},
+          success:function(data){
+            vm.oprate=true;
+            if(user_overdue(data.code,data.msg))
+            {
+              for(var i=0;i<data.data.length;i++){
+                data.data[i].href="my_coursetuoguandet.html?pid="+data.data[i].oid;
+              }
+              vm.list3.splice(vm.tab_index3, 1, vm.list3[vm.tab_index3].concat(data.data));
+              if(data.data.length>0)
+              {
+                vm.page3[vm.tab_index3]++;
+                vm.loading3[vm.tab_index3] = false;
+                load_closeanimation("load_animation"+vm.tab_index3,1);
+              }
+              else
+              {
+                load_closeanimation("load_animation"+vm.tab_index3,0);
+              }
+            }
+          },
+          error:function(){
+            vm.oprate=true;
+          }
+        });
+      }else if(vm.header1tabindex==3){
+        //活动
+        load_addanimation("load_animation"+vm.tab_index4,obj);
+        vm.loading4[vm.tab_index4] = true;//关闭下拉加载
+        $.ajax({
+          url:path_inter+"/client/activityorder/index",
+          dataType:'json',
+          type:'post',
+          data:{token:token,status:vm.ozt4[vm.tab_index4],page:vm.page4[vm.tab_index4]},
+          success:function(data){
+            vm.oprate=true;
+            if(user_overdue(data.code,data.msg))
+            {
+              for(var i=0;i<data.data.length;i++){
+                data.data[i].href="my_courseactivitydet.html?pid="+data.data[i].oid;
+              }
+              vm.list4.splice(vm.tab_index4, 1, vm.list4[vm.tab_index4].concat(data.data));
+              if(data.data.length>0)
+              {
+                vm.page4[vm.tab_index4]++;
+                vm.loading4[vm.tab_index4] = false;
+                load_closeanimation("load_animation"+vm.tab_index4,1);
+              }
+              else
+              {
+                load_closeanimation("load_animation"+vm.tab_index4,0);
+              }
+            }
+          },
+          error:function(){
+            vm.oprate=true;
+          }
+        });
+      }
+    });
+
+
+  }
+</script>
+
+</body>
+</html>

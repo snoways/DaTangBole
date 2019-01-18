@@ -1,0 +1,37 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li><a href="{:U('Question/score')}">题库分数管理</a></li>
+			<li><a href="{:U('Question/addscore')}">添加题库分数</a></li>
+			<li class="active"><a>编辑题库分数</a></li>
+		</ul>
+		<form method="post" class="form-horizontal js-ajax-form" action="">
+			<input type="hidden" name="id" value="{$rs.id}">
+			<fieldset>
+				<div class="control-group">
+					<label class="control-label">分数区间</label>
+					<div class="controls">
+						<input type="number" name="sleft" value="{$rs.sleft}" >-
+						<input type="number" name="sright" value="{$rs.sright}" >
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">答案描述</label>
+					<div class="controls">
+						<textarea type="text" name="desc" style="height: 100px;width: 500px" required>{$rs.desc}</textarea>
+					</div>
+				</div>
+
+			</fieldset>
+			<div class="form-actions">
+				<input type="hidden" name="id" value="1" />
+				<button type="submit" class="btn btn-primary js-ajax-submit">修改</button>
+				<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+			</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>我的订单</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- bootstrap -->
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap.css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+
+  <!-- libraries -->
+  <link href="__PUBLIC__/Shopadmin/css/lib/uniform.default.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/select2.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/font-awesome.css" type="text/css" rel="stylesheet"/>
+
+  <!-- global styles -->
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/layout.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/elements.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/icons.css">
+
+  <!-- this page specific styles -->
+  <link rel="stylesheet" href="__PUBLIC__/Shopadmin/css/compiled/form-showcase.css" type="text/css" media="screen"/>
+
+  <!-- open sans font -->
+  <link
+    href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+    rel='stylesheet' type='text/css'>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+
+<include file="common/menu" />
+
+
+<!-- main container -->
+<div class="content">
+
+  <div id="pad-wrapper" class="form-page">
+    <div class="row header">
+      <div class="col-md-12">
+        <h3>我的订单</h3>
+      </div>
+    </div>
+    <div class="row" style="padding: 10px; border: 1px solid #ccc;  margin-bottom: 10px;background-color: #F5FAFD;">
+      <form class="form-inline" id="formurl" method="post" action="{:U('Order/index')}">
+        <div class="form-group mar_r5">
+          <label for="shai1">孩子性别：</label>
+          <select class="form-control" name="sex" style="width: 150px;" id="shai1">
+            <option value="0">全部</option>
+            <option value="1" <if condition="$_POST['sex'] eq 1">selected</if>>男生</option>
+            <option value="2" <if condition="$_POST['sex'] eq 2">selected</if>>女生</option>
+          </select>
+        </div>
+        <div class="form-group mar_r5">
+          <label for="shai2">订单状态：</label>
+          <select class="form-control" id="shai2" name="status" style="width: 150px;">
+            <option value="0">全部</option>
+            <foreach name="status" key="key" item="item">
+              <option value="{$key}" <if condition="$_POST['status'] eq $key">selected</if>>{$item}</option>
+            </foreach>
+          </select>
+        </div>
+        <div class="form-group mar_r5">
+          <label for="shai4">关键字：</label>
+          <input type="text" name="keyword" class="form-control" id="shai4" style="width: 250px" value="{:I('request.keyword')}" placeholder="订单编号/孩子姓名/年级/手机号/科目">
+        </div>
+        <button class="btn btn-primary mar_r5" type="submit" onclick="return search();">搜索</button>
+        <a class="btn btn-danger" href="{:U('Order/index')}">清空</a>
+        <button class="btn btn-primary mar_r5" type="submit" onclick="return excel();">导出Excel</button>
+      </form>
+    </div>
+    <div class="table-wrapper products-table section">
+      <div class="row">
+        <table class="table table-hover" id="myordertable">
+          <thead>
+          <tr>
+            <th width="50">
+              ID
+            </th>
+            <th width="130">
+              <span class="line"></span>订单编号
+            </th>
+            <th width="80">
+              <span class="line"></span>学生姓名
+            </th>
+            <th width="80">
+              <span class="line"></span>学生性别
+            </th>
+            <th width="100">
+              <span class="line"></span>会员手机号
+            </th>
+            <th width="120">
+              <span class="line"></span>科目
+            </th>
+            <th width="70">
+              <span class="line"></span>总课时
+            </th>
+            <th width="80">
+              <span class="line"></span>总课时费
+            </th>
+            <th width="130">
+              <span class="line"></span>下单时间
+            </th>
+            <th width="100">
+              <span class="line"></span>机构实际应得
+            </th>
+            <th width="80">
+              <span class="line"></span>状态
+            </th>
+            <th width="80">
+              <span class="line"></span>退款原因
+            </th>
+            <th width="80">
+              <span class="line"></span>评价
+            </th>
+            <th width="80">
+              <span class="line"></span>操作
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <!-- row -->
+          <foreach name="lists" key="k" item="vo">
+            <tr>
+              <td>
+                {$k+1}
+              </td>
+              <td>
+                {$vo['sn']}
+              </td>
+              <td>
+                {$vo['child_name']}
+              </td>
+              <td>
+                {$vo['child_sex']==1?男:女}
+              </td>
+              <td>
+                {$vo['f_phone']}
+              </td>
+              <td>
+                {$vo.subject}
+              </td>
+              <td>
+                {$vo.class_num}
+              </td>
+              <td>
+                {$vo.total_money}
+              </td>
+              <td>
+                {$vo.o_time}
+              </td>
+              <td>
+                {$vo.money}
+              </td>
+              <td>
+                <?php
+                    if($vo['o_status']==1){
+                        echo "待支付";
+                    }elseif($vo['o_status']==2){
+                        echo "上课中";
+                    }elseif($vo['o_status']==3){
+                        echo "已完成";
+                    }elseif($vo['o_status']==4){
+                        echo "已取消";
+                    }elseif($vo['o_status']==5){
+                        if($vo['tui_status']==1){
+                          if($vo['st_status']==1){
+                            echo "退款审核中";
+                          }else{
+                            echo "退款已处理";
+                          }
+                        }elseif($vo['tui_status']==2){
+                            echo "已退款";
+                        }else{
+                            echo "退款申请被驳回";
+                        }
+                    }
+                ?>
+              </td>
+              <td>
+                {$vo['t_reason']}
+              </td>
+              <td>
+                <p>评星：{$vo['assess']['star']}星</p>
+                <p>内容：{$vo['assess']['content']}</p>
+                <if condition="$vo['assess']['img1'] neq null"><img src="{$vo['assess']['img1']}" width="120" /></if>
+                <if condition="$vo['assess']['img2'] neq null"><img src="{$vo['assess']['img2']}" width="120" /></if>
+                <if condition="$vo['assess']['img3'] neq null"><img src="{$vo['assess']['img3']}" width="120" /></if>
+              </td>
+              <td>
+                <if condition="$vo['o_status'] eq 5 && $vo['tui_status'] eq 1 && $vo['st_status'] eq 1">
+                  <span class="btn btn-link tongyi" data-id="{$vo.oid}">同意退款</span>
+                  <!--<span class="btn btn-link jujue" data-id="{$vo.oid}">拒绝退款</span>-->
+                </if>
+                <if condition="$vo['o_status'] eq 2">
+                  <span class="btn btn-link finish" data-id="{$vo.oid}">已完成</span>
+                </if>
+              </td>
+            </tr>
+          </foreach>
+          </tbody>
+        </table>
+        <div class="pagination">{$page}</div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end main container -->
+
+<!-- scripts for this page -->
+<script src="__PUBLIC__/Shopadmin/js/wysihtml5-0.3.0.js"></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/jquery.uniform.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/theme.js"></script>
+<!--laryer-->
+<script src="__PUBLIC__/Shopadmin/layer/layer.js"></script>
+
+
+
+
+
+<script>
+  $('#myordertable').on('click','.tongyi',function(){
+    //同意
+    var id=$(this).data('id');
+    console.log(id)
+      layer.confirm('您确定同意该退款申请吗?', {icon: 3, title:'提示'}, function(index){
+
+          $.post("__CONTROLLER__/status",
+              {'id':id, 'status':1},
+              function(json){
+                  var data = JSON.parse(json);
+                  if (data.code==1){
+                      window.location.reload();
+                  }else{
+                      layer.alert(data.msg);
+                  }
+              },"text");
+          layer.close(index);
+      });
+  }).on('click','.jujue',function(){
+    //拒绝
+    var id=$(this).data('id');
+    console.log(id)
+      layer.confirm('您确定拒绝该退款申请吗?', {icon: 3, title:'提示'}, function(index){
+
+          $.post("__CONTROLLER__/status",
+              {'id':id, 'status':2},
+              function(json){
+                  var data = JSON.parse(json);
+                  if (data.code==1){
+                      window.location.reload();
+                  }else{
+                      layer.alert(data.msg);
+                  }
+              },"text");
+          layer.close(index);
+      });
+  }).on('click','.finish',function(){
+      //完成
+      var id=$(this).data('id');
+      console.log(id)
+      layer.confirm('您确定该课程已完成吗?', {icon: 3, title:'提示'}, function(index){
+
+          $.post("__CONTROLLER__/finish",
+              {'id':id},
+              function(json){
+                  var data = JSON.parse(json);
+                  if (data.code==1){
+                      window.location.reload();
+                  }else{
+                      layer.alert(data.msg);
+                  }
+              },"text");
+          layer.close(index);
+      });
+  });
+
+  function search() {
+      $("#formurl").attr('action', "{:U('Order/index')}");
+      return true;
+  }
+  function excel() {
+      $("#formurl").attr('action', "{:U('Order/oexcel')}");
+      return true;
+  }
+</script>
+
+
+
+</body>
+</html>

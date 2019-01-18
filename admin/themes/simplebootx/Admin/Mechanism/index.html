@@ -1,0 +1,65 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap js-check-wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="{:U('Mechanism/index')}">教育机构合作申请列表</a></li>
+		</ul>
+		<form class="well form-search" method="post" action="{:U('Mechanism/index')}">
+			审核状态：
+			<select name="status" style="width: 90px;">
+				<option value="-1" selected>全部</option>
+				<option value="1" <if condition="$_POST['status'] eq 1">selected</if>>未处理</option>
+				<option value="2" <if condition="$_POST['status'] eq 2">selected</if>>已处理</option>
+			</select>
+			时间：
+			<input type="date" name="start" value="{:I('request.start')}" >-<input type="date" name="end" value="{:I('request.end')}" >
+			<input type="submit" class="btn btn-primary" value="搜索" />
+			<a class="btn btn-danger" href="{:U('Mechanism/index')}">清空</a>
+			<a href="{:U('Mechanism/mexcel')}" class="btn btn-primary">导出Excel</a>
+		</form>
+		<form class="well form-search">
+			<div style="color: red;">未审核申请数量 {$count} 个</div>
+		</form>
+			<table class="table table-hover table-bordered table-list">
+				<thead>
+					<tr>
+						<th width="50">ID</th>
+						<th width="120">名称</th>
+						<th  width="120">电话</th>
+						<th width="120">地址</th>
+						<th width="120">内容</th>
+						<th width="120">申请时间</th>
+						<th width="120">状态</th>
+						<th width="120">操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<foreach name="list" key="k" item="vo">
+					<tr>
+						<td>{$k+1}</td>
+						<td>{$vo.name}</td>
+						<td>{$vo.phone}</td>
+						<td>{$vo.address}</td>
+						<td>{$vo.content}</td>
+						<td>{$vo.m_time}</td>
+						<td><if condition="$vo.status eq 1">
+							未处理
+							<else/>
+							已处理
+							</if>
+						</td>
+						<td>
+							<if condition="$vo.status eq 1">
+								<a href="{:U('Mechanism/change',array('id'=>$vo['id']))}" class="js-ajax-dialog-btn" data-msg="{:L('确定已处理吗？')}">处理</a>
+							</if>
+						</td>
+					</tr>
+					</foreach>
+				</tbody>
+			</table>
+		<div class="pagination">{$page}</div>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

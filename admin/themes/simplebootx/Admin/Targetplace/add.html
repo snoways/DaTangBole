@@ -1,0 +1,48 @@
+<admintpl file="header" />
+<style type="text/css">
+    .pic-list li {
+        margin-bottom: 5px;
+    }
+</style>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('Targetplace/index')}">热门目的地管理</a></li>
+        <li class="active"><a href="{:U('Targetplace/add')}">添加热门目的地</a></li>
+    </ul>
+    <form action="{:U('Targetplace/add')}" method="post" class="form-horizontal js-ajax-form" enctype="multipart/form-data">
+        <div class="row-fluid">
+            <div class="span12">
+                <table class="table table-bordered">
+                    <tr>
+                        <th width="120" > 目的地名称 </th>
+                        <td>
+                            <input type="text" style="width:400px;" name="name" value="" placeholder="请输入目的地名称" required/>
+                            <span class="form-required">*</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th> 图标 </th>
+                        <td>
+                            <input type="hidden" name="image" id="thumb" value="">
+                            <a href="javascript:upload_one_image('图片上传','#thumb');">
+                                <img src="__TMPL__Public/assets/images/default-thumbnail.png" id="thumb-preview" width="135" style="cursor: hand" />
+                            </a>
+                            <input type="button" class="btn btn-small" onclick="$('#thumb-preview').attr('src','__TMPL__Public/assets/images/default-thumbnail.png');$('#thumb').val('');return false;" value="取消图片">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+        <div class="form-actions">
+            <button class="btn btn-primary js-ajax-submit" type="submit">提交</button>
+            <a class="btn" href="{:U('Activity/age')}">返回</a>
+        </div>
+    </form>
+</div>
+<script type="text/javascript" src="__PUBLIC__/layer/layer.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

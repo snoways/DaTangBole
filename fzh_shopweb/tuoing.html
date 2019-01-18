@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title>课程订单-托管</title>
+		<script type="text/javascript" src="js/com.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/stylea.css">
+		<link rel="stylesheet" type="text/css" href="css/weui.min.css">
+		<link rel="stylesheet" type="text/css" href="css/jquery-weui.css">
+
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery-weui.js"></script>
+		<script type="text/javascript" src="js/template-native.js"></script>
+		<style type="text/css">
+			.content_box .weui-pull-to-refresh .refreshing{margin-top: 45px;}
+			.numstyle{padding: 0 3px;}
+			.active .numstyle{height:1.5em;background: #FF9253;margin-left: 4px;color:#fff}
+		</style>
+	</head>
+	<body >
+
+		<div id="box" style="position:fixed;top:0;left:0;z-index: 99;width:100%;"></div>
+
+		<script type="text/html" id="tpl">
+			<div style="background: #EFEFEF;height:50px;position:fixed;top:0;left:0;z-index: 222;" class="pad_b5 w100">
+				<div class="tableblock txt_center bgcolorfff w100 h100">
+					<div class="font13 col-xs-4">
+						<div onclick="tab(0)" class="<%=tabIndex==0?'active':''%> inblock">进行中<span class="color666 inblock R numstyle"><%=tabnum[0]%>人</span></div>
+					</div>
+					<div class="font13 col-xs-4">
+						<div onclick="tab(1)" class="<%=tabIndex==1?'active':''%> inblock">已完成<span class="color666 inblock R numstyle"><%=tabnum[1]%>人</span></div>
+					</div>
+					<div class="font13 col-xs-4">
+						<div onclick="tab(2)" class="<%=tabIndex==2?'active':''%> inblock">退款<span class="color666 inblock R numstyle"><%=tabnum[2]%>人</span></div>
+					</div>
+				</div>
+			</div>
+		</script>
+
+
+		<div ontouchstart class="content_box">
+			<div class="content_scroll">
+				<div id="box1"></div>
+			</div>
+		</div>
+		<script type="text/html" id="tpl1">
+			<%if(list.length==0){%>
+			<div class="empty">暂无订单</div>
+			<%}%>
+			<!-- 订单  进行中  -->
+			<%for(var i = 0; i < list.length; i++){%>
+			<%var el = list[i];%>
+				<div class="bgcolorfff" style="padding:0 14px;margin-top:5px;">
+					<a href="tuoing_detail.html?pid=<%=el.oid%>">
+						<div class="tableblock" style="padding-top:14px;padding-bottom:14px;border-bottom:1px solid #ddd;">
+							<div class="color666 font12" style="width:70%;">订单编号:<%=el.sn%></div>
+							<%if(el.status == 2){%>
+								<div class="color74 txt_right font12" style="width:30%;">服务中</div>
+							<%}%>
+							<%if(el.status == 3){%>
+								<div class="color74 txt_right font12" style="width:30%;">已完成</div>
+							<%}%>
+							<!-- 退款-->
+							<div class="color74 txt_right font12" style="width:30%;">
+								<%if(el.status==5 && el.tui_status==1 && el.st_status==1){%>待处理<%}%>
+								<%if(el.status==5 && el.tui_status==1 && el.st_status==2){%>已处理<%}%>
+								<!--<%if(el.status==5 && el.tui_status==2){%>已退款<%}%>-->
+								<!--<%if(el.status==5 && el.tui_status==3){%>已驳回<%}%>-->
+							</div>
+						</div>
+
+						<div class="tableblock" style="padding-top:14px;padding-bottom:14px;border-bottom:1px dashed #eee;">
+							<div class="color666 col-xs-4">
+								<img class="inblock" style="width:28px;height:28px;border-radius: 50%" src="<%=path_img+el.p_img%>">
+								<div class="color333 font13 inblock" style="margin-left:10px;"><%=el.parent_name%></div>
+							</div>
+							<div class="color666 txt_center font12 col-xs-3"><%=el.time_length%>
+								<%if(el.type == 2){%>
+									<span>个月</span>
+								<%}%>
+								<%if(el.type == 1){%>
+									<span>天</span>
+								<%}%>
+							</div>
+							<div class="txt_right colorf6 font13 col-xs-5" style="font-weight: bold;">总课时费￥<%=el.money%></div>
+						</div>
+
+						<div class="clear" style="padding:14px 0 18px 50px;">
+							<div class="L">
+								<img style="width:72px;height:50px;" src="<%=path_img+el.img%>">
+							</div>
+							<div class="L" style="margin-left:8px;width:50%;">
+								<div class="font12 color666 txt_oneline"><%=el.hc_title%></div>
+								<div class="font12 color666 txt_oneline"><%=el.time_length%>
+									<%if(el.type == 2){%>
+										<span>个月</span>
+									<%}%>
+									<%if(el.type == 1){%>
+										<span>天</span>
+									<%}%>
+								</div>
+							</div>
+						</div>
+					</a>
+
+					<!-- 没有删除订单操作-->
+					<%if(el.status == 2){%>
+						<div class="clear" style="padding-top:12px;padding-bottom:12px;border-top:1px solid #eee;">
+							<div onclick="confirmFinished(<%=i%>)" class="R txt_center colorfff bgcolorzt font12" style="width:70px;height:24px;line-height:24px;border-radius:20px;">确认完成</div>
+						</div>
+					<%}%>
+
+					<%if(el.status==5 && el.tui_status==1 && el.st_status==1){%>
+					<div style="border-top: 1px solid #eee;">
+						<div class="tableblock" style="padding-top:12px;padding-bottom:12px;">
+							<div class="font12 color666 col-xs-4">
+								应退款：<span class="colorzt">￥<%=$imports.num2(el.refunds_money)%></span>
+							</div>
+							<div class="txt_right">
+								<div onclick="agreetui(<%=i%>)" class="inblock txt_center colorzt font12 mar_r10" style="width:70px;height:24px;line-height:24px;border-radius:20px;border:1px solid #ff6000;">已处理</div>
+								<!--<div onclick="noagreetui(<%=i%>)" class="inblock txt_center colorzt font12" style="width:70px;height:24px;line-height:24px;border-radius:20px;border:1px solid #ff6000;">拒绝退款</div>-->
+							</div>
+						</div>
+					</div>
+					<%}%>
+
+				</div>
+			<%}%>
+			
+
+		</script>
+		<script type="text/javascript">
+			var token=localStorage.getItem('user_token');
+
+			if(Getvariable('token')){
+				token=Getvariable('token');
+			}
+
+			var data = {
+				path_img:path_img,
+
+				oprate: true,
+				loading:false,
+				page:2,
+
+				tabnum:[0,0,0],
+				tabIndex: 0,
+				list:[]
+			};
+
+			function renderhtml() {
+				document.getElementById('box').innerHTML = template('tpl',data);
+				document.getElementById('box1').innerHTML = template('tpl1',data);
+			}
+			renderhtml();
+
+
+			// 初始化加载
+			pre_loading(0);
+			//进行中
+			$.ajax({
+				url:path_inter+"ManagedClient/HostingOrder/index",
+				dataType:'json',
+				type:'post',
+				data:{
+					token:token,
+					page:1,
+					status:2
+				},
+				success:function(res){
+					pre_loading(100);
+
+					if(user_overdue(res)){
+						data.tabnum[0] = res.data.count1;
+						data.tabnum[1] = res.data.count2;
+						data.tabnum[2] = res.data.count3;
+						data.list = res.data.list;
+						renderhtml();
+					}
+				},
+				error:function(){
+					$.toast('获取数据失败','text');
+				}
+			});
+
+
+
+
+			// tab切换
+			function tab (num) {
+				pre_loading(0);
+
+				data.tabIndex = num;
+				var status;
+				if(data.tabIndex == 0){
+					status = 2;
+				}else if(data.tabIndex == 1){
+					status = 3;
+				}else if(data.tabIndex == 2){
+					status = 5;
+				}
+
+				data.loading=false;
+				data.page=2;
+				load_closeanimation('load_animation',1);
+
+				$.ajax({
+					url:path_inter+"ManagedClient/HostingOrder/index",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						page:1,
+						status:status
+					},
+					success:function(res){
+						pre_loading(100);
+						if(user_overdue(res)){
+							data.tabnum[0] = res.data.count1;
+							data.tabnum[1] = res.data.count2;
+							data.tabnum[2] = res.data.count3;
+							data.list = res.data.list;
+							renderhtml();
+						}
+					},
+					error:function(){
+						$.toast('获取数据失败','text');
+					}
+				});
+			}
+
+
+
+
+
+			// 确认完成
+			function confirmFinished(i){
+				if(!data.oprate){
+					return false;
+				}
+
+				$.confirm("确认完成？",'', function() {
+					data.oprate=false;
+					$.ajax({
+						url:path_inter+"ManagedClient/HostingOrder/finish",
+						dataType:'json',
+						type:'post',
+						data:{
+							token:token,
+							oid:data.list[i].oid
+						},
+						success:function(res){
+							data.oprate=true;
+							if(user_overdue(res)){
+								$.toast('已确认完成');
+								data.list[i].status=3;
+								renderhtml();
+							}
+						},
+						error:function(){
+							data.oprate=true;
+							pre_loading(1);
+						}
+					});
+				},function(){
+
+				});
+			}
+			//同意退款
+			function agreetui(i){
+				if(!data.oprate){
+					return false;
+				}
+				$.confirm("确认同意？",'', function() {
+					data.oprate=false;
+					$.ajax({
+						url:path_inter+"ManagedClient/HostingOrder/status",
+						dataType:'json',
+						type:'post',
+						data:{
+							token:token,
+							oid:data.list[i].oid,
+							status:1
+						},
+						success:function(res){
+							data.oprate=true;
+							if(user_overdue(res)){
+								$.toast('审核通过');
+								data.list[i].st_status=2;//商家已审核通过
+								renderhtml();
+							}
+						},
+						error:function(){
+							data.oprate=true;
+							pre_loading(1);
+						}
+					});
+				},function(){
+
+				});
+			}
+			//拒绝退款
+			function noagreetui(i){
+				if(!data.oprate){
+					return false;
+				}
+				$.confirm("确认拒绝？",'', function() {
+					data.oprate=false;
+					$.ajax({
+						url:path_inter+"ManagedClient/HostingOrder/status",
+						dataType:'json',
+						type:'post',
+						data:{
+							token:token,
+							oid:data.list[i].oid,
+							status:2
+						},
+						success:function(res){
+							data.oprate=true;
+							if(user_overdue(res)){
+								$.toast('审核不通过');
+								data.list[i].tui_status=3;//已驳回
+								renderhtml();
+							}
+						},
+						error:function(){
+							data.oprate=true;
+							pre_loading(1);
+						}
+					});
+				},function(){
+
+				});
+			}
+
+
+
+
+
+
+			// 下拉刷新
+			xiala_reload($(".content_box"));
+			$(".content_box").pullToRefresh().on("pull-to-refresh", function() {
+				if(!data.oprate){
+					return false;
+				}
+				var num;
+				if(data.tabIndex==0){
+					num = 2;
+				}else if(data.tabIndex==1){
+					num = 3;
+				}else if(data.tabIndex==2){
+					num = 5;
+				}
+
+				data.loading=false;
+				data.page=2;
+				load_closeanimation('load_animation',1);
+
+				data.oprate=false;
+				$.ajax({
+					url:path_inter+"ManagedClient/HostingOrder/index",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						page:1,
+						status:num
+					},
+					success:function(res){
+						data.oprate=true;
+						$(".content_box").pullToRefreshDone();
+
+						if(user_overdue(res)){
+							data.tabnum[0] = res.data.count1;
+							data.tabnum[1] = res.data.count2;
+							data.tabnum[2] = res.data.count3;
+							data.list = res.data.list;
+							renderhtml();
+						}
+					},
+					error:function(){
+						data.oprate=true;
+						pre_loading(1);
+						$.toast('刷新失败','text');
+					}
+				});
+			});
+
+			// 上拉加载
+			$(".content_box").infinite().on("infinite", function() {
+				if(data.list.length==0 || data.loading || !data.oprate)
+				{
+					return false;
+				}
+				
+				var obj=$(this);
+				load_addanimation("load_animation",obj);
+				data.loading = true;//关闭下拉加载
+
+				if(data.tabIndex==0){
+					num = 2;
+				}else if(data.tabIndex==1){
+					num = 3;
+				}else if(data.tabIndex==2){
+					num = 5;
+				}
+
+				data.oprate=false;
+				$.ajax({
+					url:path_inter+"ManagedClient/HostingOrder/index",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						page:data.page,
+						status:num
+					},
+					success:function(res){
+						data.oprate=true;
+						if(user_overdue(res)){
+							if(res.data.list.length>0){
+								data.list = data.list.concat(res.data.list);
+								data.loading=false;
+								data.page++;
+								renderhtml();
+								load_closeanimation('load_animation',1);
+							}else{
+								load_closeanimation('load_animation',0);
+							}
+						}
+					},
+					error:function(){
+						data.oprate=true;
+					}
+				});
+			});
+		</script>
+
+	</body>
+</html>

@@ -1,0 +1,196 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('user/index')}">{:L('ADMIN_USER_INDEX')}</a></li>
+        <li class="active"><a href="{:U('user/address',array('id'=>$_GET['id']))}">{:L('地址管理')}</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form" action="{:U('User/address')}">
+        <fieldset>
+            <div class="control-group">
+    <label class="control-label">选择地区</label>
+    <div class="controls">
+        <div>
+            <select style="width: 150px;" id="sheng">
+                <foreach name="province" item="vo">
+                    <option value="{$vo.areaid}">{$vo.areaname}</option>
+                </foreach>
+            </select>
+            <select id="shi" style="display: none;width: 150px;"></select>
+            <select id="qu" style="display: none;width: 150px;"></select>
+
+            <!-- 存储区code值的隐藏域 -->
+            <input type="hidden" name="qucodes">
+
+            <button type="button" class="btn btn-primary" id="addaddrbtn" style="height: 30px;padding:5px 20px">添加该地址</button>
+        </div>
+        <table class="table table-hover table-bordered" style="margin-top: 20px">
+            <thead style="background: #">
+            <tr>
+                <th>地址</th>
+                <th width="100">操作</th>
+            </tr>
+            </thead>
+            <tbody id="addrtabletbody">
+            <!-- <tr>
+                <td>1111</td>
+                <td>
+                    <a href="javascript:;" class="delbtn">删除</a>
+                </td>
+            </tr> -->
+            </tbody>
+        </table>
+    </div>
+</div>
+        </fieldset>
+    </form>
+</div>
+</body>
+<script src="__PUBLIC__/js/common.js" ></script>
+<script>
+
+    var log=console.log;
+
+    //获取省市区
+    function getshengshiqu(shengcode){
+        // 获取市和区的url   {:U('User/getSub')}
+        // 参数名 'code'
+        $.ajax({
+            url: "{:U('User/getSub')}",
+            dataType: 'json',
+            type: 'post',
+            data: {code:shengcode},
+            success: function (data) {
+                var str='';
+                for(var i=0;i<data.length;i++){
+                    str+='<option value="'+data[i].areaid+'">'+data[i].areaname+'</option>';
+                }
+                $('#shi').html(str).show();
+
+                $.ajax({
+                    url: "{:U('User/getSub')}",
+                    dataType: 'json',
+                    type: 'post',
+                    data: {code:$('#shi').val()},
+                    success: function (data) {
+                        var str='';
+                        for(var i=0;i<data.length;i++){
+                            str+='<option value="'+data[i].areaid+'">'+data[i].areaname+'</option>';
+                        }
+                        $('#qu').html(str).show();
+                    },
+                    error: function () {
+                    }
+                });
+            },
+            error: function () {
+            }
+        });
+    }
+
+    //初始化
+    getshengshiqu($('#sheng').val());
+
+    // 省变化的时候
+    $('#sheng').change(function(){
+        var zhi=$(this).val();
+        getshengshiqu(zhi);
+    });
+
+    //市变化的时候
+    $('#shi').change(function(){
+        var zhi=$(this).val();
+        // 获取市和区的url   {:U('User/getSub')}
+        // 参数名 'code'
+        $.ajax({
+            url: "{:U('User/getSub')}",
+            dataType: 'json',
+            type: 'post',
+            data: {code:zhi},
+            success: function (data) {
+                var str='';
+                for(var i=0;i<data.length;i++){
+                    str+='<option value="'+data[i].areaid+'">'+data[i].areaname+'</option>';
+                }
+                $('#qu').html(str).show();
+            },
+            error: function () {
+            }
+        });
+    });
+
+    //点击添加该地址
+    var qucodesArr=[];
+    $('#addaddrbtn').click(function(){
+        var qu=$('#qu').val();
+        $.post("{:U('user/addAddress')}",{
+            id:"{$_GET['id']}",
+            code:qu
+        },function (data) {
+            if(data.code == 1){
+                //不重复才能继续往下走
+                insert(qu)
+            }else{
+                alert(data.msg)
+            }
+        })
+    });
+
+    /*
+     *  添加地址
+     */
+    function insert(code,arr) {
+        qucodesArr.push(code);
+        $('input[name=qucodes]').val(qucodesArr.toString());
+        var province = $('#sheng option:selected').text();
+        var city = $('#shi option:selected').text();
+        var area = $('#qu option:selected').text();
+        if(arr){
+                province = arr.province,
+                city = arr.city,
+                area = arr.area
+        }
+        var str=$('#addrtabletbody').html();
+        str+='<tr>\
+				<td>'+province+' '+city+' '+area+'</td>\
+				<td>\
+					<a code="'+code+'" class="delbtn">删除</span>\
+				</td>\
+			  </tr>';
+        $('#addrtabletbody').html(str);
+    }
+
+    //点击删除
+    $('#addrtabletbody').on('click','.delbtn',function(){
+        var i=$(this).closest('tr').index();
+        var code = $(this).attr('code');
+        var that = $(this);
+        $.get("{:U('user/deleteAddress')}",{
+            code:code,
+            id:"{$_GET['id']}"
+        },function (data) {
+            if(data.code == 1){
+                qucodesArr.splice(i,1);
+                that.closest('tr').remove();
+                $('input[name=qucodes]').val(qucodesArr.toString());
+            }
+        })
+    });
+
+    function init() {
+        $.get("{:U('user/getAddress')}",{
+            id:"{$_GET['id']}"
+        },function (data) {
+            if(data.code == 1){
+                $.each(data.list,function (k,v) {
+                    insert(v.id,v.address)
+                })
+            }
+        })
+    }
+
+    init();
+
+</script>
+</html>

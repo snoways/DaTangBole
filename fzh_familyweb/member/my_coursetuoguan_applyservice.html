@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>申请售后</title>
+  <script src="../js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="../css/ku/hui.css">
+  <link rel="stylesheet" href="../css/ku/style.css">
+  <script src="../js/ku/hui.js"></script>
+  <script src="../js/ku/template-web.js"></script>
+</head>
+<body>
+
+<div class="content_box bgcolorf3f3">
+  <div class="content_scroll">
+    <div class="txt_center pad10 bgcolorzt colorfff font18 rela" id="hasback">
+      <a href="javascript:history.go(-1);" class="abso" style="top: 5px;left: 10px;">
+        <img src="../img/back_white.png" style="width: 9px;height: 18px;" alt="">
+      </a>
+      <p class="pad_t10"><img src="../img/icon13.png" width="50"></p>
+      <p class="mar_t10 pad_b10">申请售后</p>
+    </div>
+    <div id="contain"></div>
+  </div>
+</div>
+
+<script type="text/html" id="tpl">
+  <div class="pad10 pad_b0 bgcolorfff font12 color666">
+    <div class="pad_b10 border_b">订单编号<%=detail.order_sn%></div>
+  </div>
+
+  <div class="pad10 pad_b0 bgcolorfff">
+    <div class="tableblock pad_b10">
+      <div style="width: 75px">
+        <img src="<%=path_img+detail.img%>" width="65" height="40">
+      </div>
+      <div>
+        <div class="font12 color333"><%=detail.hc_title%></div>
+        <div class="tableblock">
+          <div class="coloraaa font12">
+            <!-- 去掉 ￥20.00/天-->
+            <!--<span class="inblock mar_r10">￥20.00/天</span>-->
+            <span class="inblock colorzt"><%=detail.time_length%></span>
+            <span class="inblock"><%=detail.type==1?'天':'个月'%></span>
+          </div>
+          <div class="txt_right wrem6 font13 colorzt"><b>￥<%=detail.total_money%></b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mar_t5 bgcolorfff pad_l10 pad_r10 font13 color666">
+    <div class="pad10 border_b tableblock">
+      <div>申请退款天数</div>
+      <div class="txt_right">
+        <input type="text" placeholder="请填写申请退款天数" class="txt_right" id="tuidatenum">
+      </div>
+    </div>
+    <div class="pad10 tableblock">
+      <div>预计退款金额</div>
+      <div class="txt_right colorzt">
+        ￥<span id="yutuimoney">0.00</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="pad10 font12 color999">
+    <p>退款按￥<%=detail.tui_price%>/天计算，已上完<%=detail.no_days%>天则不予退款</p>
+    <!--<p>普通订单退款说明：<%=detail.ordinary_refund%></p>-->
+    <p>退款说明：<%=detail.coupon_refund%></p>
+  </div>
+
+  <div class="bgcolorfff pad10 font14 color666 mar_b10">
+    <div class="tableblock">
+      <div class="wrem5 vertop">退款原因</div>
+      <div>
+        <textarea placeholder="请填写退款原因" id="reason" style="height: 104px" class="w100"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="pad10" style="margin: 60px 0 0 0">
+    <a href="javascript:;" onclick="submit_txt()" class="block pad10 txt_center bgcolorzt border_radiu20 colorfff font14">提交申请</a>
+  </div>
+</script>
+
+<script>
+  var token=localStorage.getItem("user_token");
+  if(Getvariable('token')){
+    token=Getvariable('token');
+  }
+
+  var data={
+    path_img:path_img,
+    pid: "",
+    detail: {},
+    oprate: true
+  };
+  function renderhtml(){
+    document.getElementById('contain').innerHTML=template('tpl', data);
+  }
+
+  //初始加载
+  pre_loading(0);
+  if(!Getvariable("pid") || !Getvariable('hasback')){
+    pre_loading(404, "订单信息错误，请重新打开");
+  }else{
+    data.pid = Getvariable("pid");
+
+    if(Getvariable("hasback")=='false'){
+      //false的时候，隐藏，默认显示
+      document.getElementById('hasback').style.display='none';
+    }
+
+    hui.post(
+      path_inter+'/parents/Hosting/getOrderDetail',
+      {
+        token: token, oid: data.pid
+      },
+      function(res){
+        res = JSON.parse(res);
+        pre_loading(100);
+        if (user_overdue(res.code,res.msg)) {
+          data.detail = res.data;
+          renderhtml();
+
+          pagedo();
+        }
+      },
+      function(){
+        //error
+        pre_loading(1);
+      }
+    );
+  }
+
+  var tuidatenum='';//退款天数
+  function pagedo(){
+    //申请退款课时 发生变化时
+    document.getElementById('tuidatenum').onchange=function(){
+      tuidatenum=this.value;
+
+      var sumdate=data.detail.time_length;//总天数
+      if(data.detail.type==2){
+        //月  "date_period": "2018-5-1,2018-6-30;2018-8-1,2018-8-31;"
+        var tian=0;
+        var arr=data.detail.date_period.split(';');//arr结果是["2018-5-1,2018-6-30", "2018-8-1,2018-8-31", ""]
+        for(var i=0;i<arr.length;i++){
+          if(arr[i]!=''){
+            var arr1=arr[i].split(',');
+            var d1=arr1[0];
+            var d2=arr1[1];
+            d1=d1.replace(/-/g,'/');
+            d2=d2.replace(/-/g,'/');
+            d1=new Date(d1);
+            d2=new Date(d2);
+            d2=d2.setDate(d2.getDate()+1);
+            tian+=(d2-d1)/86400000;
+          }
+        }
+        sumdate=tian;
+      }
+      if(sumdate-tuidatenum<0 || sumdate-tuidatenum>=parseInt(data.detail.no_days)){
+        hui.toast('已上完'+data.detail.no_days+'天不予退款');
+        document.getElementById('yutuimoney').innerHTML='0.00';
+      }else{
+        //计算预计退款课时
+        document.getElementById('yutuimoney').innerHTML=Number(data.detail.tui_price*tuidatenum).toFixed(2);
+      }
+    };
+  }
+
+  function submit_txt() {
+    if (!data.oprate) {
+      return false;
+    }
+
+    var reason=document.getElementById('reason').value;
+
+    var sumdate=data.detail.time_length;//总天数
+    if(data.detail.type==2){
+      //月  "date_period": "2018-5-1,2018-6-30;2018-8-1,2018-8-31;",
+      var tian=0;
+      var arr=data.detail.date_period.split(';');//arr结果是["2018-5-1,2018-6-30", "2018-8-1,2018-8-31", ""]
+      for(var i=0;i<arr.length;i++){
+        if(arr[i]!=''){
+          var arr1=arr[i].split(',');
+          var d1=arr1[0];
+          var d2=arr1[1];
+          d1=d1.replace(/-/g,'/');
+          d2=d2.replace(/-/g,'/');
+          d1=new Date(d1);
+          d2=new Date(d2);
+          d2=d2.setDate(d2.getDate()+1);
+          tian+=(d2-d1)/86400000;
+        }
+      }
+      sumdate=tian;
+    }
+    if(sumdate-tuidatenum<0 || sumdate-tuidatenum>=parseInt(data.detail.no_days)){
+      hui.toast('已上完'+data.detail.no_days+'天不予退款');
+      return false;
+    }
+
+    if(reason==''){
+      hui.toast('请填写退款原因');
+      return false;
+    }
+
+    data.oprate = false;
+    //按月按天的 申请售后都是 填写申请退款天数
+    hui.post(
+      path_inter+'/parents/Hosting/refundOrder',
+      {
+        token: token,
+        oid: data.detail.oid,
+        day_num:tuidatenum,
+        reason:reason
+      },
+      function(res){
+        res = JSON.parse(res);
+        data.oprate = true;
+        if (user_overdue(res.code,res.msg)) {
+          if (res.code == 1) {
+            hui.toast('申请成功');
+            setTimeout(function () {
+              location.href = "javascript:history.go(-1);";
+            }, 800)
+          }
+        }
+      },
+      function(){
+        //error
+        data.oprate = true;
+        hui.toast('申请失败');
+      }
+    );
+  }
+</script>
+</body>
+</html>

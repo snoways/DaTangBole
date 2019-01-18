@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title>心理测评</title>
+		<script type="text/javascript" src="../js/com.js" ></script>
+		<link rel="stylesheet" type="text/css" href="../css/stylea.css">
+		<link rel="stylesheet" type="text/css" href="../css/weui.min.css">
+		<link rel="stylesheet" type="text/css" href="../css/jquery-weui.css">
+		<script type="text/javascript" src="../js/hui.js" ></script>
+		<script type="text/javascript" src="../js/jquery.min.js" ></script>
+		<script type="text/javascript" src="../js/jquery-weui.js" ></script>
+		<script type="text/javascript" src="../js/template-native.js" ></script>
+	</head>
+	<body class="bgcolorfff">
+		<div  class="xintest content_box">
+			<div class="content_scroll no">
+				<div id="box"></div>
+			</div>
+		</div>
+		<script type="text/html" id="tpl">
+			<!--内容开始-->
+				<div class="bot1 txt_center" style="padding: 0 30px;">
+					<div class="tupian font13">
+						<div class="colorfff tit">
+							题库随机出选择题，根据选项填写，计 <br/>
+							算出得分，不同得分范围代表不同类型。
+						</div>
+						<div class="colorzt desc">总题量约<%=sum%>道<!--，时间大约{{@needtime}}分钟--></div>
+					</div>
+					<a href="xintest_detail.html" class="pad_t10 pad_b10 bgcolorzt colorfff font16 block w100 border_radiu40">开始答题</a>
+				</div>
+				<!--内容end-->
+		</script>
+		<script>
+			var token=localStorage.getItem('user_token');
+
+			if(Getvariable('token')){
+				token=Getvariable('token');
+			}
+
+			var data = {
+				sum:60,
+				needtime:10,//死值
+
+				loading:false,
+				page:1
+			};
+			function renderhtml() {
+				document.getElementById('box').innerHTML = template('tpl', data);
+			}
+
+			//初始加载
+			pre_loading(0);
+			$.ajax({
+				url:path_inter+"Teacher/Approve/question",
+				dataType:'json',
+				type:'post',
+				data:{
+					token:token
+				},
+				success:function(res){
+					if(user_overdue(res.code,res.msg)){
+						pre_loading(100);
+
+						data.sum=res.data.length;
+					}
+					renderhtml();
+				},
+				error:function(){
+					pre_loading(1);
+				}
+			});
+
+
+		</script>
+	</body>
+</html>

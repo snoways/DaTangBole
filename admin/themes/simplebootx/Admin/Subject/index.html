@@ -1,0 +1,93 @@
+<admintpl file="header"/>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="{:U('Subject/index')}">学科分类列表</a></li>
+        <li><a href="{:U('Subject/add1')}">添加一级学科</a></li>
+        <li><a href="{:U('Subject/add2')}">添加二级学科</a></li>
+        <li><a href="{:U('Subject/add3')}">添加三级学科</a></li>
+    </ul>
+    <form method="post" class="js-ajax-form" action="{:U('subject/sort')}">
+        <div class="table-actions">
+            <button type="submit" class="btn btn-primary btn-small js-ajax-submit">排序</button>
+        </div>
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <th width="100">排序</th>
+                <th>名称</th>
+                <th>级别</th>
+                <th width="120">是否推荐</th>
+                <th align="center">{:L('ACTIONS')}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach name="rs" key="ko" item="vo">
+                <tr>
+                    <td><input name='sort[]' type='text' size='3' value='{$vo.sort}' class='input input-order'> <input
+                            type="hidden" name="id[]" value="{$vo.id}"/></td>
+                    <td>{$vo['s_name']}</td>
+                    <td>一级分类</td>
+                    <td></td>
+                    <td align="center">
+                        <a href="{:U('Subject/del',array('id'=>$vo['id']))}" class="js-ajax-dialog-btn"
+                           data-msg="您确定要删除此分类吗？">删除</a>
+                    </td>
+                </tr>
+                <foreach name="vo['son']" key="k" item="v">
+                    <tr>
+                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <input name='sort[]' type='text' size='3' value='{$v.sort}' class='input input-order'>
+                            <input type="hidden" name="id[]" value="{$v.id}"/></td>
+                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$v['s_name']}</td>
+                        <td>二级分类</td>
+                        <if condition="$v['is_hot'] eq 1">
+                            <td>
+                                <a href="{:U('subject/setHot',array('id'=>$v['id'],'is_hot'=>0))}" class="js-ajax-dialog-btn" data-msg="{:L('取消推荐吗？')}">已推荐(点击取消)</a>
+                            </td>
+                        <else/>
+                            <td>
+                                <a href="{:U('subject/setHot',array('id'=>$v['id'],'is_hot'=>1))}" class="js-ajax-dialog-btn" data-msg="{:L('确定推荐吗？')}"><font style="color: grey;">不推荐</font>(点击推荐)</a>
+                            </td>
+                        </if>
+                        <td align="center">
+                            <a href="{:U('Subject/del',array('id'=>$v['id']))}" class="js-ajax-dialog-btn"
+                               data-msg="您确定要删除此分类吗？">删除</a>
+                        </td>
+                    </tr>
+                    <foreach name="v['son']" key="kk" item="vv">
+                        <tr>
+                            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <input name='sort[]' type='text' size='3' value='{$vv.sort}' class='input input-order'>
+                                <input type="hidden" name="id[]" value="{$vv.id}"/></td>
+                            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$vv['s_name']}</td>
+                            <td>三级分类</td>
+                            <if condition="$vv['is_hot'] eq 1">
+                                <td>
+                                    <a href="{:U('subject/setHot',array('id'=>$vv['id'],'is_hot'=>0))}" class="js-ajax-dialog-btn" data-msg="{:L('取消推荐吗？')}">已推荐(点击取消)</a>
+                                </td>
+                                <else/>
+                                <td>
+                                    <a href="{:U('subject/setHot',array('id'=>$vv['id'],'is_hot'=>1))}" class="js-ajax-dialog-btn" data-msg="{:L('确定推荐吗？')}"><font style="color: grey;">不推荐</font>(点击推荐)</a>
+                                </td>
+                            </if>
+                            <td align="center">
+                                <a href="{:U('Subject/del',array('id'=>$vv['id']))}" class="js-ajax-dialog-btn"
+                                   data-msg="您确定要删除此分类吗？">删除</a>
+                            </td>
+                        </tr>
+                    </foreach>
+                </foreach>
+            </foreach>
+            </tbody>
+        </table>
+        <div class="table-actions">
+            <button type="submit" class="btn btn-primary btn-small js-ajax-submit">排序</button>
+        </div>
+        <div class="pagination">{$page}</div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

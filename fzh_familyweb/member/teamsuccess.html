@@ -1,0 +1,404 @@
+<!-- 拼团成功 -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>拼团成功</title>
+  <script src="../js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="../css/ku/hui.css">
+  <link rel="stylesheet" href="../css/ku/style.css">
+  <script src="../js/ku/hui.js"></script>
+  <script src="../js/ku/vue.min.js"></script>
+  <script src="../js/ku/jquery-1.12.4.min.js"></script>
+</head>
+
+<body>
+
+  <div id="app" v-cloak>
+    <!-- 拼团成功 -->
+    <div class="opengroup">
+      <div class="txt_center dash_border_t dash_border_b mar_b10 mar_t10" v-if="groupSuccessShow()">
+        <img class="mar_t20 mar_b20" src="../img/smile.png" alt="" width="36">
+        <p class="colorgreen mar_b20">开团成功</p>
+        <p class="mar_b20">可在会员中心 — 我的拼团查看 <a class="see_my_group" :href="'my_courseactivitydet.html?token='+token+'&pid='+pid">查看我的拼团</a></p>
+      </div>
+      <!-- 订单内容 -->
+      <div class="orderinfo clear bgcolorfff pad_l20 pad_r10 pad_t10 pad_b10 mar_b10" @click="godetactivity(detail)">
+        <img class="wrem8 L mar_r5" :src="path_img+detail.img" alt="">
+        <span class="golink R hui-icons hui-icons-right mar_l5"></span>
+        <div>
+          <p class="groupinfo_title">{{detail.title}}</p>
+          <p class="color999 font14">{{detail.age_title}} | {{detail.target}} </p>
+          <p class="color999"><span class="font12 txt_ver_t">￥</span><span class="font14 colorzt">{{detail.price}}</span><span
+              class="font12 txt_ver_b">起</span> <del class="txt_ver_b color999 font10">￥{{detail.bazar_price}}</del></p>
+        </div>
+      </div>
+      <div class="bgcolorfff mar_b10">
+        <div class="border_b pad_l20 pad_r20 pad_t10 pad_b10"><span class="money_group pad5 pad_t2 pad_b2 font12 bgcolorpink colorfff inblock">返现团</span>
+          <span class="inblock">拼团玩法</span> <i class="inblock group_question"></i></div>
+        <div class="pad_l20 pad_r20 pad_t10 pad_b10 txt_center">
+          <!-- <p class="font12 color999">支付开团并邀请1家参团，拼团成功后所有家庭将收到返现￥100</p> -->
+          <ul class="group_people">
+            <li v-for="(item,index) in detail.spells"><img :src="path_img+item.avatar" alt=""><span v-if="item.commander == 1" class="font10 bgcolorpink colorfff">团长</span></li>
+          </ul>
+          <p class="font16 color333">仅剩下<span class="colorredq">{{detail.people_num}}</span>个名额</p>
+          <button v-if="detail.spell_status == 1" class="open_group_btn bgcoloryellow mar_t20 mar_b20 pad_t5 pad_b5 font16" @click="groupOfFriends(detail)">邀请好友拼团</button>
+          <button v-if="detail.spell_status == 2" disabled class="open_group_btn bgcoloryellow mar_t20 mar_b20 pad_t5 pad_b5 font16">已拼团成功</button>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+    <!--tab-->
+    <!-- <div class="header bgcolorddd pad_r10">
+    <div class="tableblock">
+      <div class="bgcolorf3f3 wrem8 txt_center font12 color666">
+        <div class="pad_l5 pad_r5">
+          <div v-if="detail.status==1">
+            <img src="../img/icon12.png" width="12"><br>
+            <i class="noh">待支付</i>
+          </div>
+          <div v-if="detail.status==2">
+            <img src="../img/icon12.png" width="12"><br>
+            <i class="noh">报名成功</i>
+          </div>
+          <div v-if="detail.status==3">
+            <img src="../img/icon12.png" width="12"><br>
+            <i v-if="detail.status==3 && detail.refund_status==2">售后处理中</i>
+            <span v-if="detail.status==3 && detail.refund_status==3">商家已同意退款</span>
+          </div>
+          <div v-if="detail.status==4">
+            <i class="noh">已退款</i>
+          </div>
+          <div v-if="detail.status==5">
+            <i class="noh">已取消</i>
+          </div>
+        </div>
+      </div>
+      <div class="txt_right font12">
+        <a href="javascript:;" v-if="detail.status==1" class="inblock mar_l5 pad_l10 pad_r10 pad_t2 border_radiu20 bgcolorccc colorfff" @click="cancel(detail)">取消订单</a>
+        <a href="javascript:;" v-if="detail.status==1" class="inblock mar_l5 pad_l10 pad_r10 pad_t2 border_radiu20 bgcolorzt colorfff" @click="go_pay()">去支付</a>
+        <a href="javascript:;" v-if="detail.status==2 && detail.tui==1" class="inblock mar_l5 pad_l10 pad_r10 pad_t2 border_radiu20 bgcolorzt colorfff" @click="apply_after(detail)">申请售后</a>
+      </div>
+    </div>
+  </div> -->
+    <!-- <div class="content_box bgcolorf3f3">
+    <div class="content_scroll pad_tou">
+      <div class="pad10 mar_b5 bgcolorfff tableblock">
+        <div style="width: 75px" @click="goactivitydet()">
+          <img :src="path_img+detail.img" width="65" height="40">
+        </div>
+        <div>
+          <div class="font13 color333">{{detail.title}}</div>
+          <div class="coloraaa font12">
+            <div>活动时间：{{detail.start}}-{{detail.end}}</div>
+          </div>
+          <div class="tableblock"> -->
+    <!-- 活动时间和活动地点 删除-->
+    <!--<div class="coloraaa font10">-->
+    <!--<div>活动时间：2018.03.25-2018.03.31</div>-->
+    <!--<div>活动地点：线上活动</div>-->
+    <!--</div>-->
+    <!-- <div class="txt_right wrem6 font13 colorzt"><b>￥{{detail.pay_money}}</b></div>
+          </div>
+        </div>
+      </div>-->
+
+    <!-- <div class="pad_t10 bgcolorfff mar_t5">
+        <div class="pad_l10 pad_r10">
+          <div class="font12 bgcolorfff colorfff" style="background: url(../img/twoqi/actbaoming_titlebg.png) no-repeat top left;background-size: auto 18px;height: 18px;line-height: 18px;text-indent: 15px;border-top:2px solid #ff6000;box-sizing: content-box">总负责人</div>
+          <div class="font13 color333 pad_t10 pad_b10">
+            <div class="tableblock">
+              <div class="col-xs-7">
+                <img v-if="detail.p_img!=''" :src="path_img+detail.p_img" width="34" height="34" class="border_radius50 inblock mar_r5" alt="">
+                <img v-if="detail.p_img==''" src="../img/tx.png" width="34" height="34" class="border_radius50 inblock mar_r5" alt="">
+                <span class="inblock mar_r5">{{detail.parent_name}}</span>
+                <span class="inblock">{{detail.phone}}</span>
+              </div>
+              <div class="txt_right col-xs-5" id="zhankai">
+                <span class="font12 color666 inblock">已报名人数：<b class="colorzt">{{detail.num}}</b> 人</span>
+                <img src="../img/twoqi/xiaoxi_arrowb.png" id="zhankaiimg" height="6" class="inblock" alt="">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> -->
+
+    <!-- <div class="pad_l5 pad_r5 clear pad_b5" style="display: none" id="xiangxi">
+        <div class="L col-xs-6 mar_t10" v-for="(el,i) in detail.list">
+          <div class="pad_l5 pad_r5">
+            <div class="bgcolorfff pad_l10 pad_t5 pad_b5 pad_r5 border_radiu4">
+              <img src="../img/twoqi/actbaoming_people.png" alt="" class="inblock" height="13">
+              <span class="inblock font12 color666">{{el.member_name}} {{el.member_phone}}</span>
+            </div>
+          </div>
+        </div>
+      </div> -->
+
+    <!-- <div class="bgcolorfff pad10 font12 has_border_b mar_t5">
+        <div class="pad_t5 pad_b5 tableblock">
+          <div class="wrem4 color666">订单编号</div>
+          <div class="txt_right">{{detail.order_sn}}</div>
+        </div>
+        <div class="pad_t5 pad_b5 tableblock">
+          <div class="wrem4 color666">下单时间</div>
+          <div class="txt_right">{{detail.sign_time}}</div>
+        </div>
+        <div class="pad_t5 pad_b5 tableblock">
+          <div class="wrem4 color666">会员类型</div>
+          <div class="txt_right">{{detail.usertype_name}}</div>
+        </div>
+        <div class="pad_t5 pad_b5 tableblock">
+          <div class="wrem4 color666">订单状态</div>
+          <div class="txt_right">
+            <span v-if="detail.status==1">待支付</span>
+            <span v-if="detail.status==2">报名成功</span>
+            <span v-if="detail.status==3 && detail.refund_status==2">售后处理中</span>
+            <span v-if="detail.status==3 && detail.refund_status==3">商家已同意退款</span>
+            <span v-if="detail.status==4">已退款</span>
+            <span v-if="detail.status==5">已取消</span>
+          </div>
+        </div>
+        <div class="pad_t5 pad_b5 tableblock">
+          <div class="wrem4 color666">订单总额</div>
+          <div class="txt_right colorzt">￥{{detail.pay_money}}</div>
+        </div>
+      </div> -->
+    <!-- 活动没有 退款理由 驳回原因-->
+    <!-- </div>
+  </div> -->
+  </div>
+
+  <script>
+    var token = localStorage.getItem("user_token");
+    if (Getvariable('token')) {
+      token = Getvariable('token');
+    }
+
+    var vm = new Vue({
+      el: '#app',
+      data: {
+        path_img: path_img,
+        pid: "",
+        detail: {}, // 接口返回的字段
+        oprate: true
+      },
+      created: function () {
+        //初始加载
+        pre_loading(0);
+
+        if (!Getvariable("pid")) {
+          pre_loading(404, "订单信息错误，请重新打开");
+        } else {
+          this.pid = Getvariable("pid");
+
+          hui.post(
+            path_inter + 'Client/Activityorder/spellOrderDetails', {
+              token: token,
+              id: this.pid
+            },
+            function (data) {
+              data = JSON.parse(data);
+              pre_loading(100);
+              if (user_overdue(data.code, data.msg)) {
+                vm.detail = data.data;
+              }
+            },
+            function () {
+              //error
+              pre_loading(1);
+            }
+          );
+        }
+      },
+      methods: {
+        groupSuccessShow:function(){
+            return Getvariable('state') == 1 ? false:true;            
+        },
+        // 状态  1.未支付 2.报名成功 3.申请退款 4.已退款 5.已取消
+        // getStatus: function(status){
+        //   switch(status){
+        //     case "1":
+        //       return "未支付";
+        //     case "2":
+        //       return "报名成功";
+        //     case "3":
+        //       return "申请退款";
+        //     case "4":
+        //       return "已退款";
+        //     case "5":
+        //       return "已取消";
+        //   }
+        // },
+        goactivitydet: function () {
+          appActivitydet(vm.detail.activity_id);
+        },
+        cancel: function (elem) {
+          if (!vm.oprate) {
+            return false;
+          }
+
+          //取消订单
+          hui.confirm('确认取消?', '', function () {
+            vm.oprate = false;
+            hui.post(
+              path_inter + '/parents/Activity/cancelOrder', {
+                token: token,
+                oid: elem.oid
+              },
+              function (res) {
+                res = JSON.parse(res);
+                vm.oprate = true;
+                if (user_overdue(res.code, res.msg)) {
+                  if (res.code == 1) {
+                    elem.status = 5;
+                    hui.toast("订单已取消");
+                  }
+                }
+              },
+              function () {
+                //error
+                vm.oprate = true;
+                hui.toast("订单取消失败");
+              }
+            );
+          });
+        },
+        go_pay: function () {
+          //支付订单
+          appPayActivity(vm.detail.order_sn, vm.detail.sign_time, vm.detail.usertype_name, vm.detail.pay_money,
+            vm.detail.title, 4);
+        },
+        apply_after: function (elem) {
+          //申请售后
+          location.href = "my_courseactivity_applyservice.html?hasback=false&pid=" + elem.oid;
+        },
+        // 
+        godetactivity:function(elem){
+          appOrderdetActivity(elem.id);
+        },
+        // 邀请好友拼团
+        groupOfFriends:function(elem){
+          friendOpenGroup(elem.spell_id,elem.act_id)
+        }
+      }
+    });
+
+
+    $('#zhankai').click(function () {
+      if ($('#xiangxi:visible').length == 0) {
+        $('#xiangxi').slideDown();
+        $('#zhankaiimg').attr('src', '../img/twoqi/xiaoxi_arrowt.png');
+      } else {
+        $('#xiangxi').slideUp();
+        $('#zhankaiimg').attr('src', '../img/twoqi/xiaoxi_arrowb.png');
+      }
+    });
+    /*#################################################################################*/
+    // var token= localStorage.getItem("user_token");
+    // if(Getvariable('token')){
+    //   token=Getvariable('token');
+    // }
+
+    // var vm = new Vue({
+    //   el: '#app',
+    //   data: {
+    //     path_img:path_img,
+    //     pid: "",
+    //     detail: {},
+    //     oprate: true
+    //   },
+    //   created:function(){
+    //     //初始加载
+    //     pre_loading(0);
+
+    //     if (!Getvariable("pid")) {
+    //       pre_loading(404, "订单信息错误，请重新打开");
+    //     }else {
+    //       this.pid = Getvariable("pid");
+
+    //       hui.post(
+    //         path_inter+'/parents/activity/getOrderDetail',
+    //         {
+    //           token:token, oid: this.pid
+    //         },
+    //         function(data){
+    //           data = JSON.parse(data);
+    //           pre_loading(100);
+    //           if (user_overdue(data.code,data.msg)) {
+    //             vm.detail = data.data;
+    //           }
+    //         },
+    //         function(){
+    //           //error
+    //           pre_loading(1);
+    //         }
+    //       );
+    //     }
+    //   },
+    //   methods:{
+    //     goactivitydet:function(){
+    //       appActivitydet(vm.detail.activity_id);
+    //     },
+    //     cancel: function (elem) {
+    //       if (!vm.oprate) {
+    //         return false;
+    //       }
+
+    //       //取消订单
+    //       hui.confirm('确认取消?','',function(){
+    //         vm.oprate = false;
+    //         hui.post(
+    //           path_inter+'/parents/Activity/cancelOrder',
+    //           {
+    //             token: token, oid: elem.oid
+    //           },
+    //           function(res){
+    //             res = JSON.parse(res);
+    //             vm.oprate = true;
+    //             if (user_overdue(res.code,res.msg)) {
+    //               if (res.code == 1) {
+    //                 elem.status = 5;
+    //                 hui.toast("订单已取消");
+    //               }
+    //             }
+    //           },
+    //           function(){
+    //             //error
+    //             vm.oprate = true;
+    //             hui.toast("订单取消失败");
+    //           }
+    //         );
+    //       });
+    //     },
+    //     go_pay: function () {
+    //       //支付订单
+    //       appPayActivity(vm.detail.order_sn,vm.detail.sign_time,vm.detail.usertype_name,vm.detail.pay_money,vm.detail.title,4);
+    //     },
+    //     apply_after: function (elem) {
+    //       //申请售后
+    //       location.href ="my_courseactivity_applyservice.html?hasback=false&pid=" + elem.oid;
+    //     }
+    //   }
+    // });
+
+
+    // $('#zhankai').click(function(){
+    //   if($('#xiangxi:visible').length==0){
+    //     $('#xiangxi').slideDown();
+    //     $('#zhankaiimg').attr('src','../img/twoqi/xiaoxi_arrowt.png');
+    //   }else{
+    //     $('#xiangxi').slideUp();
+    //     $('#zhankaiimg').attr('src','../img/twoqi/xiaoxi_arrowb.png');
+    //   }
+    // });
+  </script>
+</body>
+
+</html>

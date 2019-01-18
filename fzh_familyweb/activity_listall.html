@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>notitle</title>
+  <script src="js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="css/ku/hui.css">
+  <link rel="stylesheet" href="css/ku/weui.min.css">
+  <link rel="stylesheet" href="css/ku/jquery-weui.min.css">
+  <link rel="stylesheet" href="css/ku/style.css">
+  <script src="js/ku/hui.js"></script>
+  <script src="js/ku/vue.min.js"></script>
+  <script src="js/ku/jquery-1.12.4.min.js"></script>
+  <script src="js/ku/jquery-weui.js"></script>
+  <style>
+    #header1 .on{background: #fff;color:#ff6000;border-radius: 50px;}
+    .weui-pull-to-refresh__layer{height: 8.4375rem;padding-top:5.625rem;}
+  </style>
+</head>
+<body>
+
+<!--当前活动列表-->
+<div id="app" v-cloak>
+
+  <div class="header bgcolorzt" id="header1">
+    <div class="tableblock h100">
+      <div style="width: 70px">
+        <img src="img/back_white.png" @click="back" style="width: 9px;height: 18px;" class="mar_l10" alt="">
+      </div>
+      <div>
+        <div class="tableblock font15 colorfff txt_center" style="border:1px solid #fff;border-radius: 50px;height: 34px;">
+          <div :class="{on:header1tabindex==0}" @click="header1tabclick(0)">当前活动</div>
+          <div :class="{on:header1tabindex==1}" @click="header1tabclick(1)">往期活动</div>
+        </div>
+      </div>
+      <div style="width: 70px">&nbsp;</div>
+    </div>
+  </div>
+  <div class="header2" style="height: 2.8125rem;top: 2.8125rem;">
+    <div class="tableblock bgcolorfff h100">
+      <div class="pad_l10 pad_r10">
+        <div class="search1 bgcolorfff">
+          <div class="border_radiu4 bgcoloreee">
+            <div class="tableblock pad_t5 pad_b5">
+              <div class="font14 colorccc pad_l10">
+                <input id="keywordzhi" type="text" placeholder="输入关键词搜索" class="w100" />
+              </div>
+              <div class="font14 color666 wrem3 txt_center" style="border-left: 1px solid #dcdcdc;">
+                <div onclick="searchfun()" class="block">
+                  <img src="img/search.png" width="18">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+  <!-- 当前活动-->
+  <div v-if="header1tabindex==0">
+    <div class="headernew" style="top: 5.625rem">
+      <div style="background: #f5f5f5" class="pad_t5">
+        <div class="zhengwen font16 color999 bgcolorfff" style="overflow-x:auto;white-space:nowrap;">
+          <span v-for="(el,i) in tablist" @click="tabclick1(el,i)" :key="i" class="inblock" style="padding:11px 20px;border-bottom:2px solid transparent" :class="{tabon:tabindex==i}">{{el.name}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="content_box" style="top: 3.4rem;">
+      <div class="content_scroll">
+        <!--内容开始-->
+        <div class="empty" v-if="list1.length==0">暂无数据</div>
+        <ul>
+          <li class="mar_b5 bgcolorfff pad_l10 pad_r10" v-for="(el,i) in list1">
+            <div class="pad_t10">
+              <!-- 16:9-->
+              <a class="imgp mar_b10 block" :style="{'background-image':'url('+el.img+')'}" style="padding-bottom: 56.25%;background-repeat: no-repeat;background-size: cover;background-position: center center" @click="godet(el)" href="javascript:;">
+              </a>
+              <div class="tableblock">
+                <div>
+                  <div class="font18 c333 txt_oneline b">{{el.title}}</div>
+                  <div class="font14 c666">
+                    <span class="inblock">开始时间：{{el.start}}</span>
+                  </div>
+                  <div class="font14 c666">
+                    <span class="inblock">结束时间：{{el.end}}</span>
+                  </div>
+                </div>
+                <div class="wrem7 txt_right">
+                  <a href="javascript:;" @click="godet(el)" class="colorfff font14 bgcolorzt border_radiu4 pad_t5 pad_b5 wrem6 txt_center inblock">立即报名</a>
+                </div>
+              </div>
+              <div class="tableblock">
+                <div class="col-xs-10 font14 c666">
+                  活动地址：{{el.address}}
+                </div>
+                <div class="col-xs-2 txt_right font14 c666">
+                  <img src="img/twoqi/video_eye.png" height="8" class="inblock mar_l10" alt="">
+                  <span class="color999 inblock">{{el.view_num}}</span>
+                </div>
+              </div>
+              <div class="border_t mar_t10 pad_t10 pad_b10">
+                <div class="tableblock">
+                  <!-- 总后台发布的后台会返回个默认头像和名字-->
+                  <div>
+                    <!-- 托管发的-->
+                    <a class="inblock" v-if="el.st_id!=-1 && el.s_type==1" href="javascript:;" @click="gototuoguandet(el)">
+                      <img :src="el.s_img" width="20" height="20" class="border_radius50 inblock mar_r5" alt="">
+                      <span class="inblock font14 b color333">{{el.s_name}}</span>
+                    </a>
+                    <!-- 机构发的-->
+                    <a class="inblock" v-if="el.st_id!=-1 && el.s_type==2" href="javascript:;" @click="gotojigoudet(el)">
+                      <img :src="el.s_img" width="20" height="20" class="border_radius50 inblock mar_r5" alt="">
+                      <span class="inblock font14 b color333">{{el.s_name}}</span>
+                    </a>
+                    <!-- 平台发的-->
+                    <div class="inblock" v-if="el.st_id==-1">
+                      <img :src="el.s_img" width="20" height="20" class="border_radius50 inblock mar_r5" alt="">
+                      <span class="inblock font14 b color333">{{el.s_name}}</span>
+                    </div>
+                  </div>
+                  <div class="txt_right">
+                    <div v-if="el.st_id!=-1">
+                      <!-- 总后台发布的-1 不显示加关注-->
+                      <a href="javascript:;" v-if="el.collection==-1" class="inblock border_radiu20 border_allzt pad_l10 pad_r10" @click="jiaguanzhu1(el.st_id)">
+                        <img src="img/twoqi/addguanzhu.png" width="8" alt="">
+                        <span class="inblock font12 colorzt">加关注</span>
+                      </a>
+                      <a href="javascript:;" v-if="el.collection==1" class="inblock border_radiu20 border_allzt pad_l10 bgcolorzt pad_r10" @click="delguanzhu1(el.st_id)">
+                        <span class="inblock font12 colorfff">已关注</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <!--内容end-->
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <!-- 往期活动-->
+  <div v-if="header1tabindex==1">
+    <div class="headernew" style="top: 5.625rem">
+      <div style="background: #f5f5f5" class="pad_t5">
+        <div class="zhengwen font13 color999 bgcolorfff" style="overflow-x:auto;white-space:nowrap;">
+          <span v-for="(el,i) in tablist" @click="tabclick2(el,i)" :key="i" class="inblock" style="padding:11px 20px;border-bottom:2px solid transparent" :class="{tabon:tabindex==i}">{{el.name}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="content_box" style="top: 3.4rem;">
+      <div class="content_scroll">
+        <!--内容开始-->
+        <div class="empty" v-if="list2.length==0">暂无数据</div>
+        <ul>
+          <li class="mar_b5 bgcolorfff pad_l10 pad_r10" v-for="(el,i) in list2">
+            <div class="pad_t10">
+              <!-- 16:9-->
+              <div class="imgp mar_b10" :style="{'background-image':'url('+el.img+')'}" style="padding-bottom: 56.25%;background-position: center center;background-size: cover;background-repeat: no-repeat" @click="godet(el)">
+              </div>
+              <!--<div @click="godet(el)">-->
+                <!--<div class="font18 c333 txt_oneline b">{{el.title}}</div>-->
+                <!--<div class="font14 c666">-->
+                  <!--<span class="inblock">活动时间：{{el.start}} - {{el.end}}</span>-->
+                  <!--<img src="img/twoqi/video_eye.png" height="8" class="inblock mar_l10" alt="">-->
+                  <!--<span class="color999 inblock">{{el.view_num}}</span>-->
+                <!--</div>-->
+              <!--</div>-->
+              <div @click="godet(el)">
+                <div class="font18 c333 txt_oneline b">{{el.title}}</div>
+                <div class="font14 c666">
+                  <span class="inblock">开始时间：{{el.start}}</span>
+                </div>
+                <div class="font14 c666">
+                  <span class="inblock">结束时间：{{el.end}}</span>
+                </div>
+              </div>
+              <div class="tableblock">
+                <div class="col-xs-10 font14 c666">
+                  活动地址：{{el.address}}
+                </div>
+                <div class="col-xs-2 font14 c666 txt_right">
+                  <img src="img/twoqi/video_eye.png" height="8" class="inblock mar_l10" alt="">
+                  <span class="color999 inblock">{{el.view_num}}</span>
+                </div>
+              </div>
+              <div class="border_t mar_t10 pad_t10 pad_b10">
+                <div class="tableblock">
+                  <!-- 总后台发布的后台会返回个默认头像和名字-->
+                  <div>
+                    <!-- 托管发的-->
+                    <a class="inblock" v-if="el.st_id!=-1 && el.s_type==1" href="javascript:;" @click="gototuoguandet(el)">
+                      <img :src="el.s_img" width="20" height="20" class="border_radius50 inblock mar_r5" alt="">
+                      <span class="inblock font14 b color333">{{el.s_name}}</span>
+                    </a>
+                    <!-- 机构发的-->
+                    <a class="inblock" v-if="el.st_id!=-1 && el.s_type==2" href="javascript:;" @click="gotojigoudet(el)">
+                      <img :src="el.s_img" width="20" height="20" class="border_radius50 inblock mar_r5" alt="">
+                      <span class="inblock font14 b color333">{{el.s_name}}</span>
+                    </a>
+                    <!-- 平台发的-->
+                    <div class="inblock" v-if="el.st_id==-1">
+                      <img :src="el.s_img" width="20" height="20" class="border_radius50 inblock mar_r5" alt="">
+                      <span class="inblock font14 b color333">{{el.s_name}}</span>
+                    </div>
+                  </div>
+                  <div class="txt_right">
+                    <div v-if="el.st_id!=-1">
+                      <!-- 总后台发布的-1 不显示加关注-->
+                      <a href="javascript:;" v-if="el.collection==-1" class="inblock border_radiu20 border_allzt pad_l10 pad_r10" @click="jiaguanzhu2(el.st_id)">
+                        <img src="img/twoqi/addguanzhu.png" width="8" alt="">
+                        <span class="inblock font12 colorzt">加关注</span>
+                      </a>
+                      <a href="javascript:;" v-if="el.collection==1" class="inblock border_radiu20 border_allzt pad_l10 bgcolorzt pad_r10" @click="delguanzhu2(el.st_id)">
+                        <span class="inblock font12 colorfff">已关注</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <!--内容end-->
+      </div>
+    </div>
+  </div>
+
+
+
+
+</div>
+
+
+
+
+
+<script>
+  var token=localStorage.getItem('user_token');
+
+  if(Getvariable('token')){
+    token=Getvariable('token');
+  }
+
+  var vm = new Vue({
+    el: '#app',
+    data: {
+      oprate:true,
+
+      header1tabindex:0,
+
+      //活动分类不区分 当前还是往期
+      tablist:[],
+      tabindex:0,
+
+      //当前活动
+      list1:[],
+      page1:2,
+      loading1:false,
+
+      //往期活动
+      list2:[],
+      page2:2,
+      loading2:false
+    },
+    created:function(){
+      this.initdata();
+    },
+    mounted:function(){
+      this.$nextTick(function(){
+        pagedo();
+      });
+    },
+    methods:{
+      back:function(){
+        //返回app页面
+        appbackToApp();
+      },
+      godet:function(el){
+        appActivitydet(el.aid);
+      },
+      gototuoguandet:function(el){
+        appTuoguanDet(el.st_id);
+      },
+      gotojigoudet:function(el){
+        appJigouDet(el.st_id);
+      },
+      header1tabclick:function(index){
+        vm.header1tabindex=index;
+        this.initdata();
+      },
+      initdata:function(){
+        //初始加载
+        pre_loading(0);
+
+        //活动分类
+        $.ajax({
+          url:path_inter+"parents/Activity/categoryList",
+          dataType:'json',
+          type:'post',
+          data:{
+            token: token
+          },
+          success:function(res){
+            if(user_overdue(res.code,res.msg)){
+              res.data.unshift({
+                "cate_id": "0",
+                "name": "全部"
+              });
+              vm.tablist=res.data;
+            }
+          },
+          error:function(){
+            pre_loading(1);
+          }
+        });
+
+        this.tabindex=0;//默认选全部
+        if(this.header1tabindex==0){
+          //线下活动-当前活动
+          $.ajax({
+            url:path_inter+"parents/Activity/index",
+            dataType:'json',
+            type:'post',
+            data:{
+              token: token
+            },
+            success:function(res){
+              if(user_overdue(res.code,res.msg)){
+                $('.content_box').scrollTop(0);
+                for(var i=0;i<res.data.length;i++){
+                  res.data[i].img=path_img+res.data[i].img;
+                  res.data[i].s_img=path_img+res.data[i].s_img;
+
+                  res.data[i].start && (res.data[i].start=res.data[i].start.substring(0,res.data[i].start.lastIndexOf(':')));
+                  res.data[i].end && (res.data[i].end=res.data[i].end.substring(0,res.data[i].end.lastIndexOf(':')));
+                }
+                vm.list1=res.data;
+                pre_loading(100);
+
+                load_closeanimation("load_animation",1);//去掉已经加载完成
+              }
+            },
+            error:function(){
+              pre_loading(1);
+            }
+          });
+        }else if(this.header1tabindex==1){
+          //线下活动-往期活动
+          $.ajax({
+            url:path_inter+"parents/Activity/index",
+            dataType:'json',
+            type:'post',
+            data:{
+              token: token,
+              type:2
+            },
+            success:function(res){
+              if(user_overdue(res.code,res.msg)){
+                $('.content_box').scrollTop(0);
+                for(var i=0;i<res.data.length;i++){
+                  res.data[i].img=path_img+res.data[i].img;
+                  res.data[i].s_img=path_img+res.data[i].s_img;
+
+                  res.data[i].start && (res.data[i].start=res.data[i].start.substring(0,res.data[i].start.lastIndexOf(':')));
+                  res.data[i].end && (res.data[i].end=res.data[i].end.substring(0,res.data[i].end.lastIndexOf(':')));
+                }
+                vm.list2=res.data;
+                pre_loading(100);
+
+                load_closeanimation("load_animation",1);//去掉已经加载完成
+              }
+            },
+            error:function(){
+              pre_loading(1);
+            }
+          });
+        }
+      },
+
+
+
+      //当前活动
+      jiaguanzhu1:function(st_id){
+        if(!this.oprate){
+          return false;
+        }
+
+        this.oprate=false;
+        //加关注
+        $.ajax({
+          url:path_inter+"parents/managed/collectManaged",
+          dataType:'json',
+          type:'post',
+          data:{token: token,managed_id:st_id},
+          success:function(res){
+            vm.oprate=true;
+            if(user_overdue(res.code,res.msg)){
+              //把列表中 相同st_id值的 改成已关注
+              for(var i=0;i<vm.list1.length;i++){
+                if(vm.list1[i].st_id==st_id){
+                  vm.list1[i].collection=1;
+                  vm.list1.splice(i, 1,vm.list1[i]);
+                }
+              }
+              $.toast('关注成功');
+            }
+          },
+          error:function(){
+            vm.oprate=true;
+            $.toast('关注失败','text');
+          }
+        });
+      },
+      delguanzhu1:function(st_id){
+        if(!this.oprate){
+          return false;
+        }
+
+        this.oprate=false;
+        //取消关注
+        $.ajax({
+          url:path_inter+"parents/UserCenter/cancelColManaged",
+          dataType:'json',
+          type:'post',
+          data:{token:token,managed_id:st_id},
+          success:function(res){
+            vm.oprate=true;
+            if(user_overdue(res.code,res.msg)){
+              //把列表中 相同st_id值的 改成已关注
+              for(var i=0;i<vm.list1.length;i++){
+                if(vm.list1[i].st_id==st_id){
+                  vm.list1[i].collection=-1;
+                  vm.list1.splice(i, 1,vm.list1[i]);
+                }
+              }
+              $.toast('取消成功');
+            }
+          },
+          error:function(){
+            vm.oprate=true;
+            $.toast('取消失败','text');
+          }
+        });
+      },
+      tabclick1:function(el,i){
+        //点击分类
+        vm.tabindex=i;
+
+        //线下活动-当前活动
+        var chuan={token:token};
+        if(el.cate_id!=0){
+          //0说明是全部
+          chuan.cate_id=el.cate_id;
+        }
+        var keyword=$('#keywordzhi').val();
+        if(keyword!=''){
+          chuan.keyword=keyword;
+        }
+
+        $.ajax({
+          url:path_inter+"parents/Activity/index",
+          dataType:'json',
+          type:'post',
+          data:chuan,
+          success:function(res){
+            if(user_overdue(res.code,res.msg)){
+              $('.content_box').scrollTop(0);
+              for(var i=0;i<res.data.length;i++){
+                res.data[i].img=path_img+res.data[i].img;
+                res.data[i].s_img=path_img+res.data[i].s_img;
+
+                res.data[i].start && (res.data[i].start=res.data[i].start.substring(0,res.data[i].start.lastIndexOf(':')));
+                res.data[i].end && (res.data[i].end=res.data[i].end.substring(0,res.data[i].end.lastIndexOf(':')));
+              }
+              vm.list1=res.data;
+
+              vm.page1=2;
+              vm.loading1=false;
+
+              load_closeanimation("load_animation",1);//去掉已经加载完成
+            }
+          },
+          error:function(){
+            pre_loading(1);
+          }
+        });
+      },
+
+
+      //往期活动
+      jiaguanzhu2:function(st_id){
+        if(!this.oprate){
+          return false;
+        }
+
+        this.oprate=false;
+        //加关注
+        $.ajax({
+          url:path_inter+"parents/managed/collectManaged",
+          dataType:'json',
+          type:'post',
+          data:{token:token,managed_id:st_id},
+          success:function(res){
+            vm.oprate=true;
+            if(user_overdue(res.code,res.msg)){
+              //把列表中 相同st_id值的 改成已关注
+              for(var i=0;i<vm.list2.length;i++){
+                if(vm.list2[i].st_id==st_id){
+                  vm.list2[i].collection=1;
+                  vm.list2.splice(i, 1,vm.list2[i]);
+                }
+              }
+              $.toast('关注成功');
+            }
+          },
+          error:function(){
+            vm.oprate=true;
+            $.toast('关注失败','text');
+          }
+        });
+      },
+      delguanzhu2:function(st_id){
+        if(!this.oprate){
+          return false;
+        }
+
+        this.oprate=false;
+        //取消关注
+        $.ajax({
+          url:path_inter+"parents/UserCenter/cancelColManaged",
+          dataType:'json',
+          type:'post',
+          data:{token:token,managed_id:st_id},
+          success:function(res){
+            vm.oprate=true;
+            if(user_overdue(res.code,res.msg)){
+              //把列表中 相同st_id值的 改成已关注
+              for(var i=0;i<vm.list2.length;i++){
+                if(vm.list2[i].st_id==st_id){
+                  vm.list2[i].collection=-1;
+                  vm.list2.splice(i, 1,vm.list2[i]);
+                }
+              }
+              $.toast('取消成功');
+            }
+          },
+          error:function(){
+            vm.oprate=true;
+            $.toast('取消失败','text');
+          }
+        });
+      },
+      tabclick2:function(el,i){
+        //点击分类
+        vm.tabindex=i;
+
+        //线下活动-往期活动
+        var chuan={token:token,type:2};
+        if(el.cate_id!=0){
+          //0说明是全部
+          chuan.cate_id=el.cate_id;
+        }
+        var keyword=$('#keywordzhi').val();
+        if(keyword!=''){
+          chuan.keyword=keyword;
+        }
+
+        $.ajax({
+          url:path_inter+"parents/Activity/index",
+          dataType:'json',
+          type:'post',
+          data:chuan,
+          success:function(res){
+            if(user_overdue(res.code,res.msg)){
+              $('.content_box').scrollTop(0);
+              for(var i=0;i<res.data.length;i++){
+                res.data[i].img=path_img+res.data[i].img;
+                res.data[i].s_img=path_img+res.data[i].s_img;
+
+                res.data[i].start && (res.data[i].start=res.data[i].start.substring(0,res.data[i].start.lastIndexOf(':')));
+                res.data[i].end && (res.data[i].end=res.data[i].end.substring(0,res.data[i].end.lastIndexOf(':')));
+              }
+              vm.list2=res.data;
+
+              vm.page2=2;
+              vm.loading2=false;
+
+              load_closeanimation("load_animation",1);//去掉已经加载完成
+            }
+          },
+          error:function(){
+            pre_loading(1);
+          }
+        });
+      }
+    }
+  });
+
+  function searchfun(){
+    var keyword=$('#keywordzhi').val();
+
+    if(vm.header1tabindex==0){
+      //线下活动-当前活动
+      $.ajax({
+        url:path_inter+"parents/Activity/index",
+        dataType:'json',
+        type:'post',
+        data:{
+          token:token,
+          keyword:keyword
+        },
+        success:function(res){
+          if(user_overdue(res.code,res.msg)){
+            $('.content_box').scrollTop(0);
+            for(var i=0;i<res.data.length;i++){
+              res.data[i].img=path_img+res.data[i].img;
+              res.data[i].s_img=path_img+res.data[i].s_img;
+
+              res.data[i].start && (res.data[i].start=res.data[i].start.substring(0,res.data[i].start.lastIndexOf(':')));
+              res.data[i].end && (res.data[i].end=res.data[i].end.substring(0,res.data[i].end.lastIndexOf(':')));
+            }
+            vm.list1=res.data;
+
+            load_closeanimation("load_animation",1);//去掉已经加载完成
+          }
+        },
+        error:function(){
+          pre_loading(1);
+        }
+      });
+    }else if(vm.header1tabindex==1){
+      //线下活动-往期活动
+      $.ajax({
+        url:path_inter+"parents/Activity/index",
+        dataType:'json',
+        type:'post',
+        data:{
+          token:token,
+          type:2,
+          keyword:keyword
+        },
+        success:function(res){
+          if(user_overdue(res.code,res.msg)){
+            $('.content_box').scrollTop(0);
+            for(var i=0;i<res.data.length;i++){
+              res.data[i].img=path_img+res.data[i].img;
+              res.data[i].s_img=path_img+res.data[i].s_img;
+
+              res.data[i].start && (res.data[i].start=res.data[i].start.substring(0,res.data[i].start.lastIndexOf(':')));
+              res.data[i].end && (res.data[i].end=res.data[i].end.substring(0,res.data[i].end.lastIndexOf(':')));
+            }
+            vm.list2=res.data;
+
+            load_closeanimation("load_animation",1);//去掉已经加载完成
+          }
+        },
+        error:function(){
+          pre_loading(1);
+        }
+      });
+    }
+  }
+
+
+  function pagedo(){
+    //下拉刷新
+    xiala_reload($(".content_box"));
+    $(".content_box").pullToRefresh().on("pull-to-refresh", function () {
+      if (!vm.oprate) {
+        $(".content_box").pullToRefreshDone();
+        return false;
+      }
+      vm.oprate = false;
+      load_closeanimation("load_animation", 1);
+
+      if(vm.header1tabindex==0){
+        //当前活动
+        vm.list1=[];
+        vm.page1=2;
+        vm.loading1=false;
+
+        var chuan={token:token,page:1};
+        if(vm.tablist[vm.tabindex].cate_id!=0){
+          //0说明是全部
+          chuan.cate_id=vm.tablist[vm.tabindex].cate_id;
+        }
+        var keyword=$('#keywordzhi').val();
+        if(keyword!=''){
+          chuan.keyword=keyword;
+        }
+        $.ajax({
+          url: path_inter + "parents/Activity/index",
+          dataType: 'json',
+          type: 'post',
+          data: chuan,
+          success: function (res) {
+            vm.oprate = true;
+            $(".content_box").pullToRefreshDone();
+
+            if (user_overdue(res.code,res.msg)) {
+              for(var i=0;i<res.data.length;i++){
+                res.data[i].img=path_img+res.data[i].img;
+                res.data[i].s_img=path_img+res.data[i].s_img;
+
+                res.data[i].start && (res.data[i].start=res.data[i].start.substring(0,res.data[i].start.lastIndexOf(':')));
+                res.data[i].end && (res.data[i].end=res.data[i].end.substring(0,res.data[i].end.lastIndexOf(':')));
+              }
+              vm.list1=res.data;
+            }
+          },
+          error: function () {
+            vm.oprate = true;
+            $.toast("刷新失败", "text");
+            $(".content_box").pullToRefreshDone();
+          }
+        });
+      }else if(vm.header1tabindex==1){
+        //往期活动
+        vm.list2=[];
+        vm.page2=2;
+        vm.loading2=false;
+
+        var chuan={token:token,type:2,page:1};
+        if(vm.tablist[vm.tabindex].cate_id!=0){
+          //0说明是全部
+          chuan.cate_id=vm.tablist[vm.tabindex].cate_id;
+        }
+        var keyword=$('#keywordzhi').val();
+        if(keyword!=''){
+          chuan.keyword=keyword;
+        }
+        $.ajax({
+          url: path_inter + "parents/Activity/index",
+          dataType: 'json',
+          type: 'post',
+          data:chuan,
+          success: function (res) {
+            vm.oprate = true;
+            $(".content_box").pullToRefreshDone();
+
+            if (user_overdue(res.code,res.msg)) {
+              for(var i=0;i<res.data.length;i++){
+                res.data[i].img=path_img+res.data[i].img;
+                res.data[i].s_img=path_img+res.data[i].s_img;
+
+                res.data[i].start && (res.data[i].start=res.data[i].start.substring(0,res.data[i].start.lastIndexOf(':')));
+                res.data[i].end && (res.data[i].end=res.data[i].end.substring(0,res.data[i].end.lastIndexOf(':')));
+              }
+              vm.list2=res.data;
+            }
+          },
+          error: function () {
+            vm.oprate = true;
+            $.toast("刷新失败", "text");
+            $(".content_box").pullToRefreshDone();
+          }
+        });
+      }
+    });
+
+    //上拉加载
+    $(".content_box").infinite().on("infinite", function(){
+      if(vm.header1tabindex==0){
+        //当前活动
+        if(vm.list1.length==0||vm.loading1||!vm.oprate) {
+          return false;
+        }
+      }else if(vm.header1tabindex==1){
+        //往期活动
+        if(vm.list2.length==0||vm.loading2||!vm.oprate) {
+          return false;
+        }
+      }
+
+      vm.oprate=false;
+      var obj=$(this);
+      load_addanimation("load_animation",obj);
+
+      if(vm.header1tabindex==0){
+        //当前活动
+        vm.loading1= true;//关闭下拉加载
+
+        var chuan={token:token,page:vm.page1};
+        if(vm.tablist[vm.tabindex].cate_id!=0){
+          //0说明是全部
+          chuan.cate_id=vm.tablist[vm.tabindex].cate_id;
+        }
+        var keyword=$('#keywordzhi').val();
+        if(keyword!=''){
+          chuan.keyword=keyword;
+        }
+        //线下活动
+        $.ajax({
+          url:path_inter+"parents/Activity/index",
+          dataType:'json',
+          type:'post',
+          data:chuan,
+          success:function(res){
+            vm.oprate=true;
+            if(user_overdue(res.code,res.msg)){
+              for(var i=0;i<res.data.length;i++){
+                res.data[i].img=path_img+res.data[i].img;
+                res.data[i].s_img=path_img+res.data[i].s_img;
+
+                res.data[i].start && (res.data[i].start=res.data[i].start.substring(0,res.data[i].start.lastIndexOf(':')));
+                res.data[i].end && (res.data[i].end=res.data[i].end.substring(0,res.data[i].end.lastIndexOf(':')));
+              }
+              vm.list1=vm.list1.concat(res.data);
+
+              if(res.data.length>0)
+              {
+                vm.page1++;
+                vm.loading1=false;
+                load_closeanimation("load_animation",1);
+              }
+              else
+              {
+                load_closeanimation("load_animation",0);
+              }
+            }
+          },
+          error:function(){
+            vm.oprate=true;
+          }
+        });
+      }else if(vm.header1tabindex==1){
+        //往期活动
+        vm.loading2= true;//关闭下拉加载
+
+        var chuan={token:token,type:2,page:vm.page2};
+        if(vm.tablist[vm.tabindex].cate_id!=0){
+          //0说明是全部
+          chuan.cate_id=vm.tablist[vm.tabindex].cate_id;
+        }
+        var keyword=$('#keywordzhi').val();
+        if(keyword!=''){
+          chuan.keyword=keyword;
+        }
+        //线下活动
+        $.ajax({
+          url:path_inter+"parents/Activity/index",
+          dataType:'json',
+          type:'post',
+          data:chuan,
+          success:function(res){
+            vm.oprate=true;
+            if(user_overdue(res.code,res.msg)){
+              for(var i=0;i<res.data.length;i++){
+                res.data[i].img=path_img+res.data[i].img;
+                res.data[i].s_img=path_img+res.data[i].s_img;
+
+                res.data[i].start && (res.data[i].start=res.data[i].start.substring(0,res.data[i].start.lastIndexOf(':')));
+                res.data[i].end && (res.data[i].end=res.data[i].end.substring(0,res.data[i].end.lastIndexOf(':')));
+              }
+              vm.list2=vm.list2.concat(res.data);
+
+              if(res.data.length>0)
+              {
+                vm.page2++;
+                vm.loading2=false;
+                load_closeanimation("load_animation",1);
+              }
+              else
+              {
+                load_closeanimation("load_animation",0);
+              }
+            }
+          },
+          error:function(){
+            vm.oprate=true;
+          }
+        });
+      }
+    });
+  }
+</script>
+</body>
+</html>

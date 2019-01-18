@@ -1,0 +1,131 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a>老师用户</a></li>
+		</ul>
+		<form class="well form-search" method="post" action="{:U('Teacher/index')}">
+			<!--用户ID：-->
+			<!--<input type="text" name="uid" style="width: 100px;" value="{:I('request.uid')}" placeholder="请输入用户ID">-->
+			审核状态：
+			<select name="state" style="width: 90px;">
+				<option value="0" selected>全部</option>
+				<option value="1" <if condition="$_POST['state'] eq 1">selected</if>>未审核</option>
+				<option value="2" <if condition="$_POST['state'] eq 2">selected</if>>审核通过</option>
+				<option value="3" <if condition="$_POST['state'] eq 3">selected</if>>审核不通过</option>
+			</select>
+
+			教师身份：
+			<select name="t_type" style="width: 90px;">
+				<option value="0" selected>全部</option>
+				<option value="1" <if condition="$_POST['t_type'] eq 1">selected</if>>大学生</option>
+				<option value="2" <if condition="$_POST['t_type'] eq 2">selected</if>>老师</option>
+				<option value="3" <if condition="$_POST['t_type'] eq 3">selected</if>>外教</option>
+			</select>
+
+			关键字：
+			<input type="text" name="keyword" style="width: 200px;" value="{:I('request.keyword')}" placeholder="手机号/姓名">
+			<input type="submit" class="btn btn-primary" value="搜索" />
+			<a class="btn btn-danger" href="{:U('Teacher/index')}">清空</a>
+		</form>
+
+		<form class="well form-search">
+			<div style="color: red;">未审核用户数量 {$count} 个</div>
+		</form>
+		<form method="post" class="js-ajax-form" action="{:U('Teacher/sort')}">
+			<button class="sort btn btn-small btn-primary"> 排序 </button>
+			<table class="table table-hover table-bordered">
+				<thead>
+					<tr>
+						<th align="center">序号</th>
+						<th align="center">ID</th>
+						<th>手机号</th>
+						<th>姓名</th>
+						<th>性别</th>
+						<th>头像</th>
+						<th>类型</th>
+						<th>注册时间</th>
+						<th>擅长年级</th>
+						<th>擅长科目</th>
+						<th>课时费</th>
+						<th>会员等级</th>
+						<th>状态</th>
+						<th width="120">是否推荐</th>
+						<th align="center">{:L('ACTIONS')}</th>
+					</tr>
+				</thead>
+				<php>
+					$type = array(
+						1 => '大学生',
+					    2 => '老师',
+					    3 => '外教'
+					);
+
+				</php>
+				<tbody>
+					<foreach name="lists" key="k" item="vo">
+					<tr>
+						<td align="center">
+							<input type="text" class="small" name="sort[]" value="{$vo['sort']}" style="max-width: 40px;text-align: center">
+							<input type="hidden" name="id[]" value="{$vo['id']}">
+						</td>
+						<td align="center">{$vo.id}</td>
+						<td>{$vo.phone}</td>
+						<td>{$vo.name}</td>
+						<td>{$vo['sex']==1?男:女}</td>
+						<td><img width="25" height="25" src="{$vo.t_img}" /></td>
+						<td>{$type[$vo['t_type']]}</td>
+						<td>{$vo['t_time']}</td>
+						<td>{$vo['t_grade']}</td>
+						<td>{$vo['t_sub2']}</td>
+						<td>{$vo['price']}</td>
+						<td>{$vo['level_name']}</td>
+						<td>
+							<php>
+								if($vo['state']==1){
+									echo "未审核";
+								}else if($vo['state']==0){
+								     echo "未上传认证资质";
+								}else if($vo['state']==2){
+									if($vo['status']==1){
+										echo "正常";
+									}else{
+										echo "冻结";
+									}
+								}else{
+								   echo "未通过";
+								}
+							</php>
+						</td>
+						<if condition="$vo['is_hot'] eq 1">
+							<td>
+								<a href="{:U('Teacher/setHot',array('id'=>$vo['id'],'is_hot'=>0))}" class="js-ajax-dialog-btn" data-msg="{:L('取消推荐吗？')}">已推荐(点击取消)</a>
+							</td>
+							<else/>
+							<td>
+								<a href="{:U('Teacher/setHot',array('id'=>$vo['id'],'is_hot'=>1))}" class="js-ajax-dialog-btn" data-msg="{:L('确定推荐吗？')}"><font style="color: grey;">不推荐</font>(点击推荐)</a>
+							</td>
+						</if>
+						<td align="center">
+							<if condition="$vo['state'] neq 0" >
+								<a href="{:U('teacher/detail',array('id'=>$vo['id']))}">查看资质</a>
+							</if>
+							<if condition="$vo['state'] eq 1">
+								<!--<a href="{:U('teacher/check',array('id'=>$vo['id'], 'ok'=>2))}" class="js-ajax-dialog-btn" data-msg="您确定此用户审核通过吗？">审核通过</a>|-->
+								<!--<a href="{:U('teacher/check',array('id'=>$vo['id'], 'ok'=>3))}" class="js-ajax-dialog-btn" data-msg="您确定此用户审核不通过吗？">审核不通过</a>-->
+							<elseif condition="$vo['state'] eq 2"/>
+								|<a href="{:U('teacher/ban',array('id'=>$vo['id']))}" class="js-ajax-dialog-btn" data-msg="您确定要禁用此用户吗？">禁用</a>|
+								<a href="{:U('teacher/cancelban',array('id'=>$vo['id']))}" class="js-ajax-dialog-btn" data-msg="您确定要启用此用户吗？">启用</a>
+							</if>
+						</td>
+					</tr>
+					</foreach>
+				</tbody>
+			</table>
+			<div class="pagination">{$page}</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

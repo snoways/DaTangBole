@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>活动列表</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- bootstrap -->
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap.css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+
+  <!-- libraries -->
+  <link href="__PUBLIC__/Shopadmin/css/lib/uniform.default.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/select2.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/font-awesome.css" type="text/css" rel="stylesheet"/>
+
+  <!-- global styles -->
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/layout.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/elements.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/icons.css">
+
+  <!-- this page specific styles -->
+  <link rel="stylesheet" href="__PUBLIC__/Shopadmin/css/compiled/form-showcase.css" type="text/css" media="screen"/>
+
+  <!-- open sans font -->
+  <link
+    href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+    rel='stylesheet' type='text/css'>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <style>
+    .thumbs{
+      height: 40px;
+    }
+  </style>
+</head>
+<body>
+
+<include file="common/menu" />
+
+
+<!-- main container -->
+<div class="content">
+
+  <div id="pad-wrapper" class="form-page">
+    <div class="row header">
+      <div class="col-md-12">
+        <h3>活动管理</h3>
+      </div>
+    </div>
+    <div class="row" style="padding: 10px; border: 1px solid #ccc;  margin-bottom: 10px;background-color: #F5FAFD;">
+      <form class="form-inline" method="post" action="{:U('Activity/sub_list')}">
+        审核状态：
+        <select name="s_status" style="width: 120px;">
+          <option value="0">全部</option>
+          <option value="1" <if condition="$_POST['s_status'] eq 1">selected</if> >未审核</option>
+          <option value="2" <if condition="$_POST['s_status'] eq 2">selected</if>>通过</option>
+          <option value="3" <if condition="$_POST['s_status'] eq 3">selected</if>>未通过</option>
+        </select>
+        推荐状态：
+        <select name="is_home" style="width: 120px;">
+          <option value="0">全部</option>
+          <option value="2" <if condition="I('is_home') eq 2">selected</if> >已推荐</option>
+        </select>
+        关键字：
+        <input type="text" name="keyword" style="width: 200px;" value="{:I('request.keyword')}" placeholder="代理商名称/联系人/地址/电话">
+        <input type="submit" class="btn btn-primary" value="查询" />
+        <button class="btn btn-primary mar_r5" type="submit">搜索</button>
+        <a class="btn btn-danger" href="{:U('Index/sub_list')}">清空</a>
+      </form>
+    </div>
+    <div class="table-wrapper products-table section">
+      <div class="row">
+        <table class="table table-hover" id="activitytable">
+          <thead>
+          <tr>
+            <th width="50">ID</th>
+            <th width="60">图片</th>
+            <th width="120">名称</th>
+            <th width="120">电话</th>
+            <th width="150">地址</th>
+            <th width="100">代理商类型</th>
+            <th width="50">审核状态</th>
+            <th width="120">操作</th>
+          </tr>
+          </thead>
+          <tbody>
+          <foreach name="list" key="k" item="vo">
+            <tr>
+              <td>{$vo.id}</td>
+              <td><img src="{$vo.s_img}" style="width: 40px;height: 40px"></td>
+              <td>{$vo.s_name}</td>
+              <td>{$vo.s_phone}</td>
+              <td>{$vo.address}</td>
+              <td>{$vo.s_type}</td>
+              <td>{$vo['s_status']==1?'未审核':($vo['s_status']==2?'通过':($vo['s_status']==3?'未通过':'未上传认证资质'))}</td>
+              <td>
+                <if condition="$vo['s_status'] eq 3">
+                  <a href="{:U('Index/add_small',array('id'=>$vo['id']))}">编辑</a>	|
+                  <a href="{:U('Index/delete',array('id'=>$vo['id']))}" class="js-ajax-delete">{:L('DELETE')}</a>
+                <else/>
+                  无
+                </if>
+
+              </td>
+            </tr>
+          </foreach>
+          </tbody>
+        </table>
+        <div class="pagination">{$page}</div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end main container -->
+
+<!-- scripts for this page -->
+<script src="__PUBLIC__/Shopadmin/js/wysihtml5-0.3.0.js"></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/jquery.uniform.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/theme.js"></script>
+<!--laryer-->
+<script src="__PUBLIC__/Shopadmin/layer/layer.js"></script>
+<script src="__PUBLIC__/layer/layer.js"></script>
+
+<script>
+  $('#activitytable').on('click', '.xiajiabtn', function () {
+    //下架
+    var id = $(this).data('id');
+    console.log(id)
+    layer.confirm('您确定要下架该活动吗?', {icon: 3, title:'提示'}, function(index){
+
+        $.post("__CONTROLLER__/status",
+            {'id':id, 'status':1},
+            function(json){
+                var data = JSON.parse(json);
+                if (data.code==1){
+                    window.location.reload();
+                }else{
+                    layer.alert(data.msg);
+                }
+            },"text");
+        layer.close(index);
+    });
+  }).on('click', '.shangjiabtn', function () {
+    //上架
+    var id = $(this).data('id');
+    console.log(id)
+    layer.confirm('您确定要上架该活动吗?', {icon: 3, title:'提示'}, function(index){
+
+        $.post("__CONTROLLER__/status",
+            {'id':id, 'status':2},
+            function(json){
+                var data = JSON.parse(json);
+                if (data.code==1){
+                    window.location.reload();
+                }else{
+                    layer.alert(data.msg);
+                }
+            },"text");
+        layer.close(index);
+    });
+  }).on('click', '.del', function () {
+    //删除
+    var id = $(this).data('id');
+    console.log(id)
+    layer.confirm('您确定要删除该活动吗?', {icon: 3, title:'提示'}, function(index){
+
+        $.post("__CONTROLLER__/del",
+            {"id":id},
+            function(json){
+                var data = JSON.parse(json);
+                if (data.code==1){
+                    window.location.reload();
+                }else{
+                    layer.alert(data.msg);
+                }
+
+            },"text");
+        layer.close(index);
+    });
+  }).on('click', '.editbtn', function () {
+    //编辑
+    var id = $(this).data('id');
+    console.log(id)
+  }).on('click', '.uploadbtn', function () {
+    //上传活动视频
+    var id = $(this).data('id');
+    console.log(id)
+  });
+</script>
+
+
+</body>
+</html>

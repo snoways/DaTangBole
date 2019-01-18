@@ -1,0 +1,30 @@
+<admintpl file="header" />
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('Category/index')}">分类管理</a></li>
+        <li class="active"><a href="{:U('Category/edit')}">修改缩略图</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form" action="{:U('Category/edit',array('id'=>$_GET['id']))}" enctype="multipart/form-data">
+        <fieldset>
+            <div class="control-group">
+                <label class="control-label">原图</label>
+                <div class="controls">
+                    <img src="__ROOT__{$lists.cate_img}" style="height: 80px;height: 80px">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">图片</label>
+                <div class="controls">
+                    <input type="file" name="cate_img" value="__ROOT__{$lists.cate_img}">         如果不修改图片不用再次添加
+                </div>
+            </div>
+        </fieldset>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary ">{:L('SAVE')}</button>
+            <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+        </div>
+    </form>
+</div>
+</body>

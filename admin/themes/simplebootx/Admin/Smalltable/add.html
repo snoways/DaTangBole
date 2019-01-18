@@ -1,0 +1,262 @@
+<admintpl file="header" />
+<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.2&key=aaeb9bb85528fb6aa40ffbcdefa5de32&plugin=AMap.Autocomplete"></script>
+<script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
+<style>
+	.input-medium{
+		width:320px;
+	}
+	.input-large{
+		width:600px;
+	}
+</style>
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li ><a href="{:U('Smalltable/index')}">代理商列表</a></li>
+			<li class="active"><a href="{:U('Smalltable/add')}">添加代理商</a></li>
+		</ul>
+		<form method="post" class="form-horizontal js-ajax-form" action="{:U('Smalltable/add')}" enctype="multipart/form-data" >
+			<fieldset>
+				<!--<div class="control-group">-->
+					<!--<label class="control-label">商户LOGO<span style="color: red;">*</span></label>-->
+					<!--<div class="controls">-->
+						<!--<input type="file" name="img"> （建议上传比例为200*200，大小不要超过200K）-->
+					<!--</div>-->
+				<!--</div>-->
+				<div class="control-group">
+					<label class="control-label">商户LOGO<span style="color: red;">*</span></label>
+					<div class="controls">
+						<table class="table table-bordered" style="width: 320px;">
+							<tr>
+								<td>
+									<div style="text-align: center; padding-top: 10px;">
+										<input type="hidden" name="smeta[thumb]" id="thumb" value="">
+										<a href="javascript:upload_one_image('图片上传','#thumb',null,'Managed');">
+											<img src="__TMPL__Public/assets/images/default-thumbnail.png" id="thumb-preview" width="135" style="cursor: hand" />
+										</a>
+                                        <br><br>
+										<input type="button" class="btn btn-small" onclick="$('#thumb-preview').attr('src','__TMPL__Public/assets/images/default-thumbnail.png');$('#thumb').val('');return false;" value="取消图片">
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<th>建议图片宽高为200*200，大小不要超过200K</th>
+							</tr>
+						</table>
+					</div>
+				</div>
+                <div class="control-group">
+                    <label class="control-label">代理商类型<span style="color: red;">*</span></label>
+                    <div class="controls">
+                        <select name="s_type" id="s_type" class="input-medium">
+                            <option value="0">请选择类型</option>
+                            <option value="1">托管机构</option>
+                            <option value="2">教育机构</option>
+                            <option value="3">合作代理商</option>
+                            <option value="4">直属代理商</option>
+                        </select>
+                    </div>
+                </div>
+				<div class="control-group">
+					<label class="control-label">所属上级<span style="color: red;">*</span></label>
+					<div class="controls">
+						<select name="agent_parent_id" id="agent_parent_id" class="input-medium">
+							<option value="0">作为顶级代理商</option>
+							{$tree_agent}
+						</select>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">代理商名称<span style="color: red;">*</span></label>
+					<div class="controls">
+						<input type="text" name="s_name" class="input-large" required>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">代理商简称<span style="color: red;">*</span></label>
+					<div class="controls">
+						<input type="text" name="j_name" class="input-large" required>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">营业类型<span style="color: red;">*</span></label>
+					<div class="controls">
+						<volist name="cate" id="c">
+							<input style="margin-left: 10px;" type="checkbox" name="cate_id[]" value="{$c['id']}" >{$c['title']}
+						</volist>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">联系人姓名<span style="color: red;">*</span></label>
+					<div class="controls">
+						<input type="text" name="c_name" class="input-large" required>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">手机号<span style="color: red;">*</span></label>
+					<div class="controls">
+						<input type="tel" name="s_phone" class="input-large" maxlength="11" required>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">密码</label>
+					<div class="controls">
+						<!--<input type="password" name="s_password" required>-->
+						<label style="padding-top: 5px;">默认手机号后六位 作为初始密码</label>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">地址<span style="color: red;">*</span></label>
+					<div class="controls">
+						<input type="text" name="address" placeholder="按关键字搜索,并在地图上选择" id="tipinput" style="width: 550px;" required>
+						<input type="text" readonly="true" style="color: #0f1217" id="lnglat" name="s_xy">
+						<div id="container" style="width:800px;height: 600px;margin-top: 20px;"></div>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">机构宗旨</label>
+					<div class="controls">
+						<textarea type="text" name="s_content" style="height: 100px;width: 785px"></textarea>
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label">机构简介</label>
+					<div class="controls">
+						<script type="text/plain" id="content" name="introduction" style="width: 800px; min-height: 400px;"></script>
+					</div>
+				</div>
+			</fieldset>
+			<div class="form-actions">
+				<button type="submit" class="btn btn-primary js-ajax-submit">{:L('SAVE')}</button>
+				<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+			</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+	<script type="text/javascript">
+        //编辑器路径定义
+        var editorURL = GV.WEB_ROOT;
+	</script>
+	<script type="text/javascript" src="__PUBLIC__/js/ueditor/ueditor.config.js"></script>
+	<script type="text/javascript" src="__PUBLIC__/js/ueditor/ueditor.all.min.js"></script>
+	<script type="text/javascript">
+        var editorcontent = new baidu.editor.ui.Editor();
+        editorcontent.render('content');
+	</script>
+	<script type="text/javascript">
+		var map = new AMap.Map("container", {
+			resizeEnable: true
+		});
+		//为地图注册click事件获取鼠标点击出的经纬度坐标
+		var clickEventListener = map.on('click', function(e) {
+			document.getElementById("lnglat").value = e.lnglat.getLng() + ',' + e.lnglat.getLat();
+
+			addMarker(e.lnglat.getLng(),e.lnglat.getLat());//删除老的标记 添加新的标记
+			regeocoder([e.lnglat.getLng(), e.lnglat.getLat()]);//给关键字搜索设置文字
+		});
+		//监听，当选中某条记录时会触发
+		var auto = new AMap.Autocomplete({
+			input: "tipinput",
+			city:'全国',
+			citylimit:true//强制在指定城市里面搜索
+		});
+		AMap.event.addListener(auto, "select", select);
+		function select(e) {
+			placeSearch.clear();//清除搜索结果
+			if (e.poi && e.poi.location) {
+				addMarker(e.poi.location.lng,e.poi.location.lat);
+				map.setFitView();//地图自动设置合适的显示方式
+				document.getElementById("lnglat").value = e.poi.location.lng + ',' + e.poi.location.lat;//设置该地点的 经纬度
+			}
+		}
+		//标记======================================================
+		var marker;
+		function addMarker(jingdu,weidu) {
+			if(marker){
+				marker.setMap(null);//删除点标记
+			}
+			// 实例化点标记
+			marker = new AMap.Marker({
+				icon: "http://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+				position: [jingdu,weidu]
+			});
+			marker.setMap(map);
+		}
+		//正向地理编码(地址转坐标)  调用方式：geocoder('天津市河东区十一经路');======================================
+		function geocoder(zhongdianStr) {
+			var geocoder = new AMap.Geocoder({
+				city: "全国", //城市，默认：“全国”
+				radius: 1000 //范围，默认：500
+			});
+			//地理编码,返回地理编码结果
+			geocoder.getLocation(zhongdianStr, function(status, result) {
+				if (status === 'complete' && result.info === 'OK') {
+					geocoder_CallBack(result);
+				}
+			});
+		}
+		//地理编码返回结果展示
+		function geocoder_CallBack(data) {
+			//地理编码结果数组
+			var geocode = data.geocodes;//一般这个数组里面只有一个元素
+			for (var i = 0; i < geocode.length; i++) {
+				addMarker(geocode[i].location.lng,geocode[i].location.lat);
+			}
+			map.setFitView();
+		}
+		//逆向地理编码(坐标转地址)  调用方式:regeocoder([116.40, 39.99]);========================================
+		function regeocoder(zuobiao) {  //逆地理编码
+			var geocoder1 = new AMap.Geocoder({
+				radius: 1000,
+				extensions: "all"
+			});
+			geocoder1.getAddress(zuobiao, function(status, result) {
+				if (status === 'complete' && result.info === 'OK') {
+					geocoder_CallBack1(result);
+				}
+			});
+			addMarker(zuobiao[0],zuobiao[1]);
+			map.setFitView();
+		}
+		function geocoder_CallBack1(data) {
+			var address = data.regeocode.formattedAddress; //返回地址描述
+			$('#tipinput').val(address);
+		}
+		//右侧的详细地点介绍框[关键字搜索]=======================================
+		var placeSearch;
+		AMap.service(["AMap.PlaceSearch"], function() {
+			placeSearch = new AMap.PlaceSearch({ //构造地点查询类
+				pageSize: 5,
+				pageIndex: 1,
+				city: "全国", //城市
+				map: map,
+				panel: "panel",
+				citylimit:true//强制在指定城市里面搜索
+			});
+		});
+		$('#place_search').click(function(){
+			placeSearch.clear();//清除搜索结果
+			placeSearch.search($('#tipinput').val());//关键字查询
+		});
+		$('#tipinput').on('input',function(){
+			if($(this).val()==''){
+				placeSearch.clear();//清除搜索结果
+			}
+		});
+		function trim(str){ //删除左右两端的空格
+			return str.replace(/(^\s*)|(\s*$)/g, "");
+		}
+		$('#city').on('click','a.areas-item',function(){
+			setTimeout(function () {
+				var zhi=$('#address1')[0].value;
+				zhi=zhi.substring(zhi.indexOf(' '));
+				zhi=trim(zhi);
+				placeSearch.setCity(zhi);
+				auto.setCity(zhi);
+			},30);
+		});
+	</script>
+</body>
+</html>

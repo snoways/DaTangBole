@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>我的营业额</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- bootstrap -->
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap.css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+
+  <!-- libraries -->
+  <link href="__PUBLIC__/Shopadmin/css/lib/uniform.default.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/select2.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/font-awesome.css" type="text/css" rel="stylesheet"/>
+
+  <!-- global styles -->
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/layout.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/elements.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/icons.css">
+
+  <!-- this page specific styles -->
+  <link rel="stylesheet" href="__PUBLIC__/Shopadmin/css/compiled/form-showcase.css" type="text/css" media="screen"/>
+
+  <!-- open sans font -->
+  <link
+    href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+    rel='stylesheet' type='text/css'>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+
+<include file="common/menu" />
+
+
+<!-- main container -->
+<div class="content">
+
+  <div id="pad-wrapper" class="form-page">
+    <div class="row header">
+      <div class="col-md-12">
+        <h3>我的营业额</h3>
+      </div>
+    </div>
+    <div class="well well-lg fs14">
+      余额：<span style="margin-right: 30px">￥{$info.balance}</span>
+      <if condition="$type eq 1">
+        <a class="btn btn-primary" disabled="disable">提现</a>
+        已有一笔申请在审核中
+      <else />
+        <a class="btn btn-primary" href="{:U('Wallet/withdraw')}">提现</a>
+      </if>
+    </div>
+    <div class="table-wrapper products-table section">
+      <div style="padding: 10px; border: 1px solid #ccc;  margin-bottom: 10px;background-color: #F5FAFD;">
+      <div class="row head" style="margin-left: 0; margin-right: 0;">
+        <div class="col-md-12" style="padding-left: 0; padding-right: 0;">
+          <h4>明细列表</h4>
+          <a class='btn <if condition="$type_red eq 1">btn-danger<else/>btn-flat</if>' href="{:U('Wallet/index',['type'=>1])}">线下活动订单</a>
+          <a class='btn <if condition="$type_red eq 2">btn-danger<else/>btn-flat</if>' href="{:U('Wallet/index',['type'=>2])}"><if condition="$info['s_type'] eq 2">教育机构订单<else/>托管订单</if></a>
+          <a class='btn <if condition="$type_red eq 3">btn-danger<else/>btn-flat</if>' href="{:U('Wallet/index',['type'=>3])}">线上课堂订单</a>
+        </div>
+      </div>
+
+      <div class="row text-right" style="padding: 10px 15px;">
+        <button class='btn-glow inverse' style=" float:left;width: 300px;" >订单金额：{$money}</button>
+
+        <form class="form-inline" method="post" action="{:U('Wallet/index')}">
+          <input type="hidden" name="type" value="{$type_red}">
+          <div class="form-group mar_r5">
+            <label for="end">关键字：</label>
+            <input type="text"  placeholder="订单号/课程名称/活动名称" class="form-control" style="width: 200px" name="sn" value="{$sn}">
+          </div>
+          <div class="form-group mar_r5">
+            <label for="start">起始时间：</label>
+            <input type="text" id="start" class="form-control" style="width: 150px" name="start" value="{$_POST['start']}">
+            <!-- 下面这个隐藏域，会自动设置上时间-->
+            <input type="hidden" name="startzhi" value="">
+          </div>
+          <div class="form-group mar_r5">
+            <label for="end">结束时间：</label>
+            <input type="text" id="end" class="form-control" style="width: 150px" name="end" value="{$_POST['end']}">
+            <!-- 下面这个隐藏域，会自动设置上时间-->
+            <input type="hidden" name="endzhi" value="">
+          </div>
+
+          <button class="btn btn-primary mar_r5" type="submit">搜索</button>
+          <a class="btn btn-danger mar_r5" href="{:U('Wallet/index',['type'=>$type_red])}">清空</a>
+        </form>
+      </div>
+    </div>
+      <if condition="$type_red eq 2">
+      <div class="row" style="padding:0 15px;">
+        <table class="table table-hover">
+          <thead>
+          <tr>
+            <th width="50">
+              ID
+            </th>
+            <th width="250">
+              订单号
+            </th>
+            <th>
+              <span class="line"></span>标题
+            </th>
+            <th width="150">
+              <span class="line"></span>收入金额
+            </th>
+            <th width="200">
+              <span class="line"></span>下单时间
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <foreach name="list" key="key" item="item">
+            <tr>
+              <td>
+                {$key+1}
+              </td>
+              <td>
+                {$item.sn}
+              </td>
+              <td>
+                {$item['title']}
+              </td>
+              <td>
+                {$item.money}
+              </td>
+              <td>
+                {$item.o_time}
+              </td>
+            </tr>
+          </foreach>
+          </tbody>
+        </table>
+      </div>
+        <elseif condition="$type_red eq 1"/>
+        <div class="row" style="padding:0 15px;">
+          <table class="table table-hover">
+            <thead>
+            <tr>
+              <th width="50">
+                ID
+              </th>
+              <th width="250">
+                订单号
+              </th>
+              <th>
+                <span class="line"></span>活动名称
+              </th>
+              <th>
+                <span class="line"></span>活动人数
+              </th>
+              <th>
+                <span class="line"></span>当前参与人数
+              </th>
+              <th width="150">
+                <span class="line"></span>收入金额
+              </th>
+              <th width="200">
+                <span class="line"></span>下单时间
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach name="list" key="key" item="item">
+              <tr>
+                <td>
+                  {$key+1}
+                </td>
+                <td>
+                  {$item.sn}
+                </td>
+                <td>
+                  {$item.title}
+                </td>
+                <td>
+                  {$item.people_num}
+                </td>
+                <td>
+                  {$item.now_num}
+                </td>
+                <td>
+                  {$item.money}
+                </td>
+                <td>
+                  {$item.sign_time}
+                </td>
+              </tr>
+            </foreach>
+            </tbody>
+          </table>
+        </div>
+        <else/>
+        <div class="row" style="padding:0 15px;">
+          <table class="table table-hover">
+            <thead>
+            <tr>
+              <th width="50">
+                ID
+              </th>
+              <th width="250">
+                订单号
+              </th>
+              <th>
+                <span class="line"></span>课程名称
+              </th>
+              <th width="150">
+                <span class="line"></span>收入金额
+              </th>
+              <th width="200">
+                <span class="line"></span>下单时间
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach name="list" key="key" item="item">
+              <tr>
+                <td>
+                  {$key+1}
+                </td>
+                <td>
+                  {$item.sn}
+                </td>
+                <td>
+                  {$item.title}
+                </td>
+                <td>
+                  {$item.money}
+                </td>
+                <td>
+                  {$item.o_time}
+                </td>
+              </tr>
+            </foreach>
+            </tbody>
+          </table>
+        </div>
+      </if>
+      {$page}
+    </div>
+  </div>
+</div>
+<!-- end main container -->
+
+<!-- scripts for this page -->
+<script src="__PUBLIC__/Shopadmin/js/wysihtml5-0.3.0.js"></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/jquery.uniform.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/theme.js"></script>
+<!--laydate-->
+<script src="__PUBLIC__/Shopadmin/laydate/laydate.js"></script>
+<!--laryer-->
+<script src="__PUBLIC__/Shopadmin/layer/layer.js"></script>
+
+
+
+<script>
+  //起始时间
+  var start = {
+    elem: '#start',
+    format: 'YYYY/MM/DD hh:mm:ss',
+//    min: laydate.now(), //设定最小日期为当前日期
+    istime: true,
+    istoday: false,
+    isclear: false,
+    choose: function (datas) {
+      end.min = datas; //开始日选好后，重置结束日的最小日期
+      end.start = datas; //将结束日的初始值设定为开始日
+
+      console.log(datas);//datas 截止日期的时间，2010-10-10 10:10:10的格式
+      $('input[name=startzhi]')[0].value=datas;
+    }
+  };
+  //结束时间
+  var end = {
+    elem: '#end',
+    format: 'YYYY/MM/DD hh:mm:ss',
+//    min: laydate.now(),
+    istime: true,
+    istoday: false,
+    isclear: false,
+    choose: function (datas) {
+      start.max = datas; //结束日选好后，重置开始日的最大日期
+
+      console.log(datas);//datas 截止日期的时间，2010-10-10 10:10:10的格式
+      $('input[name=endzhi]')[0].value=datas;
+    }
+  };
+  laydate(start);
+  laydate(end);
+
+  $('#start').on('input propertychange',function(){
+    $('input[name=startzhi]')[0].value=$(this).val();
+  });
+  $('#end').on('input propertychange',function(){
+    $('input[name=endzhi]')[0].value=$(this).val();
+  });
+</script>
+
+
+
+</body>
+</html>

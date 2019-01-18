@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title>提现申请</title>
+		<script type="text/javascript" src="js/com.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/stylea.css">
+		<link rel="stylesheet" type="text/css" href="css/weui.min.css">
+		<link rel="stylesheet" type="text/css" href="css/jquery-weui.css">
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery-weui.js"></script>
+		<script type="text/javascript" src="js/template-native.js"></script>
+		<style type="text/css">
+			input::-webkit-input-placeholder {color: #c3c3c3;}
+			.hide{display: none;}
+		</style>
+	</head>
+	<body >
+		<div id="box"></div>
+
+		<script type="text/html" id="tpl">
+
+			<!-- 提现申请页面-->
+			<%if(showtixianpage){%>
+			<div id="tixianPage">
+				<%if(selectcard.address!=''){%>
+				<div class="pad14 bgcolorfff clear" onclick="showSelectCardPage()">
+					<div class="L">
+						<div class="font13" style="line-height: 24px;"><%=selectcard.address%></div>
+						<div class="font13" style="line-height: 24px;">尾号<%=$imports.num4(selectcard.card)%></div>
+					</div>
+					<div class="R">
+						<img style="margin:14px 0;width:18px;height:18px;" src="img/arrow_r.png">
+					</div>
+				</div>
+				<%}else{%>
+				<div class="pad14 bgcolorfff clear" onclick="showAddcardPage()">
+					<div class="L">
+						<div class="font13" style="line-height: 24px;padding-top: 12px">添加银行卡</div>
+					</div>
+					<div class="R">
+						<img style="margin:14px 0;width:18px;height:18px;" src="img/arrow_r.png">
+					</div>
+				</div>
+				<%}%>
+				<div class="pad14">
+					<img style="display:inline-block;width:20px;height:16px;" src="img/tan.png">
+					<div class="font12 color999" style="display: inline-block;">提交提现申请后，请耐心等待后台审核</div>
+				</div>
+				<div class="pad14 bgcolorfff">
+					<div class="tableblock">
+						<div class="color5d inblock font13 wrem5">提现金额</div>
+						<div>
+							<input id="money" class="font13 col-xs-12" type="number" name="" placeholder="请输入提现金额" style="position: relative;top: -3px">
+						</div>
+						<div style="width:20px;" class="txt_right">
+							<img onclick="del()" style="width:16px;height:16px;" src="img/wo_del.png" style="position: relative;top: -3px">
+						</div>
+					</div>
+				</div>
+				<div class="pad14">
+					<div class="font13 color999" style="display: inline-block;">请输入<%=$imports.telcenterStar(phone)%>收到的验证码</div>
+				</div>
+				<div class="pad14 bgcolorfff">
+					<div class="tableblock">
+						<div class="color5d font13 wrem5">验证码</div>
+						<div>
+							<input id="yanma" class="font13 col-xs-12" type="text" name="" placeholder="请输入验证码" style="position: relative;top: -3px">
+						</div>
+						<div class="wrem6 txt_right">
+							<div onclick="yanzheng()" id="sendmabtn" class="txt_center inblock border_radiu12 font12 wrem6" style="height:20px;line-height:18px;border:1px solid #ff6000;color:#ff6000;position: relative;top: -3px">获取验证码</div>
+						</div>
+					</div>
+				</div>
+				<div class="txt_center" style="margin-top:25px;">
+					<div onclick="submit()" class="txt_center border_radiu40 bgcolorzt font13 colorfff" style="display:inline-block;width:314px;height:42px;line-height:42px;">提交申请</div>
+				</div>
+				<!-- 弹框提示 -->
+				<div id="bounce666" style="display: none">
+					<div style="width:100%;height:100%;background-color:rgba(0,0,0,.3);position:fixed;top:0;left:0;bottom:0;right:0;margin:auto;z-index: 200;"></div>
+					<div class="bgcolorfff" style="width:300px;height:130px;position:fixed;top:-30%;left:0;bottom:0;right:0;margin:auto;z-index: 201;border-radius:8px;">
+						<div class="txt_center" style="padding:25px 0 10px 0;">
+							<img style="display:inline-block;width:44px;height:44px;" src="img/tishi1.png">
+						</div>
+						<div class="txt_center font13">您已经提交提现申请 请耐心等待！</div>
+						<div class="txt_center">
+							<img onclick="deltan()" style="display:inline-block;margin-bottom:-120px;width:30px;height:30px;" src="img/cha.png">
+						</div>
+					</div>
+				</div>
+			</div>
+			<%}%>
+
+
+
+
+			<!-- 选择银行卡页面-->
+			<%if(showselectpage){%>
+			<div id="selectcardpage">
+				<%for( var i = 0; i < cardlist.length; i++ ){%>
+				<%var el = cardlist[i];%>
+				<div onclick="selectcardfun(<%=i%>)" class="pad14 bgcolorfff" style="border-bottom:1px solid #f5f5f5;">
+					<div class="font13" style="line-height: 24px;"><%=el.address%></div>
+					<div class="font13" style="line-height: 24px;">尾号<%=$imports.num4(el.card)%></div>
+				</div>
+				<%}%>
+				<!-- 添加银行卡框 -->
+				<div style="margin:14px;" onclick="showAddcardPage()">
+					<div class="clear" style="line-height: 80px;text-align: center;border:2px dashed #e0e0e0;border-radius:5px;">
+						<div style="display: inline-block;">
+							<img style="width:16px;height:16px;" src="img/jia.png">
+						</div>
+						<div class="font13" style="display: inline-block;">添加银行卡</div>
+					</div>
+				</div>
+			</div>
+			<%}%>
+
+
+
+
+
+			<!-- 添加银行卡页面-->
+			<%if(showaddpage){%>
+			<div id="addPage">
+				<!--<div style="width:100%;height:45px;background:#ff6000;padding:0 4%;padding-top:10px;" id="toubu">-->
+					<!--<div class="tableblock">-->
+						<!--<div>-->
+							<!--<img onclick="history.go(-1)" style="width:9px;height:16px;" src="img/left.png">-->
+						<!--</div>-->
+						<!--<div class="font16" style="color:#fff;text-align:center;">-->
+							<!--添加银行卡-->
+						<!--</div>-->
+						<!--<div class="font13">&nbsp;</div>-->
+					<!--</div>-->
+				<!--</div>-->
+				<div class="bgcolorfff" style="width:100%">
+					<div class="tableblock " style="width:90%;margin:0 5%;line-height: 50px;border-bottom:1px solid #f9f9f9;">
+						<div class="color333 font13" style="width:20%;">卡号</div>
+						<div style="width:80%;">
+							<input id="cardnum" class="font13" type="text" name="" value="" placeholder="请输入银行卡号">
+						</div>
+					</div>
+					<div class="tableblock " style="width:90%;margin:0 5%;line-height: 50px;border-bottom:1px solid #f9f9f9;">
+						<div class="color333 font13" style="width:20%;">持卡人</div>
+						<div style="width:80%;">
+							<input id="cardname" class="font13" type="text" name="" value="" placeholder="请输入持卡人姓名">
+						</div>
+					</div>
+					<div class="tableblock " style="width:90%;margin:0 5%;line-height: 50px;border-bottom:1px solid #f9f9f9;">
+						<div class="color333 font13" style="width:20%;">开户行</div>
+						<div style="width:80%;">
+							<input id="cardbank" class="font13 color666" type="text" name="" value="" placeholder="请填写开户行名称">
+						</div>
+					</div>
+					<!--不要开户地 -->
+					<div class="tableblock " style="width:90%;margin:0 5%;line-height: 50px;border-bottom:1px solid #f9f9f9;">
+						<div class="color333 font13" style="width:20%;">手机号</div>
+						<div style="width:80%;">
+							<input id="cardphone" class="font13" type="text" name="" value="" placeholder="请输入银行卡预留手机号">
+						</div>
+					</div>
+				</div>
+				<div style="width:100%;">
+					<div onclick="conf()" class="colorfff font14" style="width:80%;height: 40px;line-height:40px;margin:0 10%;background:#ff6000;border-radius:20px;text-align: center;margin-top:10%;">确认</div>
+				</div>
+			</div>
+			<%}%>
+		</script>
+
+
+
+
+		<script type="text/javascript">
+			pre_loading(0);
+
+			var token=localStorage.getItem('user_token');
+			if(Getvariable('token')){
+				token=Getvariable('token');
+			}
+
+			var data = {
+				oprate: true,
+
+				showtixianpage:true,
+				showselectpage:false,
+				showaddpage:false,
+
+				//提现申请
+				cardlist: [],
+				phone:'',
+				selectcard:{
+					"bid": "",     //银行卡id
+					"card": "",    //卡号
+					"name": "",    //持卡人姓名
+					"address": "", //开户行
+					"phone": ""    //持卡人手机号
+				}
+			};
+			function renderhtml(){
+				document.getElementById('box').innerHTML = template('tpl',data)
+			}
+
+
+
+
+
+
+
+			//提现申请页面js==================================================
+			if(!Getvariable('phone')){
+				$.toast('少参数phone','text');
+				pre_loading(3);
+			}else{
+				data.phone=Getvariable('phone');
+				renderhtml();
+				getbanklistfun(true);
+			}
+
+			function getbanklistfun(init){
+				//银行卡列表
+				$.ajax({
+					url:path_inter+"ManagedClient/SecurityCenter/getBankList",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token
+					},
+					success:function(res){
+						if(user_overdue(res)){
+							pre_loading(100);
+							if(res.data.length>0){
+								data.cardlist = res.data;
+								if(init){
+									data.selectcard=data.cardlist[0];//初始化的时候，需要设置	selectcard
+								}
+							}
+							renderhtml();
+						}
+					},
+					error:function(){
+						$.toast('获取数据失败','text');
+					}
+				});
+			}
+
+			// 点击删除
+			function del(){
+				$('#money').val('');
+			}
+			// 获取验证码
+			function yanzheng() {
+				// 发起请求
+				$.ajax({
+					type: 'post',
+					url:path_inter+"Client/common/getImgCode",
+					dataType: 'json',
+					data:{
+						phone:data.phone
+					},
+					beforeSend: function() {
+						var ses = 60;
+						var t = setInterval(function() {
+							$('#sendmabtn').html(ses-- + 's').attr('onclick','');
+							if (ses < 1) {
+								clearInterval(t);
+								$('#sendmabtn').html('重新发送').attr('onclick','yanzheng()');
+							}
+						}, 1000);
+					},
+					success: function(res) {
+						if(user_overdue(res)){
+							var code = res.data.code;
+							var yzm = code.slice(2,6);// 获取随机码
+
+							// 发短信
+							$.ajax({
+								url:path_inter+"Client/common/sendMsg",
+								dataType:'json',
+								type:'post',
+								data:{
+									phone:data.phone,
+									img_code:yzm
+								},
+								success:function(res){
+									$.toast('发送成功','text');
+								},
+								error:function(){
+
+								}
+							});
+						}
+					}
+				});
+			}
+			function deltan(){
+				$('#bounce666').hide();
+			}
+			// 点击提交申请
+			function submit(){
+				if(!data.oprate){
+					return false;
+				}
+
+				var card_id = data.selectcard.bid;
+				var code = $('#yanma').val();
+				var money = $('#money').val();
+
+				if(money==''){
+					$.toast('请输入提现金额','text');
+					return false;
+				}
+				if(code==''){
+					$.toast('请输入验证码','text');
+					return false;
+				}
+
+				data.oprate=false;
+				$.ajax({
+					url:path_inter+"ManagedClient/SecurityCenter/apply",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						card_id:card_id,
+						code:code,
+						phone:data.phone,
+						money:money
+					},
+					success:function(res){
+						data.oprate=true;
+						if(user_overdue(res)){
+							$('#bounce666').show();
+						}
+					},
+					error:function(){
+						data.oprate=true;
+						pre_loading(1);
+					}
+				});
+			}
+			//显示 选择银行卡页面
+			function showSelectCardPage(){
+				data.showtixianpage=false;
+				data.showselectpage=true;
+				data.showaddpage=false;
+				renderhtml();
+			}
+			//显示 添加银行卡页面
+			function showAddcardPage(){
+				data.showtixianpage=false;
+				data.showselectpage=false;
+				data.showaddpage=true;
+				renderhtml();
+			}
+			//显示 提现申请页面
+			function showtixianShenPage(){
+				data.showtixianpage=true;
+				data.showselectpage=false;
+				data.showaddpage=false;
+				renderhtml();
+			}
+
+
+
+
+
+
+
+
+			//选择银行卡页面js==================================================
+			// 选择银行卡
+			function selectcardfun(index){
+				data.selectcard=data.cardlist[index];
+				showtixianShenPage();
+				renderhtml();
+			}
+
+
+
+
+
+
+
+			//添加银行卡页面js==================================================
+			function conf(){
+				if(!data.oprate){
+					return false;
+				}
+
+				var card = $('#cardnum').val();
+				var name = $('#cardname').val();
+				var bank = $('#cardbank').val();
+				var phone = $('#cardphone').val();
+
+				if(card==''){
+					$.toast('请输入银行卡号','text');
+					return false;
+				}
+				if(name==''){
+					$.toast('请输入持卡人姓名','text');
+					return false;
+				}
+				if(bank==''){
+					$.toast('请填写开户行名称','text');
+					return false;
+				}
+				if(phone==''){
+					$.toast('请输入银行卡预留手机号','text');
+					return false;
+				}
+				if(!checktel(phone)){
+					$.toast('手机号不正确','text');
+					return false;
+				}
+
+				data.oprate=false;
+				$.ajax({
+					url:path_inter+"ManagedClient/SecurityCenter/addBank",
+					dataType:'json',
+					type:'post',
+					data:{
+						token:token,
+						card: card,
+						name: name,
+						address: bank,
+						phone: phone
+					},
+					success:function(res){
+						data.oprate=true;
+
+						$.toast('添加成功','text');
+						setTimeout(function(){
+							getbanklistfun();
+							showSelectCardPage();
+						},600);
+					},
+					error:function(){
+						data.oprate=true;
+						$.toast('获取数据失败','text');
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

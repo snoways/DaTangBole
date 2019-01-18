@@ -1,0 +1,442 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li><a href="{:U('Banner/index')}">Banner列表</a></li>
+			<li class="active"><a href="{:U('Banner/add')}">Banner添加</a></li>
+		</ul>
+		<form method="post" class="form-horizontal js-ajax-form" action="{:U('Banner/add')}" enctype="multipart/form-data">
+			<fieldset>
+				<div class="control-group">
+					<label class="control-label">图片</label>
+					<div class="controls">
+						<input type="file" name="img">（上传尺寸为16:9）
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">展示位置</label>
+					<div class="controls">
+						<input type="radio" name="position" value="1" class="type">首页轮播图
+						<input type="radio" name="position" value="2" class="type">线上课堂轮播图
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">类型</label>
+					<div class="controls">
+						<input type="radio" name="type" value="1" class="type">老师
+						<input type="radio" name="type" value="2" class="type">品宣视频
+						<input type="radio" name="type" value="3" class="type">新闻
+						<input type="radio" name="type" value="4" class="type">公告
+						<input type="radio" name="type" value="5" class="type">线上课堂
+						<input type="radio" name="type" value="6" class="type">线下活动
+					</div>
+				</div>
+				<div id="atype">
+
+				</div>
+			</fieldset>
+			<div class="form-actions">
+				<button type="submit" class="btn btn-primary js-ajax-submit">{:L('ADD')}</button>
+				<a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+			</div>
+		</form>
+	</div>
+	<input type="hidden" id="url" value="{:U('Banner/type')}">
+	<script src="__PUBLIC__/js/common.js"></script>
+	<script>
+        var url = $("#url").val();
+        $(".type").change(function(){
+            var type = $("input[name=type]:checked").val();
+            if(type == 1){
+                $('#atype').html('');
+                var search = '<input style="margin-left: 160px;" type="text" id="t_name" placeholder="请输入教师姓名">';
+                search += '<a href="javascript:;" class="btn btn-primary" type="submit" id="but">搜索</a><div id="liebiao"></div>';
+                $('#atype').append(search);
+                $("#but").click(function(){
+                    var t_name = $("#t_name").val();
+                    if(t_name == ''){
+                        alert('教师名称不能为空');
+                        return false;
+                    }
+                    $.post(url,{
+                        type:type,name:t_name,
+                    },function(data){
+                        $('#liebiao').html('');
+                        var data = JSON.parse(data);
+                        if(data.length == 0){
+                            alert('您所搜索的信息暂无,请重新输入！');
+                            return false;
+                        }
+                        var str = '<table class="table table-hover table-bordered">\
+							<thead>\
+							<tr>\
+							<th>选择</th>\
+							<th width="100">手机号</th>\
+							<th width="150">姓名</th>\
+							<th width="120">性别</th>\
+							<th width="120">类型</th>\
+							<th width="120">头像</th>\
+							<th width="120">注册时间</th>\
+							</tr>\
+							</thead><tbody>';
+
+
+                        for(var i=0 ;i<data.length;i++){
+                            str +='<tr><td width="50"><input type="radio" name="item_id" value="'+data[i].id+'"</td><td>'+data[i].phone+'</td>\
+                        <td>'+data[i].name+'</td>';
+                            if(data[i].sex == 1){
+                                str += '<td>男</td>';
+                            }else{
+                                str += '<td>女</td>';
+                            }
+                            if(data[i].t_type == 1){
+                                str += '<td>大学生</td>';
+                            }else{
+                                str += '<td>老师</td>';
+                            }
+                            str += '<td><img style="width:40px;height:40px;" src="__ROOT__'+data[i].t_img+'"/></td>\
+                        <td>'+data[i].t_time+'</td>\
+                        </tr>';
+                        }
+                        str +='</tbody></table>';
+                        $('#liebiao').append(str);
+                        return false;
+                    })
+				})
+			}else if(type == 2){
+                $('#atype').html('');
+                var search = '<input style="margin-left: 160px;" type="text" id="title" placeholder="请输入视频名称">';
+                search += '<a href="javascript:;" class="btn btn-primary" type="submit" id="but">搜索</a><div id="liebiao"></div>';
+                $('#atype').append(search);
+                $("#but").click(function(){
+                    var title = $("#title").val();
+                    if(title == ''){
+                        alert('视频名称不能为空');
+                        return false;
+					}
+                    $.post(url,{
+                        type:type,title:title,
+                    },function(data){
+                        $('#liebiao').html('');
+                        var data = JSON.parse(data);
+                        if(data.length ==0){
+                            alert('您所搜索的信息暂无,请重新输入！');
+                            return false;
+                        }
+                        var str = '<table class="table table-hover table-bordered">\
+                        <thead>\
+                        <tr>\
+                        <th>选择</th>\
+                        <th width="100">标题</th>\
+                        <th width="150">缩略图</th>\
+                        <th width="120">描述</th>\
+                        <th width="120">添加时间</th>\
+                        </tr>\
+                        </thead>\
+                        <tbody>';
+                        for(var i=0;i<data.length;i++){
+                            str +='<tr><td width="50"><input type="radio" name="item_id" value="'+data[i].id+'"</td><td>'+data[i].title+'</td>\
+						<td><img style="width:40px;height:40px;" src="__ROOT__'+data[i].img_url+'"/></td>\
+                    	<td>'+data[i].desc+'</td>\
+                        <td>'+data[i].add_time+'</td>\
+                        </tr>';
+                        }
+                        str += '</tbody></table>';
+                        $('#liebiao').append(str);
+                    })
+				})
+			}else if(type == 3){
+                $('#atype').html('');
+                var search = '<input style="margin-left: 160px;" type="text" id="news_title" placeholder="请输入新闻名称">';
+                search += '<a href="javascript:;" class="btn btn-primary" type="submit" id="but">搜索</a><div id="liebiao"></div>';
+                $('#atype').append(search);
+                $("#but").click(function(){
+                    var news_title = $("#news_title").val();
+                    if(news_title == ''){
+                        alert('新闻名称不能为空');
+                        return false;
+					}
+                    $.post(url,{
+                        type:type,news_title:news_title,
+                    },function(data){
+                        $("#liebiao").html('');
+                        var data = JSON.parse(data);
+                        if(data.length == 0){
+                            alert('您所搜索的信息暂无,请重新输入！');
+                            return false;
+						}
+                        var str ='<table class="table table-hover table-bordered">\
+                        <thead>\
+                        <tr>\
+                        <th>选择</th>\
+                        <th width="100">新闻标题</th>\
+                        <th width="150">新闻分类</th>\
+                        <th width="120">创建时间</th>\
+                        </tr>\
+                        </thead>\
+                        <tbody>';
+                        for(var i=0;i<data.length;i++){
+                            str += '<tr>\
+                        <td width="50"><input type="radio" name="item_id" value="'+data[i].id+'"</td><td>'+data[i].news_title+'</td>\
+						<td>'+data[i].cate_name+'</td>\
+                        <td>'+data[i].news_time+'</td>\
+                        </tr>';
+                        }
+                        str +='</tbody></table>';
+                        $('#liebiao').append(str);
+                    })
+				})
+			}else if(type == 4){
+                $('#atype').html('');
+                var search = '<input style="margin-left: 160px;" type="text" id="news_gonggao" placeholder="请输入新闻公告">';
+                search += '<a href="javascript:;" class="btn btn-primary" type="submit" id="but">搜索</a><div id="liebiao"></div>';
+                $('#atype').append(search);
+                $("#but").click(function(){
+                    var news_title = $("#news_gonggao").val();
+                    if(news_title == ''){
+                        alert('新闻公告不能为空');
+                        return false;
+                    }
+                    $.post(url,{
+                        type:type,news_title:news_title,
+                    },function(data){
+                        $("#liebiao").html('');
+                        var data = JSON.parse(data);
+                        if(data.length == 0){
+                            alert('您所搜索的信息暂无,请重新输入！');
+                            return false;
+                        }
+                        var str ='<table class="table table-hover table-bordered">\
+                        <thead>\
+                        <tr>\
+                        <th>选择</th>\
+                        <th width="100">新闻标题</th>\
+                        <th width="150">新闻分类</th>\
+                        <th width="120">创建时间</th>\
+                        </tr>\
+                        </thead>\
+                        <tbody>';
+                        for(var i=0;i<data.length;i++){
+                            str += '<tr>\
+                        <td width="50"><input type="radio" name="item_id" value="'+data[i].id+'"</td><td>'+data[i].news_title+'</td>\
+						<td>'+data[i].cate_name+'</td>\
+                        <td>'+data[i].news_time+'</td>\
+                        </tr>';
+                        }
+                        str +='</tbody></table>';
+                        $('#liebiao').append(str);
+                    })
+                })
+            }else if(type == 5){
+                $('#atype').html('');
+                var search = '<input style="margin-left: 160px;" type="text" id="onlineclass" placeholder="请输入线上课堂标题">';
+                search += '<a href="javascript:;" class="btn btn-primary" type="submit" id="but">搜索</a><div id="liebiao"></div>';
+                $('#atype').append(search);
+                $("#but").click(function(){
+                    var class_title = $("#onlineclass").val();
+                    if(class_title == ''){
+                        alert('线上课堂标题不能为空');
+                        return false;
+                    }
+                    $.post(url,{
+                        type:type,news_title:class_title,
+                    },function(data){
+                        $("#liebiao").html('');
+                        var data = JSON.parse(data);
+                        if(data.length == 0){
+                            alert('您所搜索的信息暂无,请重新输入！');
+                            return false;
+                        }
+                        var str ='<table class="table table-hover table-bordered">\
+                        <thead>\
+                        <tr>\
+                        <th>选择</th>\
+                        <th>标题</th>\
+						<th>发布人</th>\
+						<th width="120">封面图</th>\
+						<th width="200">视频</th>\
+						<th>视频介绍</th>\
+						<th>科目</th>\
+                        <th width="120">发布时间</th>\
+                        </tr>\
+                        </thead>\
+                        <tbody>';
+                        for(var i=0;i<data.length;i++){
+                            str += '<tr>\
+                        <td width="50"><input type="radio" name="item_id" value="'+data[i].id+'"</td><td>'+data[i].title+'</td>\
+                        <td>'+data[i].name+'</td>\
+                        <td><img src="'+data[i].img_url+'" width="120"></td>\
+						<td><video src="'+data[i].video_url+'" width="200">您的浏览器不支持 video 标签。</video></td>\
+						<td>'+data[i].content+'</td>\
+						<td>'+data[i].t_sub1+data[i].t_sub2+'</td>\
+						<td>'+data[i].oc_time+'</td>\
+                        </tr>';
+                        }
+                        str +='</tbody></table>';
+                        $('#liebiao').append(str);
+                    })
+                })
+            }else if(type == 6){
+                $('#atype').html('');
+                var search = '<input style="margin-left: 160px;" type="text" id="activity" placeholder="请输入线下活动标题">';
+                search += '<a href="javascript:;" class="btn btn-primary" type="submit" id="but">搜索</a><div id="liebiao"></div>';
+                $('#atype').append(search);
+                $("#but").click(function(){
+                    var class_title = $("#activity").val();
+                    if(class_title == ''){
+                        alert('线下活动标题不能为空');
+                        return false;
+                    }
+                    $.post(url,{
+                        type:type,news_title:class_title,
+                    },function(data){
+                        $("#liebiao").html('');
+                        var data = JSON.parse(data);
+                        if(data.length == 0){
+                            alert('您所搜索的信息暂无,请重新输入！');
+                            return false;
+                        }
+                        var str ='<table class="table table-hover table-bordered">\
+                        <thead>\
+                        <tr>\
+                        <th>选择</th>\
+                        <th>活动标题</th>\
+						<th>活动分类</th>\
+						<th>缩略图</th>\
+						<th>活动商家</th>\
+						<th>活动人数</th>\
+						<th>当前人数</th>\
+						<th>报名截止时间</th>\
+						<th>报名费</th>\
+						<th>活动时间</th>\
+						<th>活动地点</th>\
+                        <th width="120">发布时间</th>\
+                        </tr>\
+                        </thead>\
+                        <tbody>';
+                        for(var i=0;i<data.length;i++){
+                            str += '<tr>\
+							<td width="50"><input type="radio" name="item_id" value="'+data[i].id+'"</td><td>'+data[i].title+'</td>\
+							<td>'+data[i].name+'</td>\
+							<td><img src="'+data[i].img+'" width="120"></td>\
+							<td>';
+								if (data[i].shop_id==-1){
+									var shop = "平台";
+								}else{
+									var shop = data[i].s_name;
+								}
+								str += shop;
+								str += '</td>\
+							<td>'+data[i].people_num+'</td>\
+							<td>'+data[i].now_num+'</td>\
+							<td>'+data[i].end_time+'</td>\
+							<td>'+data[i].money+'</td>\
+							<td>'+data[i].start+'-'+data[i].end+'</td>\
+							<td>'+data[i].address+'</td>\
+							<td>'+data[i].add_time+'</td>\
+							</tr>';
+                        }
+                        str +='</tbody></table>';
+                        $('#liebiao').append(str);
+                    })
+                })
+            }
+        })
+//            if(type == 1){
+//                $.post(url,{
+//                    type:type,
+//                },function(data){
+//                    $('#atype').html('');
+//                    var data = JSON.parse(data);
+//                    var str = '<table class="table table-hover table-bordered">\
+//                    <thead>\
+//                    <tr>\
+//                    <th>选择</th>\
+//                    <th width="100">手机号</th>\
+//                    <th width="150">姓名</th>\
+//                    <th width="120">性别</th>\
+//                    <th width="120">类型</th>\
+//                    <th width="120">头像</th>\
+//                    <th width="120">注册时间</th>\
+//                    </tr>\
+//                    </thead><tbody>';
+//
+//                    for(var i=0 ;i<data.length;i++){
+//						str +='<tr><td width="50"><input type="radio" name="id" value="'+data[i].id+'"</td><td>'+data[i].phone+'</td>\
+//                        <td>'+data[i].name+'</td>';
+//                        if(data[i].sex == 1){
+//                            str += '<td>男</td>';
+//                        }else{
+//                            str += '<td>女</td>';
+//                        }
+//                        if(data[i].t_type == 1){
+//                            str += '<td>大学生</td>';
+//                        }else{
+//                            str += '<td>老师</td>';
+//                        }
+//                        str += '<td><img style="width:40px;height:40px;" src="__ROOT__'+data[i].t_img+'"/></td>\
+//                        <td>'+data[i].t_time+'</td>\
+//                        </tr>';
+//                    }
+//					str +='</tbody></table>';
+//					$('#atype').append(str);
+//                })
+//            }else if(type == 2){
+//                $.post(url,{
+//                    type:type,
+//                },function(data){
+//                    $('#atype').html('');
+//                    var data = JSON.parse(data);
+//                    var str = '<table class="table table-hover table-bordered">\
+//                        <thead>\
+//                        <tr>\
+//                        <th>选择</th>\
+//                        <th width="100">标题</th>\
+//                        <th width="150">缩略图</th>\
+//                        <th width="120">描述</th>\
+//                        <th width="120">添加时间</th>\
+//                        </tr>\
+//                        </thead>\
+//                        <tbody>';
+//                    for(var i=0;i<data.length;i++){
+//                        str +='<tr><td width="50"><input type="radio" name="id" value="'+data[i].id+'"</td><td>'+data[i].title+'</td>\
+//						<td><img style="width:40px;height:40px;" src="__ROOT__'+data[i].img_url+'"/></td>\
+//                    	<td>'+data[i].desc+'</td>\
+//                        <td>'+data[i].add_time+'</td>\
+//                        </tr>';
+//                    }
+//                    str += '</tbody></table>';
+//                    $('#atype').append(str);
+//                })
+//            }else{
+//                $.post(url,{
+//                    type:type,
+//                },function(data){
+//                    $("#atype").html('');
+//                    var data = JSON.parse(data);
+//                    var str ='<table class="table table-hover table-bordered">\
+//                        <thead>\
+//                        <tr>\
+//                        <th>选择</th>\
+//                        <th width="100">新闻标题</th>\
+//                        <th width="150">新闻分类</th>\
+//                        <th width="120">创建时间</th>\
+//                        </tr>\
+//                        </thead>\
+//                        <tbody>';
+//                    for(var i=0;i<data.length;i++){
+//                        str += '<tr>\
+//                        <td width="50"><input type="radio" name="id" value="'+data[i].id+'"</td><td>'+data[i].news_title+'</td>\
+//						<td>'+data[i].cate_name+'</td>\
+//                        <td>'+data[i].news_time+'</td>\
+//                        </tr>';
+//                    }
+//                    str +='</tbody></table>';
+//                    $('#atype').append(str);
+//                })
+//            }
+
+	</script>
+</body>
+</html>

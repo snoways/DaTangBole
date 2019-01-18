@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<title>课程详情</title>
+		<script type="text/javascript" src="../js/com.js" ></script>
+		<link rel="stylesheet" type="text/css" href="../css/stylea.css">
+		<link rel="stylesheet" type="text/css" href="../css/weui.min.css">
+		<link rel="stylesheet" type="text/css" href="../css/jquery-weui.css">
+		<script type="text/javascript" src="../js/hui.js" ></script>
+		<script type="text/javascript" src="../js/jquery.min.js" ></script>
+		<script type="text/javascript" src="../js/jquery-weui.js" ></script>
+		<script type="text/javascript" src="../js/template-native.js" ></script>
+		<script type="text/javascript" src="../js/swiper_jqueryweui.js"></script>
+		<style>
+			.bgstyle{background-position: center center;background-repeat: no-repeat;background-size: cover;}
+		</style>
+	</head>
+	<body>
+		<div ontouchstart class="content_box">
+			<div class="content_scroll">
+				<div id="box"></div>
+			</div>
+		</div>
+
+		<script type="text/html" id="tpl">
+			<div class="tableblock font12" style="height: 46px">
+				<div class="bgcolorf3f3 txt_center col-xs-3">
+					<img src="../img/icon2.png" width="14" height="14" alt=""/>
+					<!--   status -1.待确认(接单) 1待支付(家长端有支付按钮) 2进行中(授课中) 3已完成 4已取消(家长端有取消订单按钮) 5已退款   -->
+					<p class="color999 mar_t2">
+						<%if(shuju.status==-1 || shuju.status==1 || shuju.status==2){%>
+							<span>进行中</span>
+						<%}%>
+						<%if(shuju.status==3){%>
+							<span>已完成</span>
+						<%}%>
+						<%if(shuju.status==5){%>
+							<span >售后</span>
+						<%}%>
+					</p>
+				</div>
+				<!--<div class="bgcolorddd col-xs-6">-->
+					<!--<div class="pad_l10">-->
+						<!--<span class="color666">课程时间：</span>-->
+						<!--<span class="color333">周xingqi&nbsp;shuju.teach_time</span>-->
+					<!--</div>-->
+				<!--</div>-->
+				<div class="bgcolorddd txt_right col-xs-3">
+					<div class="pad_r10">
+						<!-- 进行中 ：1.接单 2.授课中-->
+						<%if(shuju.status==-1){%>
+						<a  href="javascript:;" class="font12  mecoursebtn1 inblock" onclick="jiedan()">接单</a>
+						<%}%>
+						<%if(shuju.status==1){%>
+						<span class="color333 font12">家长待支付</span>
+						<%}%>
+						<%if(shuju.status==2){%>
+						<span class="colorgreenq font12">授课中</span>
+						<%}%>
+						<%if(shuju.status==3){%>
+						<!-- 已完成：1.已完成-->
+						<span class="color333 font12">已完成</span>
+						<%}%>
+						<%if(shuju.status==5 && shuju.order_status==1){%>
+						<!-- 售后：1.退款中 2.退款成功-->
+						<span class="font12 colorblueq">退款申请中</span>
+						<%}%>
+						<%if(shuju.status==5 && shuju.order_status==2){%>
+						<span class="font12 colorblueq">退款成功</span>
+						<%}%>
+						<%if(shuju.status==5 && shuju.order_status==3){%>
+						<span class="font12 colorblueq">退款已驳回</span>
+						<%}%>
+					</div>
+				</div>
+			</div>
+
+			<div class="bgcolorfff pad_l10 pad_r10 mar_b5">
+				<div class="tableblock pad_t10 pad_b5">
+					<div style="width: 40px" class="vertop">
+						<div class="img_box img100">
+							<div class="img_content border_radius50">
+								<img src="<%=path_img+shuju.p_img%>" class="imgone">
+							</div>
+						</div>
+					</div>
+					<div class="pad_l10 font12 color666">
+						<div class="tableblock">
+							<div>
+								<span class="inblock sex_icon <%=shuju.child_sex=='1'?'man':''%>"></span>
+								<span class="inblock font15 color333"><%=shuju.child_name%></span>
+							</div>
+							<!-- 单位固定是半小时-->
+							<div class="txt_right wrem5">￥<%=shuju.o_price%><!--/课时-->&times;<%=shuju.class_num%></div>
+							<div class="txt_right wrem5">
+								<span class="font12 colorzt inblock">￥<%=shuju.total_money%></span>
+							</div>
+						</div>
+						<div class="pad_l18"><%=shuju.subject%></div>
+						<!--<div class="pad_l18 mar_b10">课程时间：shuju.teach_date&nbsp;shuju.teach_time</div>-->
+						<div class="pad_l18">
+							<a href="javascript:;" class="border_t block pad_t5" onclick="botel1(<%=shuju.phone%>)">
+								<span class="inblock mar_r10">家长电话：<%=shuju.phone%></span>
+								<img src="../img/telicon.png" height="44" width="44" id="bodaTel" alt=""/>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			
+			<div class="bgcolorfff pad_r10 pad_l10 mar_b5">
+				<%for(var i=0;i<courses.length;i++){%>
+				<%var el=courses[i];%>
+					<div class="border_b_dashed">
+						<div class="tableblock font12 color666" style="height: 44px">
+							<div>
+								<!-- 待确认-->
+								<%if(el.status==1 || el.status==2){%>
+								<div>
+									<img src="../img/icon1.png" height="15" class="mar_r5" alt=""/>
+									<span class="inblock">第<%=el.courseJie%>节/待确认</span>
+								</div>
+								<%}%>
+								<%if(el.status==3){%>
+								<!-- 已完成-->
+								<div>
+									<img src="../img/ok2.png" height="15" class="mar_r5" alt=""/>
+									<span class="inblock">第<%=el.courseJie%>节/已确认</span>
+								</div>
+								<%}%>
+							</div>
+							<div class="txt_right">
+								<!-- 待确认-->
+								<%if(i+1==shuju.now_num&&el.status==2&&shuju.status==2){%>
+								<a href="javascript:;" class="font12 mecoursebtn2 inblock" onclick="querenComplete(<%=i%>,<%=el%>)">确认完成</a>
+								<%}%>
+								<%if(i+1==shuju.now_num&&el.status==1&&shuju.status==2){%>
+								<span class="font12 color999">待家长确认</span>
+								<%}%>
+								<%if(el.status==3){%>	
+								<!-- 已完成-->
+								<span class="font12 color999">已确认</span>
+								<%}%>
+							</div>
+						</div>
+						<!--已完成-->
+						<%if(el.status==3){%>
+						<div class="font12 border_t_dashed pad_b10">
+							<div class="pad_t5 pad_b5 txt_right mar_b5">
+								<span class="colorgreenq pad_r5">授课评价</span>
+							</div>
+							<a class="pad10 dialog block" href="mecourse_detail_pingjia.html?id=<%=shuju.id%>&num=<%=i+1%>">
+								<div class="colorgreenq mar_b5">授课教案</div>
+								<div class="txt_twoline color999"><%=el.word%></div>
+							</a>
+						</div>
+						<%}%>
+					</div>
+				<%}%>	
+				<div class="txt_right pad_t10 pad_b10">
+					<a href="javascript:;" onclick="contact(<%=shuju%>)" class="inblock wrem7 bgcolorzt colorfff font12 txt_center pad_t3 pad_b3" style="border-radius: 30px">
+						<img src="../img/kefu.png" class="mar_r5" width="17" height="14" alt=""/><span class="inblock">在线咨询</span>
+					</a>
+				</div>
+			</div>
+
+			<div class="bgcolorfff pad10 font12 mar_b5">
+				<div class="tableblock pad_t2 pad_b2">
+					<div class="col-xs-3 color666">订单编号</div>
+					<div class="txt_right col-xs-9 color333"><%=shuju.sn%></div>
+				</div>
+				<div class="tableblock pad_t2 pad_b2">
+					<div class="col-xs-3 color666">授课地址</div>
+					<div class="txt_right col-xs-9 colorzt">
+						<a href="javascript:;" class="pad_t5 pad_b5 tableblock" onclick="daohang()">
+							<div>
+								
+								<i class="inblock noh"><%=shuju.address%></i>
+								<%if(shuju.address_other){%>
+								<i class="inblock noh"><%=shuju.address_other%></i>
+								<%}%>
+							</div>
+							<div style="width: 20px;">
+								<img src="../img/icon10.png" width="15">
+							</div>
+						</a>
+					</div>
+				</div>
+				<!--<div class="tableblock pad_t2 pad_b2">-->
+					<!--<div class="col-xs-3 color666">课程时间</div>-->
+					<!--<div class="txt_right col-xs-9 color333">星期xingqi&nbsp;shuju.teach_date&nbsp;shuju.teach_time</div>-->
+				<!--</div>-->
+				<%if(shuju.status>-1){%>
+				<div class="tableblock pad_t2 pad_b2">
+					<div class="col-xs-3 color666">订单状态</div>
+					<div class="txt_right col-xs-9 color333">
+						<!-- 进行中 ：1.接单 2.授课中-->
+						<%if(shuju.status==-1){%>
+						<span class="font12">未接单</span>
+						<%}%>
+						<%if(shuju.status==1){%>
+						<span class="font12">家长待支付</span>
+						<%}%>
+						<%if(shuju.status==2){%>
+						<span class="font12">授课中</span>
+						<%}%>
+						<%if(shuju.status==3){%>
+						<!-- 已完成：1.已完成-->
+						<span  class="font12">已完成</span>
+						<%}%>
+						<%if(shuju.status==5 && shuju.order_status==1){%>
+						<!-- 售后：1.退款中 2.退款成功-->
+						<span class="font12">退款申请中</span>
+						<%}%>
+						<%if(shuju.status==5 && shuju.order_status==2){%>
+						<span class="font12">退款成功</span>
+						<%}%>
+						<%if(shuju.status==5 && shuju.order_status==3){%>
+						<span class="font12">退款已驳回</span>
+						<%}%>
+					</div>
+				</div>
+				<%}%>
+				<div class="tableblock pad_t2 pad_b2">
+					<div class="col-xs-3 color666">订单总额</div>
+					<div class="txt_right col-xs-9 colorzt">￥<%=shuju.total_money%></div>
+				</div>
+			</div>
+			
+			<%if(shuju.status==5&&shuju.t_reason){%>
+			<div class="pad10 font12 color666 bgcolorfff mar_b5" >
+				<div><span class="colorzt">退款原因：</span><%=shuju.t_reason%></div>
+			</div>
+			<%}%>
+			<%if(shuju.order_status==3&&shuju.reason){%>
+				<div class="pad10 font12 color666 bgcolorfff" >
+					<div><span class="colorzt">驳回原因：</span><%=shuju.reason%></div>
+				</div>
+			<%}%>
+
+
+			<div class="mar_t5 bgcolorfff">
+				<div class="border_b">
+					<span class="inblock font14 wrem6 txt_center pad_t10 pad_b10 border_bzt2 colorzt">用户评价</span>
+				</div>
+				<%if(shuju.comment){%>
+				<div class="pad_l10 pad_r10">
+					<div class="font14 color999 pad_t10 pad_b10"><%=shuju.comment.a_time%></div>
+					<div class="font14 color333"><%=shuju.comment.content%></div>
+					<div class="pad_t10 pad_b10 pad_l5 pad_r5 clear border_b">
+						<%if(shuju.comment.img1){%>
+						<div class="col-xs-4 L">
+							<div class="pad_l5 pad_r5">
+								<div class="imgp" style="padding-bottom: 100%" onclick="imginit(0)">
+									<%if(shuju.comment.img1.indexOf('http')!=-1){%>
+									<div class="bgstyle" style="background-image:url(<%=shuju.comment.img1%>)"></div>
+									<%}else{%>
+									<div class="bgstyle" style="background-image:url(<%=path_img+shuju.comment.img1%>)"></div>
+									<%}%>
+								</div>
+							</div>
+						</div>
+						<%}%>
+						<%if(shuju.comment.img2){%>
+						<div class="col-xs-4 L">
+							<div class="pad_l5 pad_r5">
+								<div class="imgp" style="padding-bottom: 100%" onclick="imginit(1)">
+									<%if(shuju.comment.img2.indexOf('http')!=-1){%>
+									<div class="bgstyle" style="background-image:url(<%=shuju.comment.img2%>)"></div>
+									<%}else{%>
+									<div class="bgstyle" style="background-image:url(<%=path_img+shuju.comment.img2%>)"></div>
+									<%}%>
+								</div>
+							</div>
+						</div>
+						<%}%>
+						<%if(shuju.comment.img3){%>
+						<div class="col-xs-4 L">
+							<div class="pad_l5 pad_r5">
+								<div class="imgp" style="padding-bottom: 100%" onclick="imginit(2)">
+									<%if(shuju.comment.img3.indexOf('http')!=-1){%>
+									<div class="bgstyle" style="background-image:url(<%=shuju.comment.img3%>)"></div>
+									<%}else{%>
+									<div class="bgstyle" style="background-image:url(<%=path_img+shuju.comment.img3%>)"></div>
+									<%}%>
+								</div>
+							</div>
+						</div>
+						<%}%>
+					</div>
+					<div class="tableblock pad_t10 pad_b10">
+						<div class="wrem5 font12 color666" style="position: relative;top: 2px;">综合评价</div>
+						<div>
+							<span class="inblock star <%=shuju.comment.star>=1?'all':''%> <%=shuju.comment.star>=0.5 && shuju.comment.star<1?'half':''%>"></span>
+							<span class="inblock star <%=shuju.comment.star>=2?'all':''%> <%=shuju.comment.star>=1.5 && shuju.comment.star<2?'half':''%>"></span>
+							<span class="inblock star <%=shuju.comment.star>=3?'all':''%> <%=shuju.comment.star>=2.5 && shuju.comment.star<3?'half':''%>"></span>
+							<span class="inblock star <%=shuju.comment.star>=4?'all':''%> <%=shuju.comment.star>=3.5 && shuju.comment.star<4?'half':''%>"></span>
+							<span class="inblock star <%=shuju.comment.star>=5?'all':''%> <%=shuju.comment.star>=4.5 && shuju.comment.star<5?'half':''%>"></span>
+						</div>
+					</div>
+				</div>
+				<%}else{%>
+				<div class="empty">暂无评价</div>
+				<%}%>
+			</div>
+		</script>
+
+		<script>
+			var token = localStorage.getItem("user_token");
+
+			if(Getvariable('token')){
+				token=Getvariable('token');
+			}
+
+			var data = {
+				path_img:path_img,
+				xingqiText: ['日','一','二','三','四','五','六'],
+				xingqi: '',
+				oprate:true,
+				courseJieText:['一'],
+				shuju:{},
+				courses:[
+					//0 待确认(不显示 确认完成按钮) 1待确认（显示 确认完成按钮） 2已确认(确认的时候，就会评价)
+					//		{status:2,courseJie:'一',word:''},
+					//		{status:1,courseJie:'二'}
+				],
+				loading:false,
+				page:1
+			};
+            function renderhtml() {
+                document.getElementById('box').innerHTML = template('tpl', data);
+            };
+            // 打电话
+            function botel1(tel){
+				botel(tel);
+			};
+			function contact(el){
+				app_contact(el.accid,data.shuju.p_xy);
+			};
+			function daohang(){
+				app_daohang(data.shuju.address);
+			};
+
+			function jiedan(){
+				//接单
+				if(!data.oprate){
+					return false;
+				}
+				data.oprate=false;
+				$.confirm("确认接单？",'', function() {
+					$.ajax({
+						url:path_inter+"Teacher/Course/receive",
+						dataType:'json',
+						type:'post',
+						data:{token:token,id:data.shuju.id},
+						success:function(res){
+							
+							data.oprate=true;
+							if(user_overdue(res.code,res.msg)){
+								data.shuju.status=1;
+								$.toast('接单成功',"text");
+								
+							}
+							renderhtml();
+						},
+						error:function(){
+							data.oprate=true;
+							pre_loading(1);
+						}
+					});
+				},function(){
+					data.oprate=true;
+				});
+			};
+			function querenComplete(i,el) {
+				//确认完成
+				$.confirm("确认完成？",'', function() {
+					location.href="mecourse_write_pingjia.html?pid="+Getvariable('id')+"&num="+(i+1);
+				},function(){});
+			};
+
+
+			//将数字转中文 start==============================
+			var _change = {
+				ary0:["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"],
+				ary1:["", "十", "百", "千"],
+				ary2:["", "万", "亿", "兆"],
+				init:function (name) {
+					this.name = name;
+				},
+				strrev:function () {
+					var ary = []
+					for (var i = this.name.length; i >= 0; i--) {
+						ary.push(this.name[i])
+					}
+					return ary.join("");
+				}, //倒转字符串。
+				pri_ary:function () {
+					var $this = this
+					var ary = this.strrev();
+					var zero = ""
+					var newary = ""
+					var i4 = -1
+					for (var i = 0; i < ary.length; i++) {
+						if (i % 4 == 0) { //首先判断万级单位，每隔四个字符就让万级单位数组索引号递增
+							i4++;
+							newary = this.ary2[i4] + newary; //将万级单位存入该字符的读法中去，它肯定是放在当前字符读法的末尾，所以首先将它叠加入$r中，
+							zero = ""; //在万级单位位置的“0”肯定是不用的读的，所以设置零的读法为空
+
+						}
+						//关于0的处理与判断。
+						if (ary[i] == '0') { //如果读出的字符是“0”，执行如下判断这个“0”是否读作“零”
+							switch (i % 4) {
+								case 0:
+									break;
+								//如果位置索引能被4整除，表示它所处位置是万级单位位置，这个位置的0的读法在前面就已经设置好了，所以这里直接跳过
+								case 1:
+								case 2:
+								case 3:
+									if (ary[i - 1] != '0') {
+										zero = "零"
+									}
+									; //如果不被4整除，那么都执行这段判断代码：如果它的下一位数字（针对当前字符串来说是上一个字符，因为之前执行了反转）也是0，那么跳过，否则读作“零”
+									break;
+
+							}
+
+							newary = zero + newary;
+							zero = '';
+						}
+						else { //如果不是“0”
+							newary = this.ary0[parseInt(ary[i])] + this.ary1[i % 4] + newary; //就将该当字符转换成数值型,并作为数组ary0的索引号,以得到与之对应的中文读法，其后再跟上它的的一级单位（空、十、百还是千）最后再加上前面已存入的读法内容。
+						}
+
+					}
+					if (newary.indexOf("零") == 0) {
+						newary = newary.substr(1)
+					}//处理前面的0
+					return newary;
+				}
+			};
+			//创建class类
+			function change() {
+				this.init.apply(this, arguments);
+			};
+			change.prototype = _change;
+			//创建实例
+			//var k = new change("00102040");
+			//alert(k.pri_ary())
+			//将数字转中文end=====================================
+
+				//初始加载
+				pre_loading(0);
+				var xingqiText=['日','一','二','三','四','五','六'];
+				console.log(Getvariable('id'));
+				if(Getvariable('id')){
+					var id=Getvariable('id');
+					data.courses = [];
+					$.ajax({
+						url:path_inter+"Teacher/Course/detail",
+						dataType:'json',
+						type:'post',
+						data:{token:token,id:id},
+						success:function(res){
+							
+							console.log(res)
+							if(user_overdue(res.code,res.msg)){
+								pre_loading(100);
+
+								//算出 星期几
+								var data1=res.data;
+//								var date=data1.teach_date;
+//								date=date.replace(/-/g,'/');
+//								var xingqiNum=new Date(date).getDay();
+//								data.xingqi=xingqiText[xingqiNum];
+//								console.log(data.xingqi);
+
+								data.shuju=data1;
+								renderhtml();
+
+								//					vm.shuju.order_status=3;
+								//					vm.shuju.t_reason="好几分看到接口光电科技飞洒复健科贷款纠纷说的就放开是单击发送端口连接费";
+								
+								//整出 courses数据
+								//"check": 当前课程状态（1家长确认可以评价   2家长未确认不能评价） [后台数据]
+								//status 0 待确认(不显示 确认完成按钮) 1待确认（显示 确认完成按钮） 2已确认(确认的时候，就会评价) [自己数据]
+								var coursearr=[];
+								for(var i=1;i<=res.data.class_num;i++){
+									//第几节课
+									var k = new change(i.toString());
+									k=k.pri_ary();
+									var obj={courseJie:k};
+									
+									
+									if(i<res.data.now_num)
+									{
+										obj.status=3;
+										//评价内容
+										$.ajax({
+											url:path_inter+"Teacher/Course/remark",
+											dataType:'json',
+											type:'post',
+											data:{
+												token:token,
+												id:id,
+												num:i
+											},
+											async:false,//同步
+											success:function(res){
+												if(user_overdue(res.code,res.msg)){
+													obj.word=res.data.lesson_plan;
+												}
+											},
+											error:function(){
+												pre_loading(1);
+											}
+										});
+									}
+									else if(i==res.data.now_num)
+									{
+										if(res.data.status==3)
+										{
+											obj.status=3;
+											//评价内容
+											$.ajax({
+												url:path_inter+"Teacher/Course/remark",
+												dataType:'json',
+												type:'post',
+												data:{
+													token:token,
+													id:id,
+													num:i
+												},
+												async:false,//同步
+												success:function(res){
+													if(user_overdue(res.code,res.msg)){
+														obj.word=res.data.lesson_plan;
+													}
+												},
+												error:function(){
+													pre_loading(1);
+												}
+											});
+										}
+										else
+										{
+											if(res.data.check==2)
+											{
+												obj.status=1;
+											}
+											else if(res.data.check==3)
+											{
+												obj.status=2;
+											}
+											else
+											{
+												obj.status=3;
+												//评价内容
+												$.ajax({
+													url:path_inter+"Teacher/Course/remark",
+													dataType:'json',
+													type:'post',
+													data:{
+														token:token,
+														id:id,
+														num:i
+													},
+													async:false,//同步
+													success:function(res){
+														if(user_overdue(res.code,res.msg)){
+															obj.word=res.data.lesson_plan;
+														}
+													},
+													error:function(){
+														pre_loading(1);
+													}
+												});
+											}
+										}
+										
+									}
+									else if(i>res.data.now_num){
+										obj.status=1;
+									}
+									obj.num=i;
+									coursearr.push(obj);
+								}
+								data.courses=coursearr;
+								renderhtml();
+								console.log(coursearr);
+								console.log(obj);
+							}
+						},
+						error:function(){
+							pre_loading(1);
+						}
+					});
+				}
+				else
+				{
+					pre_loading(3);
+				}
+				
+				
+
+
+
+			function imginit(index){
+				var arr=[];
+				if(data.shuju.comment){
+					if(data.shuju.comment.img1){
+						if(data.shuju.comment.img1.indexOf('http')==-1){
+							arr.push(path_img+data.shuju.comment.img1);
+						}else{
+							arr.push(data.shuju.comment.img1);
+						}
+					}
+					if(data.shuju.comment.img2){
+						if(data.shuju.comment.img2.indexOf('http')==-1){
+							arr.push(path_img+data.shuju.comment.img2);
+						}else{
+							arr.push(data.shuju.comment.img2);
+						}
+					}
+					if(data.shuju.comment.img3){
+						if(data.shuju.comment.img3.indexOf('http')==-1){
+							arr.push(path_img+data.shuju.comment.img3);
+						}else{
+							arr.push(data.shuju.comment.img3);
+						}
+					}
+				}
+				var pb1 = $.photoBrowser({
+					items: arr,
+					initIndex:index
+				});
+				pb1.open();
+			}
+		</script>
+	</body>
+</html>

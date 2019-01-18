@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>我的图集</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- bootstrap -->
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap.css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+
+  <!-- libraries -->
+  <link href="__PUBLIC__/Shopadmin/css/lib/uniform.default.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/select2.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/font-awesome.css" type="text/css" rel="stylesheet"/>
+
+  <!-- global styles -->
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/layout.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/elements.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/icons.css">
+
+  <!-- this page specific styles -->
+  <link rel="stylesheet" href="__PUBLIC__/Shopadmin/css/compiled/form-showcase.css" type="text/css" media="screen"/>
+
+  <!-- open sans font -->
+  <link
+    href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+    rel='stylesheet' type='text/css'>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <!-- 放大 -->
+  <link rel="stylesheet" href="__PUBLIC__/Shop/css/zoomify.min.css">
+</head>
+<body>
+
+<include file="common/menu" />
+
+
+<!-- main container -->
+<div class="content">
+
+  <div id="pad-wrapper" class="form-page">
+    <div class="row header">
+      <div class="col-md-12">
+        <h3>我的图集</h3>
+      </div>
+    </div>
+    <form method="post" action="" id="formurl">
+      <div class="row" style="padding: 10px; border: 1px solid #ccc;  margin-bottom: 10px;background-color: #F5FAFD;">
+          <button class="btn btn-primary mar_r5" type="submit" onclick="return sort();">排序</button>
+          <!--<a class="btn btn-primary mar_r5" href="#">批量添加</a>-->
+          <button class="btn btn-danger mar_r5" type="button" onclick="del();">批量删除</button>
+      </div>
+      <div class="table-wrapper products-table section">
+        <div class="row">
+          <table class="table table-hover" id="myimagestable">
+            <thead>
+            <tr>
+              
+              <th width="50">
+                <input type="checkbox">
+              </th>
+              <th width="100">
+                ID
+              </th>
+              <th>
+                <span class="line"></span>图片
+              </th>
+              <th width="80">
+                序号
+              </th>
+              <th width="100">
+                <span class="line"></span>操作
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- row -->
+            <foreach name="image" key="key" item="u">
+            <tr>
+              
+              <td>
+                <!--<input type="checkbox">-->
+                <input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x" name="ids[]" value="{$u.id}" title="ID:{$u.id}">
+              </td>
+              <td>
+                {$key+1}
+              </td>
+              <td>
+                <div class="img">
+                  <img src="__ROOT__{$u['url']}" class="fangdaimgitem" width="225" height="150">
+                </div>
+              </td>
+              <td>
+                <input type="text" class="form-control" name='sort[]' value='{$u.sort}'>
+                <input type="hidden" name="imgid[]" value="{$u.id}"/>
+              </td>
+              <td>
+                <span class="btn btn-link delbtn" data-id="{$u['id']}">删除</span>
+              </td>
+            </tr>
+            </foreach>
+            </tbody>
+          </table>
+          <div class="pagination">{$page}</div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- end main container -->
+
+<!-- scripts for this page -->
+<script src="__PUBLIC__/Shopadmin/js/wysihtml5-0.3.0.js"></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/jquery.uniform.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/theme.js"></script>
+<!--laryer-->
+<script src="__PUBLIC__/Shopadmin/layer/layer.js"></script>
+<script src="__PUBLIC__/js/common.js"></script>
+<script src="__PUBLIC__/layer/layer.js"></script>
+<!-- 放大 -->
+<script src="__PUBLIC__/Shop/js/zoomify.min.js"></script>
+
+<script>
+  //放大
+  $('.fangdaimgitem').zoomify();
+
+    function sort() {
+        $("#formurl").attr('action', "{:U('Image/sort')}");
+        return true;
+    }
+    function del() {
+        var selected=false;//有一个checked了，就是true
+        var idsobjs=document.getElementsByName('ids[]');
+        for(var i=0;i<idsobjs.length;i++){
+            if(idsobjs[i].checked){
+                selected=true;
+                break;
+            }
+        }
+        if(!selected){
+            layer.msg('请勾选要删除的图片');
+            return false;
+        }else{
+            layer.confirm('您确定要删除选中的图片吗?', {icon: 3, title:'提示'}, function(index){
+                $("#formurl").attr('action', "{:U('Image/del_batch_url')}");
+                $("#formurl").submit();
+            });
+        }
+    }
+
+  $('#myimagestable').on('click','.delbtn',function(){
+    //删除
+    var id=$(this).data('id');
+    console.log(id)
+    layer.confirm('您确定要删除该图片吗?', {icon: 3, title:'提示'}, function(index){
+        $.post("__CONTROLLER__/del",
+            {"id":id},
+            function(json){
+                var data = JSON.parse(json);
+                if (data.code==1){
+                    window.location.reload();
+                }else{
+                    layer.alert('删除失败，请稍后再试');
+                }
+
+            },"text");
+    });
+  });
+</script>
+
+
+
+</body>
+</html>

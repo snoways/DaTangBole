@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>添加活动</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- bootstrap -->
+    <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap.css" rel="stylesheet">
+    <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+
+    <!-- libraries -->
+    <link href="__PUBLIC__/Shopadmin/css/lib/uniform.default.css" type="text/css" rel="stylesheet">
+    <link href="__PUBLIC__/Shopadmin/css/lib/select2.css" type="text/css" rel="stylesheet">
+    <link href="__PUBLIC__/Shopadmin/css/lib/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+    <link href="__PUBLIC__/Shopadmin/css/lib/font-awesome.css" type="text/css" rel="stylesheet"/>
+
+    <!-- global styles -->
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/layout.css">
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/elements.css">
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/icons.css">
+
+    <!-- this page specific styles -->
+    <link rel="stylesheet" href="__PUBLIC__/Shopadmin/css/compiled/form-showcase.css" type="text/css" media="screen"/>
+
+    <!-- open sans font -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <script src="__PUBLIC__/js/jquery.js" ></script>
+
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <script type="text/html" id="photos-item-wrapper">
+        <li id="savedimage{id}">
+            <input id="photo-{id}" type="hidden" name="photos_url[]" value="{filepath}">
+            <input id="photo-{id}-name" type="text" name="photos_alt[]" value="{name}" style="width: 160px;" title="图片名称">
+            <img id="photo-{id}-preview" src="{url}" onclick="parent.image_preview_dialog(this.src);">
+            <a href="javascript:upload_one_image('图片上传','#photo-{id}');">替换</a>
+            <a href="javascript:(function(){$('#savedimage{id}').remove();})();">移除</a>
+        </li>
+    </script>
+    <link href="__PUBLIC__/js/artDialog/skins/default.css" rel="stylesheet" />
+    <script type="text/javascript">
+        //全局变量
+        var GV = {
+            ROOT: "__ROOT__/",
+            WEB_ROOT: "__WEB_ROOT__/",
+            JS_ROOT: "public/js/",
+            APP:'{$Think.MODULE_NAME}'/*当前应用名*/
+        };
+    </script>
+    <script src="__PUBLIC__/js/wind.js"></script>
+
+    <style>
+
+        .plus,.minus{
+            color: #077aff;
+        }
+        .minus{
+            color: #ff2222;
+        }
+        input[name='introduce'],input[name='title']{
+            width: 90%;
+        }
+
+        .no-margin{
+            margin-left: 0px;
+            margin-right: 0px;
+        }
+        .save{
+            width: 24.5px;
+            height: 24.5px;
+            border:none;
+            border-radius: 100%;
+            margin-right: 2px;
+            float: left;
+        }
+        select{
+            min-width: 20%;
+        }
+    </style>
+
+</head>
+<body>
+
+<include file="common/menu" />
+
+
+<!-- main container -->
+<div class="content">
+
+    <div id="pad-wrapper" class="form-page" style="padding: 0px;padding-left: 10px;padding-top: 10px">
+        <ul class="nav nav-tabs">
+            <li><a href="{:U('Activity/index')}">活动列表</a></li>
+            <li class="active"><a href="{:U('Activity/start',array('id'=>$_GTE['id']))}">设置出发地</a></li>
+        </ul>
+        <form action="{:U('Activity/start')}" method="post" class="form-horizontal js-ajax-forms" enctype="multipart/form-data">
+            <input type="hidden"  name="id" value="{$_GET['id']}" >
+            <div class="row-fluid">
+                <div class="span12">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th> ID </th>
+                            <th> 出发地 </th>
+                            <th width="90"> 操作 </th>
+                        </tr>
+                        <tr class="item">
+                            <td> 0 </td>
+                            <td>
+                                <select name="target_province" id="tp" required class="province">
+                                    <option value="0">请选择</option>
+                                    <foreach name="province" item="v">
+                                        <option value="{$v['areaid']}">{$v['areaname']}</option>
+                                    </foreach>
+                                </select>
+                                <select name="target_city" id="city" class="city"  required>
+                                    <option value="0">请选择</option>
+                                </select>
+                            </td>
+                            <td>
+                                <a href="javascript:;" class="form-required plus"  id="add"> 添加 </a>
+                            </td>
+                        </tr>
+
+                        <foreach name="list" item="i">
+                            <tr class="item" data_id="{$i['id']}" >
+                                <td> {$i['id']} </td>
+                                <td>
+                                    <select name="target_province" required class="province">
+                                        <option value="0">请选择</option>
+                                        <foreach name="province" item="v">
+                                            <option value="{$v['areaid']}" <if condition="$v['areaid'] eq $i['province']" >selected</if> >{$v['areaname']}</option>
+                                        </foreach>
+                                    </select>
+                                    <select name="target_city"  class="city"  required>
+                                        <option value="0">请选择</option>
+                                        <foreach name="i['cities']" item="v">
+                                            <option value="{$v['areaid']}" <if condition="$v['areaid'] eq $i['city']" >selected</if> >{$v['areaname']}</option>
+                                        </foreach>
+                                    </select>
+                                </td>
+                                <td>
+                                    <a href="javascript:;" class="plus no-margin save" > 保存 </a>
+                                    <a href="javascript:;" class="minus no-margin"> 删除 </a>
+                                </td>
+                            </tr>
+                        </foreach>
+
+                    </table>
+                </div>
+            </div>
+            <!--<div class="form-actions">-->
+            <!--<button class="btn btn-primary js-ajax-submit" type="submit">提交</button>-->
+            <!--<a class="btn" href="{:U('Activity/index')}">返回</a>-->
+            <!--</div>-->
+        </form>
+    </div>
+</div>
+
+</body>
+<script type="text/javascript" src="__PUBLIC__/layer/layer.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/common.js"></script>
+</body>
+<script>
+
+    function getAreas(id,callback){
+        $.get("{:U('Activity/getAreas')}",{
+            pid:id
+        },function (data) {
+            callback(data.list);
+        })
+    }
+
+    $(".province").change(function (data) {
+        var el = $(this);
+        var id  = el.val();
+        var html = '<option value="0">请选择</option>';
+        if(parseInt(id) > 0){
+            getAreas(id,function (list) {
+                $.each(list,function (k,v) {
+                    html +='<option value="'+v.areaid+'">'+v.areaname+'</option>';
+                })
+                el.siblings('.city').html(html);
+            })
+        }else{
+            el.siblings('.city').html(html);
+            el.siblings('.area').html(html);
+        }
+    })
+
+
+</script>
+<script>
+    $("#add").click(function () {
+
+        var el = $(this).closest('.item');
+
+        var tp = $('#tp').val()? $('#tp').val():0;
+        var city = $('#city').val()?$('#city').val():0;
+        if(parseInt(tp) && parseInt(city)){
+            var act_id = "{$_GET['id']}";
+            $.post("{:U('Activity/addStart')}",{
+                act_id:act_id,
+                tp:tp,
+                city:city,
+            },function (res) {
+                if(res.code == 1){
+                    var data = res.data;
+                    layer.msg("添加成功")
+                    setTimeout(function () {
+                        window.location.reload();
+                    },2000)
+                }else{
+                    artdialog_alert(res.msg)
+                    return false
+                }
+            })
+        }else{
+            artdialog_alert('请填选完所有信息再添加')
+            return false
+        }
+
+    })
+
+    $(".minus").live('click',function () {
+        var el = $(this).closest('.item');
+        var id = el.attr('data_id');
+
+        $.get("{:U('Activity/deleteStart')}",{
+            id:id
+        },function (res) {
+            if(res.code == 1){
+                el.closest('.item').remove();
+                layer.msg('删除成功')
+            }else{
+                artdialog_alert(res.msg)
+                return false
+            }
+        })
+    })
+
+
+    $(".save").live('click',function () {
+        var el = $(this).closest('.item');
+        var id = el.attr('data_id');
+        var pro = el.find('.province').val();
+        var city = el.find('.city').val();
+        if(parseInt(pro) && parseInt(city)){
+            $.post("{:U('Activity/updateStart')}",{
+                id:id,
+                province:pro,
+                city:city,
+            },function (res) {
+                if(res.code == 1){
+                    layer.msg(res.msg)
+                }else{
+                    artdialog_alert(res.msg)
+                    return false
+                }
+            })
+        }else{
+            artdialog_alert('请填选完所有信息再添加')
+            return false
+        }
+    })
+
+</script>
+
+</html>

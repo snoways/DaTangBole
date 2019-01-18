@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>游记信息</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- bootstrap -->
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap.css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+
+  <!-- libraries -->
+  <link href="__PUBLIC__/Shopadmin/css/lib/uniform.default.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/select2.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/font-awesome.css" type="text/css" rel="stylesheet"/>
+
+  <!-- global styles -->
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/layout.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/elements.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/icons.css">
+
+  <!-- this page specific styles -->
+  <link rel="stylesheet" href="__PUBLIC__/Shopadmin/css/compiled/form-showcase.css" type="text/css" media="screen"/>
+
+  <![endif]-->
+  <link href="__PUBLIC__/js/artDialog/skins/default.css" rel="stylesheet" />
+
+  <script type="text/javascript">
+      //全局变量
+      var GV = {
+          ROOT: "__ROOT__/",
+          WEB_ROOT: "__WEB_ROOT__/",
+          JS_ROOT: "public/js/",
+          APP:'{$Think.MODULE_NAME}'/*当前应用名*/
+      };
+  </script>
+  <script src="__PUBLIC__/js/wind.js"></script>
+  <style type="text/css">
+    .input-medium{
+      width: 80.3333%;
+      display: inline-table;
+    }
+    .input-small{
+      width: 22%;
+      display: inline-table;
+    }
+    .label_att span{
+      text-align: right;
+      padding-top: 10px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<include file="common/menu" />
+<!-- main container -->
+<div class="content">
+
+  <div id="pad-wrapper" class="form-page" style="margin-left: 50px;">
+    <div class="row header">
+      <div class="col-md-12">
+        <h3>添加游记</h3>
+      </div>
+    </div>
+    <form method="post" class="form-horizontal js-ajax-form" action="{:U('Travels/edit')}" enctype="multipart/form-data">
+      <div class="row form-wrapper">
+        <div class="col-md-12 column">
+          <fieldset>
+            <div class="field-box">
+              <div class="col-md-9 label_att">
+                <span style="color: red;">*</span><span>游记封面图片（建议图片宽高为1050*650，大小不要超过200K）：</span>
+                <div style="margin-bottom: 10px;">
+                  <input type="hidden" name="img1" id="img1" value="{$info.img_url}">
+                  <if condition="!empty($info['img_url'])">
+                    <a href="javascript:upload_one_image('图片上传','#img1',null,'Managed');" class="inb">
+                      <img src="{$info.img_url}" id="img1-preview" style="width: 315px;height: 195px;">
+                    </a>
+                    <else/>
+                    <a href="javascript:upload_one_image('图片上传','#img1',null,'Managed');" class="inb">
+                      <img src="__PUBLIC__/Shopadmin/img/new-gallery-img.png" id="img1-preview" style="width: 315px;height: 195px;">
+                    </a>
+                  </if>
+                </div>
+                <div class="mar_t10">
+                  <input type="button" class="btn btn-default" onclick="$('#thumb-preview').attr('src','__PUBLIC__/Shopadmin/img/new-gallery-img.png');$('#thumb').val('');return false;" value="取消图片">
+                </div>
+              </div>
+            </div>
+            <div class="field-box">
+              <div class="col-md-9 label_att">
+                <span style="color: red;">*</span><span>游记标题：</span>
+                <input type="text" name="title" class="form-control input-medium" value="{$info['title']}" required>
+              </div>
+            </div>
+            <div class="field-box">
+              <div class="col-md-9 label_att">
+                <span style="color: red;">*</span><span>游记作者：</span>
+                <input type="text" maxlength="30" id="author" name="author" class="form-control input-small" value="{$info['author']}" required>
+                <span style="color: red;">*</span><span>发布日期：</span>
+                <input type="date" id="add_date" name="add_date" class="form-control input-small" value="{$info['add_date']}" required>
+                <span style="color: red;">*</span><span>活动玩伴：</span>
+                <select name="person" id="person" class="form-control input-small" required>
+                  <option value="家人" <if condition="$info['person'] eq 家人">selected</if>>家人</option>
+                  <option value="朋友" <if condition="$info['person'] eq 朋友">selected</if>>朋友</option>
+                  <option value="同事" <if condition="$info['person'] eq 同事">selected</if>>同事</option>
+                  <option value="旅行社" <if condition="$info['person'] eq 旅行社">selected</if>>旅行社</option>
+                  <option value="其它" <if condition="$info['person'] eq 其它">selected</if>>其它</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-box">
+              <div class="col-md-9 label_att">
+                <span style="color: red;">*</span><span>游玩天数：</span>
+                <input type="number" min="1" max="30" name="travel_days" class="form-control input-small" value="{$info['travel_days']}" required>
+                <span style="color: red;">*</span><span>游玩月份：</span>
+                <select name="travel_month" id="travel_month" class="form-control input-small" required>
+                  <option value="">请选择游玩月份</option>
+                  <?php for($month=1; $month<=12; $month++): ?>
+                  <option value="{$month}月" <if condition="$info['travel_month'] eq $month.'月'">selected</if>>{$month}月</option>
+                  <?php endfor; ?>
+                </select>
+                <span style="color: red;">*</span><span>人均消费： </span>
+                <input type="number" min="1" max="999999999" name="price" class="form-control input-small" value="{$info['price']}" required> <span>元</span>
+              </div>
+            </div>
+            <div class="field-box">
+              <div class="col-md-9 label_att">
+                <span>浏览数：</span>
+                <input type="number" min="0" max="10000" name="viewnum" class="form-control input-small" value="{$info['viewnum']}" required>
+                <span>评论数：</span>
+                <input type="number" name="commentnum" class="form-control input-small" value="{$info['commentnum']}" readonly="readonly" required>
+                <span>点赞数：</span>
+                <input type="number" min="0" max="10000" name="zannum" class="form-control input-small" value="{$info['zannum']}" required>
+              </div>
+            </div>
+            <div class="field-box">
+              <div class="col-md-9 label_att">
+                <span style="color: red;">*</span><span>游记详情： </span>
+                <textarea id="content" name="content" style="width: 88%; min-height: 600px;">{$info.content}</textarea>
+                <!--<script type="text/plain" id="content" name="content" style="width: 100%; min-height: 600px;"></script>-->
+                <p style="color: red;"></p>
+              </div>
+            </div>
+            <if condition="$info['status'] neq -1">
+            <div class="field-box">
+              <div class="col-md-9 label_att">
+                <span style="color: red;">*</span><span>是否启用：</span>
+                <input type="radio" value="1" name="status" <if condition="$info['status'] eq 1">checked</if>><span>立即发布</span>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <input type="radio" value="2" name="status" <if condition="$info['status'] eq 2">checked</if>><span>等待发布</span>
+              </div>
+            </div>
+            </if>
+          </fieldset>
+          <div class="field-box">
+            <div class="col-md-9 label_att">
+              <input type="hidden" name="id" value="{$info.id}"/>
+              <button type="submit" class="btn btn-primary mar_r5 js-ajax-submit">保存</button>
+              <a class="btn btn-default" href="{:U('Travels/index')}">返回</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- end main container -->
+
+<!-- scripts for this page -->
+<script src="__PUBLIC__/Shopadmin/js/wysihtml5-0.3.0.js"></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/jquery.uniform.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/theme.js"></script>
+<!--laydate-->
+<script src="__PUBLIC__/Shopadmin/laydate/laydate.js"></script>
+<!--laryer-->
+<script src="__PUBLIC__/Shopadmin/layer/layer.js"></script>
+<script src="__PUBLIC__/layer/layer.js"></script>
+
+<script type="text/javascript" src="__PUBLIC__/js/common.js"></script>
+<script type="text/javascript">
+    //编辑器路径定义
+    var editorURL = GV.WEB_ROOT;
+</script>
+
+
+<script type="text/javascript" src="__PUBLIC__/js/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript">
+    $(function() {
+        //编辑器
+        editorcontent = new baidu.editor.ui.Editor();
+        editorcontent.render('content');
+        try {
+            editorcontent.sync();
+        } catch (err) {
+        }
+    });
+</script>
+
+
+
+</body>
+</html>

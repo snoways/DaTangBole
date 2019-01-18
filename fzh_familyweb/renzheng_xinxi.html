@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>认证信息</title>
+  <script src="js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="css/ku/hui.css">
+  <link rel="stylesheet" href="css/ku/swiper.min.css">
+  <link rel="stylesheet" href="css/ku/style.css">
+  <script src="js/ku/hui.js"></script>
+  <script src="js/ku/template-web.js"></script>
+  <script src="js/ku/swiper.min.js"></script>
+</head>
+<body>
+
+<div ontouchstart class="content_box">
+  <div class="content_scroll">
+    <!--内容开始-->
+    <div id="containbanner"></div>
+    <div id="contain"></div>
+    <!--内容end-->
+  </div>
+</div>
+
+<script type="text/html" id="tplbanner">
+  <div class="pro_banner bgcolorfff">
+    <div class="swiper-container">
+      <div class="swiper-wrapper">
+        <%for(var i=0;i<banner_list.length;i++){%>
+        <%var el=banner_list[i];%>
+        <div class="swiper-slide">
+          <div class="block img_box imgratio4">
+            <div class="img_content">
+              <img src="<%=el.url%>" class="imgone">
+            </div>
+          </div>
+        </div>
+        <%}%>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </div>
+</script>
+<script type="text/html" id="tpl">
+  <div class="tableblock border_b txt_center renzhengTab bgcolorfff font14 color666" style="height: 46px">
+    <a href="javascript:;" class="<%=tabIndex==1?'on':''%>" onclick="tabClick(1)">毕业院校</a>
+    <a href="javascript:;" class="<%=tabIndex==2?'on':''%>" onclick="tabClick(2)">荣誉资质</a>
+    <a href="javascript:;" class="<%=tabIndex==3?'on':''%>" onclick="tabClick(3)">心理测评</a>
+    <a href="javascript:;" class="<%=tabIndex==4?'on':''%>" onclick="tabClick(4)">健康证</a>
+  </div>
+  <%if(tabIndex==1){%>
+  <div class="tuwen font14 color666 bgcolorfff"><%-tuwen2%></div>
+  <%}else if(tabIndex==2){%>
+  <div class="tuwen font14 color666 bgcolorfff"><%-tuwen3%></div>
+  <%}else if(tabIndex==3){%>
+  <div class="tuwen font14 color666 bgcolorfff"><%-tuwen4%></div>
+  <%}else if(tabIndex==4){%>
+  <div class="tuwen font14 color666 bgcolorfff"><%-tuwen5%></div>
+  <%}%>
+</script>
+
+<script>
+  var token=localStorage.getItem('user_token');
+
+  if(Getvariable('token')){
+    token=Getvariable('token');
+  }
+
+  var data={
+    banner_list: [],
+    tabIndex: 1,
+    tuwen1: '暂无相关内容',
+    tuwen2: '暂无相关内容',
+    tuwen3: '暂无相关内容',
+    tuwen4: '暂无相关内容',
+    tuwen5: '暂无相关内容'
+  };
+  function renderbanner(){
+    document.getElementById('containbanner').innerHTML=template('tplbanner', data);
+  }
+  function rendercontain(){
+    document.getElementById('contain').innerHTML=template('tpl', data);
+  }
+
+  //初始加载
+  pre_loading(0);
+  var pid;//老师id
+  if (!Getvariable('pid')) {
+    pre_loading(3);
+  } else {
+    pid = Getvariable('pid');
+
+    //banner
+    hui.post(
+      path_inter+'parents/teacher/banner',
+      {
+        token: token,
+        teacher_id: pid
+      },
+      function(res){
+        res = JSON.parse(res);
+        if (user_overdue(res.code,res.msg)) {
+          for(var i=0;i<res.data.length;i++){
+            res.data[i].url = path_img + res.data[i].url;
+          }
+          data.banner_list = res.data;
+          renderbanner();
+
+          //swiper
+          var mySwiper = new Swiper('.pro_banner .swiper-container', {
+            direction: 'horizontal',
+            loop: true,
+            autoplay: 5000,
+            autoplayDisableOnInteraction: false,
+            // 如果需要分页器
+            pagination: '.pro_banner .swiper-pagination',
+            paginationClickable: true
+          });
+        }
+      },
+      function(){
+        //error
+        pre_loading(1);
+      }
+    );
+
+    //获取图文
+    hui.post(
+      path_inter+'parents/teacher/detail',
+      {
+        token:token,
+        t_id: pid
+      },
+      function(res){
+        res = JSON.parse(res);
+        pre_loading(100);
+        if (user_overdue(res.code,res.msg)){
+          //身份认证
+          if (res.data.idcard1 && res.data.idcard2) {
+            data.tuwen1 = '<p class="txt_center mar_b10"><img src="' + path_img + res.data.idcard1 + '" /></p>' + '<p class="txt_center mar_b10"><img src="' + path_img + res.data.idcard2 + '" /></p>';
+          }
+          //毕业院校
+          if (res.data.school) {
+            data.tuwen2 = res.data.school;
+          }
+          if (res.data.honor.length > 0 && res.data.honor) {
+            //荣誉资质
+            var rongyustr = '';
+            for (var i = 0; i < res.data.honor.length; i++) {
+              rongyustr += '<div class="txt_center mar_b10"><p class="mar_b5"><img src="' + path_img + res.data.honor[i].url + '" /></p><p>' + res.data.honor[i].msg + '</p></div>';
+            }
+            data.tuwen3 = rongyustr;
+          }
+          //心理测评
+          if (res.data.evaluation) {
+            data.tuwen4 = res.data.evaluation;
+          }
+          if (res.data.health) {
+            //健康证
+            data.tuwen5 = '<p class="txt_center mar_b10"><img src="' + path_img + res.data.health + '" /></p>';
+          }
+          rendercontain();
+        }
+      },
+      function(){
+        //error
+        pre_loading(1);
+      }
+    );
+  }
+
+  //点击tab
+  function tabClick(zhi){
+    data.tabIndex = zhi;
+    rendercontain();
+  }
+</script>
+</body>
+</html>
+

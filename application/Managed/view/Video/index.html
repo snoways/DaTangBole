@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>我的视频</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- bootstrap -->
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap.css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+
+  <!-- libraries -->
+  <link href="__PUBLIC__/Shopadmin/css/lib/uniform.default.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/select2.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/font-awesome.css" type="text/css" rel="stylesheet"/>
+
+  <!-- global styles -->
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/layout.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/elements.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/icons.css">
+
+  <!-- this page specific styles -->
+  <link rel="stylesheet" href="__PUBLIC__/Shopadmin/css/compiled/form-showcase.css" type="text/css" media="screen"/>
+
+  <!-- open sans font -->
+  <link
+    href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+    rel='stylesheet' type='text/css'>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+<include file="common/menu" />
+<!-- main container -->
+<div class="content">
+
+  <div id="pad-wrapper" class="form-page">
+    <div class="row header">
+      <div class="col-md-12">
+        <h3>我的视频</h3>
+      </div>
+    </div>
+    <div class="row" style="padding: 10px; border: 1px solid #ccc;  margin-bottom: 10px;background-color: #F5FAFD;">
+      <form class="form-inline" method="post" action="{:U('Video/index')}">
+        <div class="form-group mar_r5">
+          <label for="shai4">关键字：</label>
+          <input type="text" name="keyword" class="form-control" id="shai4" style="width: 200px" value="{$keyword}" placeholder="请输入视频名称">
+        </div>
+        <button class="btn btn-primary mar_r5" type="submit">搜索</button>
+        <a class="btn btn-danger" href="{:U('Video/index')}">清空</a>
+      </form>
+    </div>
+    <div class="table-wrapper products-table section">
+      <div class="row">
+        <table class="table table-hover" id="videotable">
+          <thead>
+          <tr>
+            <th width="50">
+              ID
+            </th>
+            <th width="120">
+              <span class="line"></span>标题
+            </th>
+            <th width="200">
+              <span class="line"></span>缩略图
+            </th>
+            <th>
+              <span class="line"></span>描述
+            </th>
+            <th width="60">
+              <span class="line"></span>状态
+            </th>
+            <th width="80">
+              <span class="line"></span>是否置顶
+            </th>
+            <th width="150">
+              <span class="line"></span>添加时间
+            </th>
+            <th width="60">
+              <span class="line"></span>操作
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <!-- row -->
+          <foreach name="list" key="k" item="vo">
+            <tr>
+              <td>
+                {$k+1}
+              </td>
+              <td>
+                {$vo['title']}
+              </td>
+              <td align="center">
+                <div class="img">
+                  <img src="{$vo.img_url}" width="90" height="60">
+                </div>
+              </td>
+              <td>
+                <div class="ml1">{$vo['desc']}</div>
+              </td>
+              <td align="center">
+                <if condition="$vo['status'] eq 1">
+                  <span class="icon-ok cursor fs18 xiajiabtn" data-id="{$vo['id']}"></span>
+                <else />
+                  <span class="icon-remove cursor fs18 shangjiabtn" data-id="{$vo['id']}"></span>
+                </if>
+              </td>
+              <td align="center">
+                <if condition="$vo['is_top'] eq 1">
+                  <span class="icon-ok cursor fs18" data-id="{$vo['id']}"></span>
+                  <else />
+                  <span class="icon-remove cursor fs18 zhiding" data-id="{$vo['id']}"></span>
+                </if>
+              </td>
+              <td>{$vo['add_time']}</td>
+              <td>
+                <a class="btn btn-link" href="__CONTROLLER__/edit/id/{$vo['id']}">编辑</a>
+                <span class="btn btn-link delbtn" data-id="{$vo['id']}">删除</span>
+              </td>
+            </tr>
+          </foreach>
+          </tbody>
+        </table>
+        <div class="pagination">{$page}</div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end main container -->
+
+<!-- scripts for this page -->
+<script src="__PUBLIC__/Shopadmin/js/wysihtml5-0.3.0.js"></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/jquery.uniform.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/theme.js"></script>
+<!--laryer-->
+<script src="__PUBLIC__/Shopadmin/layer/layer.js"></script>
+<script src="__PUBLIC__/layer/layer.js"></script>
+
+
+
+<script>
+  $('#videotable').on('click','.xiajiabtn',function(){
+    //下架
+    var id=$(this).data('id');
+    console.log(id)
+      layer.confirm('您确定要下架该视频吗?', {icon: 3, title:'提示'}, function(index){
+
+          $.post("__CONTROLLER__/status",
+              {'id':id, 'status':1},
+              function(json){
+                  var data = JSON.parse(json);
+                  if (data.code==1){
+                      window.location.reload();
+                  }else{
+                      layer.alert(data.msg);
+                  }
+              },"text");
+          layer.close(index);
+      });
+  }).on('click','.shangjiabtn',function(){
+    //上架
+    var id=$(this).data('id');
+    console.log(id)
+      layer.confirm('您确定要上架该视频吗?', {icon: 3, title:'提示'}, function(index){
+
+          $.post("__CONTROLLER__/status",
+              {'id':id, 'status':2},
+              function(json){
+                  var data = JSON.parse(json);
+                  if (data.code==1){
+                      window.location.reload();
+                  }else{
+                      layer.alert(data.msg);
+                  }
+              },"text");
+          layer.close(index);
+      });
+  }).on('click','.delbtn',function(){
+    //删除
+    var id=$(this).data('id');
+    console.log(id)
+      layer.confirm('您确定要删除该视频吗?', {icon: 3, title:'提示'}, function(index){
+
+          $.post("__CONTROLLER__/del",
+              {"id":id},
+              function(json){
+                  var data = JSON.parse(json);
+                  if (data.code==1){
+                      window.location.reload();
+                  }else{
+                      layer.alert(data.msg);
+                  }
+
+              },"text");
+          layer.close(index);
+      });
+  }).on('click','.zhiding',function(){
+      //删除
+      var id=$(this).data('id');
+      console.log(id)
+      layer.confirm('您确定要置顶该视频吗?', {icon: 3, title:'提示'}, function(index){
+
+          $.post("__CONTROLLER__/top",
+              {"id":id},
+              function(json){
+                  var data = JSON.parse(json);
+                  if (data.code==1){
+                      window.location.reload();
+                  }else{
+                      layer.alert(data.msg);
+                  }
+
+              },"text");
+          layer.close(index);
+      });
+  });
+</script>
+
+
+
+</body>
+</html>

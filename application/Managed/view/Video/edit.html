@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>添加视频</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- bootstrap -->
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap.css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet">
+
+  <!-- libraries -->
+  <link href="__PUBLIC__/Shopadmin/css/lib/uniform.default.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/select2.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/bootstrap.datepicker.css" type="text/css" rel="stylesheet">
+  <link href="__PUBLIC__/Shopadmin/css/lib/font-awesome.css" type="text/css" rel="stylesheet"/>
+
+  <!-- global styles -->
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/layout.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/elements.css">
+  <link rel="stylesheet" type="text/css" href="__PUBLIC__/Shopadmin/css/compiled/icons.css">
+
+  <!-- this page specific styles -->
+  <link rel="stylesheet" href="__PUBLIC__/Shopadmin/css/compiled/form-showcase.css" type="text/css" media="screen"/>
+
+  <!-- open sans font -->
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <script type="text/html" id="photos-item-wrapper">
+    <li id="savedimage{id}">
+      <input id="photo-{id}" type="hidden" name="photos_url[]" value="{filepath}">
+      <input id="photo-{id}-name" type="text" name="photos_alt[]" value="{name}" style="width: 160px;" title="图片名称">
+      <img id="photo-{id}-preview" src="{url}" style="height:36px;width: 36px;" onclick="parent.image_preview_dialog(this.src);">
+      <a href="javascript:upload_one_image('图片上传','#photo-{id}');">替换</a>
+      <a href="javascript:(function(){$('#savedimage{id}').remove();})();">移除</a>
+    </li>
+  </script>
+
+  <link href="__PUBLIC__/js/artDialog/skins/default.css" rel="stylesheet" />
+
+  <script type="text/javascript">
+      //全局变量
+      var GV = {
+          ROOT: "__ROOT__/",
+          WEB_ROOT: "__WEB_ROOT__/",
+          JS_ROOT: "public/js/",
+          APP:'{$Think.MODULE_NAME}'/*当前应用名*/
+      };
+  </script>
+  <script src="__PUBLIC__/js/wind.js"></script>
+
+</head>
+<body>
+
+<include file="common/menu" />
+
+
+<!-- main container -->
+<div class="content">
+
+  <div id="pad-wrapper" class="form-page">
+    <div class="row header">
+      <div class="col-md-12">
+        <h3>编辑视频</h3>
+      </div>
+    </div>
+    <form method="post" class="form-horizontal js-ajax-form" action="{:U('Video/edit')}" enctype="multipart/form-data">
+      <input name="id" value="{$rs.id}" type="hidden">
+    <div class="row form-wrapper">
+      <div class="col-md-8 column">
+          <fieldset>
+            <div class="field-box">
+              <label class="inputlh">标题</label>
+              <div class="col-md-8">
+                <input type="text" name="title" class="form-control" value="{$rs.title}" required>
+              </div>
+            </div>
+            <div class="field-box">
+              <label class="inputlh">描述</label>
+              <div class="col-md-8">
+                <textarea name="desc" class="form-control" style="height: 140px">{$rs.desc}</textarea>
+              </div>
+            </div>
+            <div class="field-box">
+              <label class="inputlh">视频</label>
+              <div class="col-md-8">
+                <div class="container">
+                  <div class="demo">
+                    <a class="btn" id="btn">上传视频</a> 支持MP4格式。
+                    <ul id="ul_pics" class="ul_pics clearfix"></ul>
+                  </div>
+                  <video width="320" height="240" controls>
+                    <source src="{$rs.video_url}" type="video/mp4">
+                    您的浏览器不支持 video 标签。
+                  </video>
+                </div>
+                <script src="__PUBLIC__/js/jquery.js"></script>
+                <script type="text/javascript" src="__PUBLIC__/fileupload/js/plupload.full.min.js"></script>
+                <script type="text/javascript">
+                    var uploader = new plupload.Uploader({ //创建实例的构造方法
+                        runtimes: 'html5,flash,silverlight,html4', //上传插件初始化选用那种方式的优先级顺序
+                        browse_button: 'btn', // 上传按钮
+                        url: "__CONTROLLER__/upload", //远程上传地址
+                        flash_swf_url: '__PUBLIC__/fileupload/plupload/Moxie.swf', //flash文件地址
+                        silverlight_xap_url: '__PUBLIC__/fileupload/plupload/Moxie.xap', //silverlight文件地址
+                        filters: {
+                            max_file_size: '500MB', //最大上传文件大小（格式100b, 10kb, 10mb, 1gb）
+                            mime_types: [ //允许文件上传类型
+                                {
+                                    title: "files",
+                                    extensions: "mp4"
+                                }
+                            ]
+                        },
+                        multi_selection: true, //true:ctrl多文件上传, false 单文件上传
+                        init: {
+                            FilesAdded: function(up, files) { //文件上传前
+                                if ($("#ul_pics").children("li").length > 30) {
+                                    alert("您上传的图片太多了！");
+                                    uploader.destroy();
+                                } else {
+                                    var li = '';
+                                    plupload.each(files, function(file) { //遍历文件
+                                        li += "<li id='" + file['id'] + "'><div class='progress'><span class='bar'></span><span class='percent'>0%</span></div></li>";
+                                    });
+                                    $("#ul_pics").append(li);
+                                    uploader.start();
+                                }
+                            },
+                            UploadProgress: function(up, file) { //上传中，显示进度条
+                                var percent = file.percent;
+                                $("#" + file.id).find('.bar').css({
+                                    "width": percent + "%"
+                                });
+                                $("#" + file.id).find(".percent").text(percent + "%");
+                            },
+                            FileUploaded: function(up, file, info) { //文件上传成功的时候触发
+                                var data = eval("(" + info.response + ")");
+//                var data = info.response;
+//                console.log(file);
+//                                                $("#" + file.id).html("<div class='img'><video  src='__ROOT__" + data.pic + "'/></div><p>" + data.name + "</p><input type='hidden' name='imglist[]' value='"+data.id+"'/>");
+                                $("#" + file.id).html("<p>" + file.name + "</p><input type='hidden' name='imglist[]' value='"+data.id+"'/>");
+                            },
+                            Error: function(up, err) { //上传出错的时候触发
+                                alert(err.message);
+                            }
+                        }
+                    });
+                    uploader.init();
+                </script>
+              </div>
+            </div>
+          </fieldset>
+          <div class="field-box">
+            <label class="inputlh"></label>
+            <div class="col-md-8">
+              <button type="submit" class="btn btn-primary mar_r5 js-ajax-submit">保存</button>
+              <a class="btn btn-default" href="{:U('Video/index')}">返回</a>
+            </div>
+          </div>
+
+      </div>
+      <div class="col-md-4 column pull-right">
+        <div class="field-box">
+          <label class="inputlh" style="padding-left: 0;">缩略图（上传尺寸为16:9）</label>
+          <div class="col-md-8">
+            <div>
+              <input type="hidden" name="smeta[thumb]" id="thumb" value="{$rs.img_url}">
+              <a href="javascript:upload_one_image('图片上传','#thumb');" class="inb">
+                <img src="/{$rs.img_url}" id="thumb-preview" style="width: 135px;height: 135px;">
+              </a>
+            </div>
+            <div class="mar_t10">
+              <input type="button" class="btn btn-default" onclick="$('#thumb-preview').attr('src','/admin/themes/simplebootx/Public/assets/images/default-thumbnail.png');$('#thumb').val('');return false;" value="取消图片">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </form>
+  </div>
+</div>
+<!-- end main container -->
+
+<!-- scripts for this page -->
+<script src="__PUBLIC__/Shopadmin/js/wysihtml5-0.3.0.js"></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/jquery.uniform.min.js"></script>
+<script src="__PUBLIC__/Shopadmin/js/theme.js"></script>
+<!--laydate-->
+<script src="__PUBLIC__/Shopadmin/laydate/laydate.js"></script>
+<!--laryer-->
+<script src="__PUBLIC__/Shopadmin/layer/layer.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/common.js"></script>
+<script type="text/javascript">
+    //编辑器路径定义
+    var editorURL = GV.WEB_ROOT;
+</script>
+
+
+<script>
+  //截止日期
+  var date = {
+    elem: '#date',
+    format: 'YYYY/MM/DD hh:mm:ss',
+    istime: true,
+    istoday: false,
+    isclear: false,
+    choose: function (datas) {
+      console.log(datas);//datas 截止日期的时间，2010-10-10 10:10:10的格式
+      $('input[name=datezhi]')[0].value=datas;
+    }
+  };
+  laydate(date);
+
+  $('#date').on('input propertychange',function(){
+    $('input[name=datezhi]')[0].value=$(this).val();
+  });
+</script>
+
+
+
+
+
+</body>
+</html>

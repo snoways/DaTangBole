@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+  <title>分类</title>
+  <script src="js/ku/common_nojq.js"></script>
+  <link rel="stylesheet" href="css/ku/hui.css">
+  <link rel="stylesheet" href="css/ku/weui.min.css">
+  <link rel="stylesheet" href="css/ku/jquery-weui.min.css">
+  <link rel="stylesheet" href="css/ku/style.css">
+  <script src="js/ku/hui.js"></script>
+  <script src="js/ku/jquery-1.12.4.min.js"></script>
+  <script src="js/ku/jquery-weui.js"></script>
+  <script src="js/ku/template-web.js"></script>
+  <style>
+    .listtabCeng1 .left li.on a{background: #f5f5f5}
+  </style>
+</head>
+<body ontouchstart>
+
+<script type="text/html" id="tpl">
+  <div class="listtabCeng1" style="height:auto;top:44px;bottom: 0;">
+    <div class="left font14 color666 bgcolorfff">
+      <ul>
+        <%for(var i=0;i<leftlist.length;i++){%>
+        <%var el=leftlist[i];%>
+        <li class="<%=lefti==i?'on':''%>">
+          <a href="javascript:;" onclick="leftclickfun(<%=i%>)" class="block pad10 has_border_b"><%=el.text%></a>
+        </li>
+        <%}%>
+      </ul>
+    </div>
+    <div class="right bgcolorf5">
+      <ul class="pad10 clear txt_center color666">
+        <%for(var i=0;i<rightlist.length;i++){%>
+        <%var el=rightlist[i];%>
+        <li class="mar_b10 pad2 L col-xs-4">
+          <div>
+            <a href="javascript:;" class="pad5 w100 block bgcolorfff" onclick="rightclickfun(<%=i%>)"><%=el.text%></a>
+          </div>
+        </li>
+        <%}%>
+      </ul>
+    </div>
+  </div>
+</script>
+
+<div class="content_box">
+  <div class="content_scroll no">
+    <!--内容开始-->
+    <div id="contain"></div>
+    <!--内容end-->
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<script>
+  var token=localStorage.getItem('user_token');
+
+  if(Getvariable('token')){
+    token=Getvariable('token');
+  }
+
+  pre_loading(0);
+
+  var data={
+    list:[],
+    leftlist:[],
+    lefti:0,//0全部
+    rightlist:[],
+    righti:0,//0说明一个也没选
+    courseall:[],
+    oprate:true
+  };
+  function renderhtml(){
+    document.getElementById('contain').innerHTML=template('tpl', data);
+  }
+
+  //获取科目
+  hui.post(
+    path_inter+'parents/home/subjects',
+    {
+      token:token
+    },
+    function(res){
+      res = JSON.parse(res);
+      pre_loading(100);
+      if (user_overdue(res.code,res.msg)) {
+        data.list = res.data;
+        var leftarr = [];
+        var rightarr = [];
+        for (var i = 0; i < res.data.length; i++) {
+          leftarr.push({text: res.data[i].s_name});
+          for (var j = 0; j < res.data[i].son.length; j++) {
+            rightarr.push({text: res.data[i].son[j].s_name});
+          }
+        }
+        data.leftlist = leftarr;
+        data.rightlist = rightarr;
+        data.courseall = rightarr;
+
+        renderhtml();
+        pagedo();
+      }
+    },
+    function(){
+      //error
+      pre_loading(1);
+    }
+  );
+
+  //点击左侧
+  function leftclickfun(zhi){
+    data.lefti = zhi;
+    data.righti = 0;
+
+    //右侧更新
+    if (zhi == 0) {
+      data.rightlist=data.courseall;
+    } else {
+      var rightarr = [];
+      for (var i = 0; i < data.list[data.lefti].son.length; i++) {
+        rightarr.push({text: data.list[data.lefti].son[i].s_name});
+      }
+      data.rightlist = rightarr;
+    }
+    renderhtml();
+  }
+  //点击右侧
+  function rightclickfun(zhi){
+    data.righti = zhi;
+    if(data.lefti==0 && data.righti==0){
+      appgotoSouResult(null,'');//点击一级全部 二级也是全部，传空字符串即可
+    }else if(data.lefti==0 && data.righti!=0){
+      appgotoSouResult(null,data.rightlist[data.righti].text);
+    }else if(data.lefti!=0 && data.righti==0){
+      appgotoSouResult(null,data.leftlist[data.lefti].text);
+    }else if(data.lefti!=0 && data.righti!=0){
+      appgotoSouResult(null,data.rightlist[data.righti].text);
+    }
+  }
+
+  function pagedo(){
+    //下拉刷新
+    xiala_reload($(".content_box"));
+    $(".content_box").pullToRefresh().on("pull-to-refresh", function () {
+      if (!data.oprate) {
+        $(".content_box").pullToRefreshDone();
+        return false;
+      }
+      data.oprate = false;
+      data.leftlist=[];
+      data.rightlist=[];
+      data.courseall=[];
+      load_closeanimation("load_animation", 1);
+      renderhtml();
+
+      //获取科目
+      hui.post(
+        path_inter+'parents/home/subjects',
+        {
+          token:token
+        },
+        function(res){
+          data.oprate = true;
+          res = JSON.parse(res);
+          $(".content_box").pullToRefreshDone();
+          if (user_overdue(res.code,res.msg)) {
+            data.list = res.data;
+            var leftarr = [];
+            var rightarr = [];
+            for (var i = 0; i < res.data.length; i++) {
+              leftarr.push({text: res.data[i].s_name});
+              for (var j = 0; j < res.data[i].son.length; j++) {
+                rightarr.push({text: res.data[i].son[j].s_name});
+              }
+            }
+            data.leftlist = leftarr;
+            data.rightlist = rightarr;
+            data.courseall = rightarr;
+
+            renderhtml();
+          }
+        },
+        function(){
+          //error
+          data.oprate = true;
+          $.toast("刷新失败", "text");
+          $(".content_box").pullToRefreshDone();
+        }
+      );
+    });
+  }
+</script>
+</body>
+</html>

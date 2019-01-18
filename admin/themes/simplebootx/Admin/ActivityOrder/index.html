@@ -1,0 +1,140 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a>普通订单列表</a></li>
+			<li><a href="{:U('ActivityOrder/spell_index')}">拼团订单列表</a></li>
+		</ul>
+		<form class="well form-search" id="formurl" method="post" action="{:U('ActivityOrder/index')}">
+
+			订单状态：
+			<select name="status" style="width: 120px;">
+				<option value="0">全部</option>
+				<foreach name="status" key="key" item="item">
+					<option value="{$key}" <if condition="I('status') eq $key">selected</if>>{$item}</option>
+				</foreach>
+			</select>
+			关键字：
+			<input type="text" name="keyword" style="width: 200px;" value="{:I('request.keyword')}" placeholder="订单编号/报名人姓名/报名人手机号">
+
+			<input type="submit" class="btn btn-primary" onclick="return search();" value="搜索" />
+			<a class="btn btn-danger" href="{:U('ActivityOrder/index')}">清空</a>
+			<input type="submit" class="btn btn-primary" onclick="return excel();" value="导出Excel" />
+		</form>
+		<div style="color: red;margin-bottom: 5px;font-size: 18px;">
+		 	 <!--总金额 : {$total}￥-->
+		</div>
+		<form method="post" class="js-ajax-form">
+			<table class="table table-hover table-bordered">
+				<thead>
+					<tr>
+						<th align="center">ID</th>
+						<th>订单编号</th>
+						<th>活动标题</th>
+						<th>用户信息</th>
+						<th>订单联系人信息</th>
+						<th>套餐名称</th>
+						<th>总金额</th>
+						<th>出发日期</th>
+						<th>下单时间</th>
+						<th>{:L('STATUS')}</th>
+						<th align="center">{:L('ACTIONS')}</th>
+					</tr>
+				</thead>
+				<tbody>
+					<foreach name="list" key="k" item="vo">
+					<tr>
+						<td align="center">{$k+1}</td>
+						<td>{$vo['sn']}</td>
+						<td>{$vo['act_name']}</td>
+						<td>报名人：{$vo['parent_name']}<br/>手机号：{$vo['parent_phone']}</td>
+						<td>联系人：{$vo['user_name']}<br/>手机号：{$vo['phone']}</td>
+						<td>{$vo.attr_title}</td>
+						<td>{$vo.pay_money}</td>
+						<td>{$vo.start_date}</td>
+						<td>{$vo.sign_time}</td>
+						<td>
+							{$status[$vo['status']]}
+						</td>
+						<td align="center">
+							<a href="{:U('ActivityOrder/view',array('id'=>$vo['id']))}" > 查看 </a>
+						</td>
+					</tr>
+					</foreach>
+				</tbody>
+			</table>
+			<div class="pagination">{$page}</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+	<script>
+        function search() {
+            $("#formurl").attr('action', "{:U('ActivityOrder/index')}");
+            return true;
+        }
+        function excel() {
+            $("#formurl").attr('action', "{:U('ActivityOrder/oexcel')}");
+            return true;
+        }
+
+        $('.pay').click(function () {
+            var sn=$(this).attr('data-id');
+			$.ajax({
+				type:"GET",
+				url:"{:U('ActivityOrder/pay')}",
+				data:{sn:sn},
+				success:function(json){
+				    window.location.reload();
+				}
+			});
+        })
+
+        //选择地区城市
+        $('select[name="province"]').on('change',function(){
+            var str = "";
+            $('select[name="city"]').html("");
+            var areaid = $(this).val();
+            $.ajax({
+                type:"GET",
+                url:"{:U('ActivityOrder/city')}",
+                data:{areaid:areaid},
+                datatype: "json",
+                success:function(json){
+                    var data = JSON.parse(json);
+                    if(data!=""){
+                        var city = "{$_POST['city']}";
+                        str = '<option value="0" selected >选择市</option>';
+                        for(var i=0;i<data.length;i++){
+                            str += '<option value="'+data[i].areaid+'" <if condition="'+city+' eq '+data[i].areaid+'">selected</if> >'+data[i].areaname+'</option>';
+                        }
+                        $('select[name="city"]').append(str);
+                    }
+                }
+            });
+        });
+        //选择地区城市
+        $('select[name="city"]').on('change',function(){
+            var str = "";
+            $('select[name="area"]').html("");
+            var areaid = $(this).val();
+            $.ajax({
+                type:"GET",
+                url:"{:U('ActivityOrder/city')}",
+                data:{areaid:areaid},
+                datatype: "json",
+                success:function(json){
+                    var data = JSON.parse(json);
+                    if(data!=""){
+                        str = '<option value="0" selected >选择区</option>';
+                        for(var i=0;i<data.length;i++){
+                            str += '<option value="'+data[i].areaid+'"">'+data[i].areaname+'</option>';
+                        }
+                        $('select[name="area"]').append(str);
+                    }
+                }
+            });
+        });
+	</script>
+</body>
+</html>

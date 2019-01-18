@@ -1,0 +1,49 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="{:U('Category/index')}">分类管理</a></li>
+		</ul>
+		<form method="post" class="js-ajax-form" action="{:U('AdminTerm/listorders')}">
+			<div class="table-actions">
+				<button type="submit" class="btn btn-primary btn-small js-ajax-submit">{:L('SORT')}</button>
+			</div>
+			<table class="table table-hover table-bordered table-list">
+				<thead>
+					<tr>
+						<th width="50">ID</th>
+						<th>名称</th>
+						<th>缩略图</th>
+						<th>{:L('ACTIONS')}</th>
+					</tr>
+				</thead>
+				<tbody>
+					<foreach name="lists" key="key" item="item">
+						<tr>
+							<td>{$key+1}</td>
+							<td>{$item.cate_name}</td>
+							<td><img width="80" src="{$item.cate_img}"></td>
+							<td>
+								<a href="{:U('category/edit',array('id'=>$item['id']))}">修改缩略图</a>
+							</td>
+						</tr>
+					</foreach>
+				</tbody>
+				<tfoot>
+					<tr>
+						<th width="50">ID</th>
+						<th>名称</th>
+						<th>缩略图</th>
+						<th>{:L('ACTIONS')}</th>
+					</tr>
+				</tfoot>
+			</table>
+			<div class="table-actions">
+				<button type="submit" class="btn btn-primary btn-small js-ajax-submit">{:L('SORT')}</button>
+			</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

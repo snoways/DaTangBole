@@ -1,0 +1,57 @@
+<admintpl file="header"/>
+<style>
+    .input-medium {
+        width: 200px;
+    }
+
+    .input-large {
+        width: 400px;
+    }
+</style>
+</head>
+<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('Smalltable/direct_agent_ratio')}">代理商分销设置</a></li>
+        <li class="active"><a href="{:U('Smalltable/direct_agent_ratio_edit')}">添加分销设置</a></li>
+    </ul>
+    <form method="post" class="form-horizontal js-ajax-form" action="{:U('Smalltable/direct_agent_ratio_edit')}">
+        <php>
+            if(empty($info)) {
+        </php>
+            <div class="control-group">
+                <label class="control-label">选择代理商<span style="color: red;">*</span></label>
+                <div class="controls">
+                    <select name="agent_id" id="agent_id" class="input-medium">
+                        <option value="0">请选择代理商</option>
+                        <foreach name="agent_list" key="k" item="vo">
+                            <option value="{$vo.id}">{$vo.s_name}</option>
+                        </foreach>
+                    </select>
+                </div>
+            </div>
+        <php>
+            }
+        </php>
+        <div class="control-group">
+            <label class="control-label">课程分销比例<span style="color: red;">*</span></label>
+            <div class="controls">
+                <input type="number" min="0" max="100" name="kecheng_ratio" class="input-medium" value="{$info.kecheng_ratio}" required> %（代理商在此模块的分佣占比）
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">活动分销比例<span style="color: red;">*</span></label>
+            <div class="controls">
+                <input type="number" min="0" max="100" name="huodong_ratio" class="input-medium" value="{$info.huodong_ratio}" required> %（代理商在此模块的分佣占比）
+            </div>
+        </div>
+        <div class="form-actions">
+            <input type="hidden" name="$agent_id" value="{$info.$agent_id}"/>
+            <button type="submit" class="btn btn-primary js-ajax-submit">{:L('SAVE')}</button>
+            <a class="btn" href="javascript:history.back(-1);">{:L('BACK')}</a>
+        </div>
+    </form>
+</div>
+<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>

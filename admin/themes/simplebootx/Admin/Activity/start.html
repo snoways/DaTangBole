@@ -1,0 +1,223 @@
+<admintpl file="header" />
+<style>
+    .plus,.minus{
+        width: 21px;
+        height: 21px;
+        line-height: 21px;
+        text-align: center;
+        border-radius: 50%;
+        border: solid 1px #077aff;
+        color: #077aff;
+        display: inline-block;
+        margin-left: 30px;
+        cursor: pointer;
+    }
+    .minus{
+        border: solid 1px #ff2222;
+        color: #ff2222;
+    }
+    .price{
+        width: 100px;
+    }
+    .number{
+        width: 100px;
+    }
+    input[name='introduce'],input[name='title']{
+        width: 90%;
+    }
+
+    .no-margin{
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+    .save{
+        width: 24.5px;
+        height: 24.5px;
+        border:none;
+        border-radius: 100%;
+        margin-right: 2px;
+        float: left;
+    }
+    .minus{
+        float: left;
+        margin-left: 4px;
+    }
+</style>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:U('Activity/index')}">活动列表</a></li>
+        <li class="active"><a href="{:U('Activity/start',array('id'=>$_GTE['id']))}">出发地</a></li>
+    </ul>
+    <form action="{:U('Activity/start')}" method="post" class="form-horizontal js-ajax-forms" enctype="multipart/form-data">
+        <input type="hidden"  name="id" value="{$_GET['id']}" >
+        <div class="row-fluid">
+            <div class="span12">
+                <table class="table table-bordered">
+                    <tr>
+                        <th> ID </th>
+                        <th> 出发地 </th>
+                        <th width="90"> 操作 </th>
+                    </tr>
+                    <tr class="item">
+                            <td> 0 </td>
+                            <td>
+                                <select name="target_province" id="tp" required class="province">
+                                    <option value="0">请选择</option>
+                                    <foreach name="province" item="v">
+                                        <option value="{$v['areaid']}">{$v['areaname']}</option>
+                                    </foreach>
+                                </select>
+                                <select name="target_city" id="city" class="city"  required>
+                                    <option value="0">请选择</option>
+                                </select>
+
+                            </td>
+                            <td>
+                                <span class="form-required plus"  id="add"> + </span>
+                            </td>
+                    </tr>
+
+                    <foreach name="list" item="i">
+                        <tr class="item" data_id="{$i['id']}" >
+                            <td> {$i['id']} </td>
+                            <td>
+                                <select name="target_province" required class="province">
+                                    <option value="0">请选择</option>
+                                    <foreach name="province" item="v">
+                                        <option value="{$v['areaid']}" <if condition="$v['areaid'] eq $i['province']" >selected</if> >{$v['areaname']}</option>
+                                    </foreach>
+                                </select>
+                                <select name="target_city"  class="city"  required>
+                                    <option value="0">请选择</option>
+                                    <foreach name="i['cities']" item="v">
+                                        <option value="{$v['areaid']}" <if condition="$v['areaid'] eq $i['city']" >selected</if> >{$v['areaname']}</option>
+                                    </foreach>
+                                </select>
+
+                            </td>
+                            <td>
+                                <a class="plus no-margin save" > <img src="/public/iconimg/save.png" alt=""> </a>
+                                <span class="form-required minus" > - </span>
+                            </td>
+                        </tr>
+                    </foreach>
+
+                </table>
+            </div>
+        </div>
+        <!--<div class="form-actions">-->
+            <!--<button class="btn btn-primary js-ajax-submit" type="submit">提交</button>-->
+            <!--<a class="btn" href="{:U('Activity/index')}">返回</a>-->
+        <!--</div>-->
+    </form>
+</div>
+<script type="text/javascript" src="__PUBLIC__/layer/layer.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/common.js"></script>
+</body>
+<script>
+
+    function getAreas(id,callback){
+        $.get("{:U('Activity/getAreas')}",{
+            pid:id
+        },function (data) {
+            callback(data.list);
+        })
+    }
+
+    $(".province").change(function (data) {
+        var el = $(this);
+        var id  = el.val();
+        var html = '<option value="0">请选择</option>';
+        if(parseInt(id) > 0){
+            getAreas(id,function (list) {
+                $.each(list,function (k,v) {
+                    html +='<option value="'+v.areaid+'">'+v.areaname+'</option>';
+                })
+                el.siblings('.city').html(html);
+            })
+        }else{
+            el.siblings('.city').html(html);
+        }
+    })
+
+</script>
+<script>
+    $("#add").click(function () {
+
+        var el = $(this).closest('.item');
+
+        var tp = $('#tp').val()? $('#tp').val():0;
+        var city = $('#city').val()?$('#city').val():0;
+
+        if(parseInt(tp) && parseInt(city)){
+            var act_id = "{$_GET['id']}";
+            $.post("{:U('Activity/addStart')}",{
+                act_id:act_id,
+                tp:tp,
+                city:city,
+            },function (res) {
+                if(res.code == 1){
+                    var data = res.data;
+                    layer.msg("添加成功")
+                    setTimeout(function () {
+                        window.location.reload();
+                    },2000)
+                }else{
+                    artdialog_alert(res.msg)
+                    return false
+                }
+            })
+        }else{
+            artdialog_alert('请填选完所有信息再添加')
+            return false
+        }
+
+    })
+
+    $(".minus").live('click',function () {
+        var el = $(this).closest('.item');
+        var id = el.attr('data_id');
+
+        $.get("{:U('Activity/deleteStart')}",{
+            id:id
+        },function (res) {
+            if(res.code == 1){
+                el.closest('.item').remove();
+                layer.msg('删除成功')
+            }else{
+                artdialog_alert(res.msg)
+                return false
+            }
+        })
+    })
+
+
+    $(".save").live('click',function () {
+        var el = $(this).closest('.item');
+        var id = el.attr('data_id');
+        var pro = el.find('.province').val();
+        var city = el.find('.city').val();
+
+        if(parseInt(pro) && parseInt(city)){
+            $.post("{:U('Activity/updateStart')}",{
+                id:id,
+                province:pro,
+                city:city,
+            },function (res) {
+                if(res.code == 1){
+                    layer.msg(res.msg)
+                }else{
+                    artdialog_alert(res.msg)
+                    return false
+                }
+            })
+        }else{
+            artdialog_alert('请填选完所有信息再添加')
+            return false
+        }
+    })
+
+</script>
+</html>

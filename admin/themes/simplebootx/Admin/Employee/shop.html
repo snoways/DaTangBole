@@ -1,0 +1,42 @@
+<admintpl file="header" />
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="{:U('Employee/index')}">返回</a></li>
+		</ul>
+		<form method="post" class="js-ajax-form">
+			<table class="table table-hover table-bordered">
+				<thead>
+				<tr>
+					<th width="50">ID</th>
+					<th width="100">图片</th>
+					<th width="150">地址</th>
+					<th width="120">名称</th>
+					<th width="120">电话</th>
+					<th width="120">描述</th>
+					<th width="50">会员等级</th>
+					<th width="50">审核状态</th>
+				</tr>
+				</thead>
+				<tbody>
+				<foreach name="list" key="k" item="vo">
+					<tr>
+						<td>{$k+1}</td>
+						<td><img src="{$vo.s_img}" style="width: 40px;height: 40px"></td>
+						<td>{$vo.address}</td>
+						<td>{$vo.s_name}</td>
+						<td>{$vo.s_phone}</td>
+						<td>{$vo.s_content}</td>
+						<td>{$vo.level_name}</td>
+						<td>{$vo['s_status']==1?'未审核':($vo['s_status']==2?'通过':'未通过')}</td>
+					</tr>
+				</foreach>
+				</tbody>
+			</table>
+			<div class="pagination">{$page}</div>
+		</form>
+	</div>
+	<script src="__PUBLIC__/js/common.js"></script>
+</body>
+</html>
